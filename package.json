@@ -19,6 +19,8 @@
 		"tailwind:watch": "pnpm tailwind:build --watch"
 	},
 	"dependencies": {
+		"@conform-to/react": "^1.2.2",
+		"@conform-to/zod": "^1.2.2",
 		"@prisma/client": "6.3.1",
 		"@radix-ui/react-avatar": "^1.1.3",
 		"@radix-ui/react-dialog": "^1.1.6",
