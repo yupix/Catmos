@@ -18,6 +18,11 @@ export const env = createEnv({
 		OIDC_REDIRECT_URIS: z.string().transform((value) => value.split(',')),
 		OIDC_USERINFO_ENDPOINT: z.string(),
 		SESSION_SECRET: z.string(),
+
+		// REDIS系
+		REDIS_HOST: z.string(),
+		REDIS_PORT: z.string().transform((v) => Number(v)),
+		REDIS_PASSWORD: z.string().optional(),
 	},
 	runtimeEnv: process.env,
 });
