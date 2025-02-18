@@ -28,7 +28,7 @@ export function Client() {
 			setIsConnected(false);
 		};
 
-		const handleMessage = (meow: any) => {
+		const handleMessage = (meow: IMeow) => {
 			console.log('meow', meow);
 			if (isAtTop) {
 				setMeows((prev) => [meow, ...prev]);
