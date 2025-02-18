@@ -14,6 +14,7 @@ import { AppSidebar } from './components/app-sidebar';
 import { SidebarProvider } from './components/shadcn/ui/sidebar';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
+import Welcome from './routes/welcome';
 
 export const links: Route.LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -48,12 +49,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			<body>
 				<SidebarProvider>
 					{data?.user ? (
-						<AppSidebar
-							user={{ name: data.user.name, avatar: data.user.avatarUrl }}
-						/>
-					) : null}
-
-					{children}
+						<>
+							<AppSidebar
+								user={{ name: data.user.name, avatar: data.user.avatarUrl }}
+							/>
+							{children}
+						</>
+					) : (
+						<Welcome />
+					)}
 				</SidebarProvider>
 				<ScrollRestoration />
 				<Scripts />
