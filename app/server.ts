@@ -1,7 +1,12 @@
 import { createHonoServer } from 'react-router-hono-server/node';
 import { Server } from 'socket.io';
+import { redisSubscriber } from './lib/redis.server';
 
 console.log('loading server');
+
+redisSubscriber.subscribe('meow', (err, count) => {
+	console.log('Subscribed to meow channel');
+});
 
 export default await createHonoServer({
 	onServe(server) {
@@ -9,6 +14,11 @@ export default await createHonoServer({
 
 		io.on('connection', (socket) => {
 			console.log('New connection 🔥', socket.id);
+
+			redisSubscriber.on('message', (channel, message) => {
+				console.log('Message received:', message);
+				socket.emit('meow', JSON.parse(message));
+			});
 
 			socket.on('disconnect', (reason) => {
 				// called when the underlying connection is closed
@@ -20,19 +30,6 @@ export default await createHonoServer({
 				// Broadcast to all clients except sender
 				socket.broadcast.emit('message', message);
 			});
-
-			setInterval(() => {
-				socket.broadcast.emit('meow', {
-					id: new Date().toString() + Math.random(),
-					text: 'こんにちは',
-					author: {
-						id: '1',
-						name: 'yupix',
-						avatar: 'https://github.com/yupix.png',
-					},
-					createdAt: new Date(),
-				});
-			}, 1000);
 		});
 	},
 });
