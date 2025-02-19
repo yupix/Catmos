@@ -11,3 +11,23 @@ export const redis = singleton(
 			password: env.REDIS_PASSWORD,
 		}),
 );
+
+export const redisSubscriber = singleton(
+	'redisSubscriber',
+	() =>
+		new Redis({
+			host: env.REDIS_HOST,
+			port: env.REDIS_PORT,
+			password: env.REDIS_PASSWORD,
+		}),
+);
+
+export const redisPublisher = singleton(
+	'redisPublisher',
+	() =>
+		new Redis({
+			host: env.REDIS_HOST,
+			port: env.REDIS_PORT,
+			password: env.REDIS_PASSWORD,
+		}),
+);
