@@ -1,5 +1,7 @@
+import { DialogTitle } from '@radix-ui/react-dialog';
 import { TbPencil } from 'react-icons/tb';
 import { Form, useNavigation } from 'react-router';
+import MeowTree from '~/lib/meow-tree';
 import { Button } from './shadcn/ui/button';
 import {
 	Dialog,
@@ -9,7 +11,6 @@ import {
 } from './shadcn/ui/dialog';
 
 export function PostModal() {
-	// 投稿中かどうかの状態を管理する
 	const navigation = useNavigation();
 
 	return (
@@ -20,14 +21,11 @@ export function PostModal() {
 				</Button>
 			</DialogTrigger>
 			<DialogContent>
+				<DialogTitle>投稿</DialogTitle>
 				<Form action="/?index" method="POST">
 					<DialogHeader />
 					<input type="hidden" name="intent" value="post" />
-					<textarea
-						name="text"
-						placeholder="今どんな気分？"
-						className="scroll resize-none"
-					/>
+					<MeowTree />
 					<div className="flex justify-end">
 						<Button
 							className="w-fit"
