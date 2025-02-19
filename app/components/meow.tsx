@@ -8,6 +8,7 @@ export type IMeow = {
 	createdAt: string;
 	author: {
 		name: string;
+		displayName: string;
 		avatarUrl: string;
 	};
 };
@@ -16,17 +17,15 @@ export function Meow({ meow }: { meow: IMeow }) {
 	const dateInfo = getDateTimeString(meow.createdAt);
 	return (
 		<div className="inset-shadow-black/10 inset-shadow-sm max-w-[700px] rounded-xl border p-4">
-			<div className="flex justify-between border-b pb-2">
+			<div className="flex justify-between pb-2">
 				<div className="flex items-center gap-1">
-					<Avatar className="h-10 w-10">
+					<Avatar className="h-15 w-15">
 						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>
 					<div className="flex items-center">
-						{meow.author.name}
-						<span className="ml-2 text-gray-400 text-xs">
-							@{meow.author.name}
-						</span>
+						{meow.author.displayName || meow.author.name}
+						<span className="ml-1 text-gray-400">@{meow.author.name}</span>
 					</div>
 				</div>
 
