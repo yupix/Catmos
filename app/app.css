@@ -16,6 +16,12 @@ body {
   @media (prefers-color-scheme: dark) {
     color-scheme: dark;
   }
+
+  font-size: 15px;
+  line-height: 17px;
+  font-family: 'BIZ UDPGothic', Roboto,  serif;
+  font-weight: 400;
+  color: #484848;
 }
 
 :root {
