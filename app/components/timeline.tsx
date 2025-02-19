@@ -4,12 +4,21 @@ import { ClientOnly } from 'remix-utils/client-only';
 import { socket } from '~/lib/socket.client';
 import { type IMeow, Meow } from './meow';
 
-export default function Timeline() {
-	return <ClientOnly fallback={<>loading</>}>{() => <Client />}</ClientOnly>;
+export type TimelineProps = {
+	// 初期データ
+	initMeows: IMeow[];
+};
+
+export default function Timeline({ initMeows }: TimelineProps) {
+	return (
+		<ClientOnly fallback={<>loading</>}>
+			{() => <Client initMeows={initMeows} />}
+		</ClientOnly>
+	);
 }
 
-export function Client() {
-	const [meows, setMeows] = useState<IMeow[]>([]);
+export function Client({ initMeows }: TimelineProps) {
+	const [meows, setMeows] = useState<IMeow[]>(initMeows);
 	const [newMeows, setNewMeows] = useState<IMeow[]>([]);
 	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [isAtTop, setIsAtTop] = useState(true);

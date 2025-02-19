@@ -17,20 +17,16 @@ export function meta({}: Route.MetaArgs) {
 	];
 }
 
-export function loader({ request }: Route.LoaderArgs) {
-	const meows = [
-		{
-			id: 'koerkgoreigjeijgeo',
-			text: 'こんにちは',
-			author: {
-				id: '1',
-				name: 'yupix',
-				avatarUrl: 'https://github.com/yupix.png',
-			},
-			createdAt: new Date(1719757656393),
+export async function loader({ request }: Route.LoaderArgs) {
+	const meows = await prisma.meow.findMany({
+		orderBy: {
+			createdAt: 'desc',
 		},
-	];
-
+		include: {
+			author: true,
+			attachments: true,
+		},
+	});
 	return { meows };
 }
 
@@ -45,6 +41,7 @@ export async function action({ request }: Route.ActionArgs) {
 						text: z.string().nonempty(),
 					}),
 				});
+				console.log('hello', submission);
 
 				if (submission.status !== 'success') {
 					return submission.reply();
@@ -81,7 +78,7 @@ export default function Home() {
 					<PostModal />
 				</div>
 			</div>
-			<Timeline />
+			<Timeline initMeows={meows} />
 		</div>
 	);
 }
