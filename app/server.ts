@@ -10,7 +10,24 @@ redisSubscriber.subscribe('meow', (err, count) => {
 
 export default await createHonoServer({
 	onServe(server) {
-		const io = new Server(server);
+		const io = new Server(server, {
+			cors: {
+				origin: (origin, fn) => {
+					// 開発環境では全てのリクエストを許可
+					if (process.env.NODE_ENV === 'development') {
+						fn(null, true);
+						return;
+					}
+
+					// 本番環境では特定のドメインからのリクエストのみ許可
+					if (origin === 'https://catmos.catarks.org') {
+						fn(null, true);
+					} else {
+						fn(new Error('Not allowed'));
+					}
+				},
+			},
+		});
 
 		io.on('connection', (socket) => {
 			console.log('New connection 🔥', socket.id);
