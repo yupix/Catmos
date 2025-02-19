@@ -15,7 +15,7 @@ export function PostModal() {
 	return (
 		<Dialog>
 			<DialogTrigger>
-				<Button className="cursor-pointer">
+				<Button className="cursor-pointer" asChild size="icon">
 					<TbPencil strokeWidth={2} />
 				</Button>
 			</DialogTrigger>
