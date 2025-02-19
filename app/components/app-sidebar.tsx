@@ -30,7 +30,7 @@ const MENUS = [
 export interface AppSidebarProps {
 	user: {
 		name: string;
-		avatar: string | null;
+		avatarUrl: string | null;
 	};
 }
 
@@ -73,7 +73,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 			<SidebarFooter>
 				<NavUser
 					user={{
-						avatar: user.avatar,
+						avatarUrl: user.avatarUrl,
 						name: user.name,
 					}}
 				/>

@@ -51,7 +51,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 					{data?.user ? (
 						<>
 							<AppSidebar
-								user={{ name: data.user.name, avatar: data.user.avatarUrl }}
+								user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
 							/>
 							{children}
 						</>

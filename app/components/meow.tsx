@@ -8,7 +8,7 @@ export type IMeow = {
 	createdAt: string;
 	author: {
 		name: string;
-		avatar: string;
+		avatarUrl: string;
 	};
 };
 
@@ -19,7 +19,7 @@ export function Meow({ meow }: { meow: IMeow }) {
 			<div className="flex justify-between border-b pb-2">
 				<div className="flex items-center gap-1">
 					<Avatar className="h-10 w-10">
-						<AvatarImage src={meow.author.avatar} alt={meow.author.name} />
+						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>
 					<div className="flex items-center">

@@ -7,6 +7,7 @@ import Timeline from '~/components/timeline';
 import type { User } from '~/lib/auth/auth.server';
 import { getSession } from '~/lib/auth/session.server';
 import { prisma } from '~/lib/db';
+import { redisPublisher } from '~/lib/redis.server';
 import type { Route } from './+types/index';
 
 export function meta({}: Route.MetaArgs) {
@@ -24,7 +25,7 @@ export function loader({ request }: Route.LoaderArgs) {
 			author: {
 				id: '1',
 				name: 'yupix',
-				avatar: 'https://github.com/yupix.png',
+				avatarUrl: 'https://github.com/yupix.png',
 			},
 			createdAt: new Date(1719757656393),
 		},
@@ -49,7 +50,7 @@ export async function action({ request }: Route.ActionArgs) {
 					return submission.reply();
 				}
 				// Do something with the form data
-				await prisma.meow.create({
+				const createdMeow = await prisma.meow.create({
 					data: {
 						text: submission.value.text,
 						author: {
@@ -58,7 +59,14 @@ export async function action({ request }: Route.ActionArgs) {
 							},
 						},
 					},
+					include: {
+						author: true,
+						attachments: true,
+					},
 				});
+
+				await redisPublisher.publish('meow', JSON.stringify(createdMeow));
+				return createdMeow;
 			}
 		}
 	}

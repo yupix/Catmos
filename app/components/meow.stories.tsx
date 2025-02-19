@@ -22,7 +22,7 @@ const sampleMeow: IMeow = {
 	createdAt: new Date().toISOString(),
 	author: {
 		name: 'yupix',
-		avatar: 'https://github.com/yupix.png',
+		avatarUrl: 'https://github.com/yupix.png',
 	},
 };
 
