@@ -1,4 +1,5 @@
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut } from 'lucide-react';
+import { BadgeCheck, ChevronsUpDown, LogOut } from 'lucide-react';
+import { Link } from 'react-router';
 import {
 	Avatar,
 	AvatarFallback,
@@ -66,19 +67,17 @@ export function NavUser({
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
-							<DropdownMenuItem>
-								<BadgeCheck />
-								Account
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Bell />
-								Notifications
+							<DropdownMenuItem asChild>
+								<Link to={`/${user.name}`}>
+									<BadgeCheck />
+									プロフィール
+								</Link>
 							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem>
-							<LogOut />
-							Log out
+						<DropdownMenuItem className="text-red-400 hover:text-red-500">
+							<LogOut color="oklch(0.704 0.191 22.216)" />
+							ログアウト
 						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
