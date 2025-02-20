@@ -95,7 +95,7 @@ const renderTree = (nodes: TreeNode[]) => {
 			case 'italic':
 				return <em key={index}>{node.content}</em>;
 			case 'text':
-				return <p key={index}>{node.content}</p>;
+				return <span key={index}>{node.content}</span>;
 			case 'newline':
 				return <br key={index} />;
 			default:
@@ -104,13 +104,18 @@ const renderTree = (nodes: TreeNode[]) => {
 	});
 };
 
-const MeowTree = () => {
+interface MeowTreeProps {
+	handleSubmit: (text: string) => void;
+}
+
+const MeowTree = ({ handleSubmit }: MeowTreeProps) => {
 	const [text, setText] = useState('');
 	const [tree, setTree] = useState<TreeNode[]>([]);
 
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const parsedTree = parseTextToTree(e.target.value);
 		setTree(parsedTree);
+		setText(e.target.value);
 	};
 
 	return (
@@ -119,6 +124,15 @@ const MeowTree = () => {
 				<textarea
 					name="text"
 					onChange={handleChange}
+					value={text}
+					onKeyDown={(e) => {
+						console.log(e.key, e.metaKey, e.ctrlKey);
+						if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
+							// e.preventDefault();
+							handleSubmit(text);
+							setText('');
+						}
+					}}
 					className="mb-4 h-20 w-full resize-none whitespace-pre-wrap focus:outline-none"
 				/>
 			</div>

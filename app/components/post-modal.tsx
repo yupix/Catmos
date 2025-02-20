@@ -1,6 +1,7 @@
 import { DialogTitle } from '@radix-ui/react-dialog';
+import { useRef, useState } from 'react';
 import { TbPencil } from 'react-icons/tb';
-import { Form, useNavigation } from 'react-router';
+import { Form, useNavigation, useSubmit } from 'react-router';
 import MeowTree from '~/lib/meow-tree';
 import { Button } from './shadcn/ui/button';
 import {
@@ -11,10 +12,20 @@ import {
 } from './shadcn/ui/dialog';
 
 export function PostModal() {
+	const form = useRef<HTMLFormElement>(null);
 	const navigation = useNavigation();
 
+	const [isOpen, setIsOpen] = useState(false);
+	const submit = useSubmit();
+
+	const handleSubmit = () => {
+		console.log('submit');
+		setIsOpen(false);
+		submit(form.current, { method: 'POST' });
+	};
+
 	return (
-		<Dialog>
+		<Dialog open={isOpen} onOpenChange={setIsOpen}>
 			<DialogTrigger>
 				<Button className="cursor-pointer" asChild size="icon">
 					<TbPencil strokeWidth={2} />
@@ -22,10 +33,10 @@ export function PostModal() {
 			</DialogTrigger>
 			<DialogContent>
 				<DialogTitle>投稿</DialogTitle>
-				<Form action="/?index" method="POST">
+				<Form action="/?index" method="POST" ref={form}>
 					<DialogHeader />
 					<input type="hidden" name="intent" value="post" />
-					<MeowTree />
+					<MeowTree handleSubmit={handleSubmit} />
 					<div className="flex justify-end">
 						<Button
 							className="w-fit"
