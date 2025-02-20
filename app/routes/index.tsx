@@ -1,5 +1,6 @@
 import { parseWithZod } from '@conform-to/zod';
 import { useLoaderData } from 'react-router';
+import superjson from 'superjson';
 import { z } from 'zod';
 import { PostModal } from '~/components/post-modal';
 import {} from '~/components/shadcn/ui/avatar';
@@ -62,7 +63,7 @@ export async function action({ request }: Route.ActionArgs) {
 					},
 				});
 
-				await redisPublisher.publish('meow', JSON.stringify(createdMeow));
+				await redisPublisher.publish('meow', superjson.stringify(createdMeow));
 				return createdMeow;
 			}
 		}

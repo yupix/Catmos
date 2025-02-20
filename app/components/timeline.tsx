@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
+import SuperJSON from 'superjson';
 import { socket } from '~/lib/socket.client';
 import { type IMeow, Meow } from './meow';
 
@@ -37,8 +38,9 @@ export function Client({ initMeows }: TimelineProps) {
 			setIsConnected(false);
 		};
 
-		const handleMessage = (meow: IMeow) => {
-			console.log('meow', meow);
+		const handleMessage = (_meow: string) => {
+			console.log('meow', _meow);
+			const meow = SuperJSON.parse<IMeow>(_meow);
 			if (isAtTop) {
 				setMeows((prev) => [meow, ...prev]);
 			} else {

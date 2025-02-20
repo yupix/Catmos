@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function getDateTimeString(date: string) {
+export function getDateTimeString(date: Date) {
 	const now = new Date();
 	const diff = now.getTime() - new Date(date).getTime();
 	const diffSeconds = Math.floor(diff / 1000);

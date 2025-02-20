@@ -34,7 +34,7 @@ export default await createHonoServer({
 
 			redisSubscriber.on('message', (channel, message) => {
 				console.log('Message received:', message);
-				socket.emit('meow', JSON.parse(message));
+				socket.emit('meow', message);
 			});
 
 			socket.on('disconnect', (reason) => {

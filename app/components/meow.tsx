@@ -1,17 +1,12 @@
+import type { File, Meow, User } from '@prisma/client';
 import { TbArrowBack, TbDots, TbPlus, TbRepeat } from 'react-icons/tb';
 import { cn, getDateTimeString } from '~/lib/utils';
 import { HoverUserCard } from './hover-user-card';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
 
-export type IMeow = {
-	id: string;
-	text: string;
-	createdAt: string;
-	author: {
-		name: string;
-		displayName: string;
-		avatarUrl: string;
-	};
+export type IMeow = Meow & {
+	author: User;
+	attachments: File[];
 };
 
 export function Meow({ meow }: { meow: IMeow }) {
@@ -46,7 +41,7 @@ export function Meow({ meow }: { meow: IMeow }) {
 										? 'text-yellow-400'
 										: null,
 							)}
-							title={meow.createdAt}
+							title={meow.createdAt.toString()}
 						>
 							{dateInfo.text}
 						</time>
