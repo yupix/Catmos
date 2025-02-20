@@ -40,6 +40,8 @@ export function Client({ initMeows }: TimelineProps) {
 
 		const handleMessage = (_meow: string) => {
 			console.log('meow', _meow);
+			const audio = new Audio('/notification.mp3');
+			audio.play();
 			const meow = SuperJSON.parse<IMeow>(_meow);
 			if (isAtTop) {
 				setMeows((prev) => [meow, ...prev]);
