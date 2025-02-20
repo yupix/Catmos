@@ -1,100 +1,68 @@
-# Welcome to React Router!
+# CatMos
 
-A modern, production-ready template for building full-stack React applications using React Router.
+CatMos は、ユーザーが投稿（Meow）を作成し、ファイルを添付し、フォルダを管理するためのアプリケーションです。
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## クイックセットアップ
 
-## Features
+### 環境設定
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+1. `.env.example` ファイルを `.env` にコピーし、必要な環境変数を設定します。
 
-## Getting Started
+### インストール
 
-### Installation
+依存関係をインストールします。
 
-Install the dependencies:
+```sh
+pnpm install
+```
+
+### データベースの設定
+
+Prisma を使用してデータベースを設定します。
+
+```
+pnpm prisma migrate dev
+```
+
+### 開発サーバーの起動
+
+開発サーバーを起動します。
 
 ```bash
-npm install
+pnpm dev
 ```
 
-### Development
+アプリケーションは http://localhost:5173 で利用可能です。
 
-Start the development server with HMR:
+### テストの実行
+
+テストを実行します。
 
 ```bash
-npm run dev
+pnpm test
 ```
 
-Your application will be available at `http://localhost:5173`.
+### ビルド
 
-## Building for Production
-
-Create a production build:
+プロダクションビルドを作成します。
 
 ```bash
-npm run build
+pnpm build
 ```
 
-## Deployment
+### Docker デプロイ
 
-### Docker Deployment
-
-This template includes three Dockerfiles optimized for different package managers:
-
-- `Dockerfile` - for npm
-- `Dockerfile.pnpm` - for pnpm
-- `Dockerfile.bun` - for bun
-
-To build and run using Docker:
+Docker を使用してアプリケーションをビルドおよび実行します。
 
 ```bash
-# For npm
-docker build -t my-app .
-
-# For pnpm
-docker build -f Dockerfile.pnpm -t my-app .
-
-# For bun
-docker build -f Dockerfile.bun -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
+docker build -t catmos .
+docker run -p 3000:3000 catmos
 ```
 
-The containerized application can be deployed to any platform that supports Docker, including:
+このコンテナ化されたアプリケーションは、Docker をサポートする任意のプラットフォームにデプロイできます。
 
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
+Built with ❤️ using React Router. ```
 
-### DIY Deployment
+"text": "(.\*)"
 
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+- $1
