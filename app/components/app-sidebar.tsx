@@ -10,6 +10,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '~/components/shadcn/ui/sidebar';
+import { cn } from '~/lib/utils';
 import { NavUser } from './nav-user';
 
 const MENUS = [
@@ -37,12 +38,21 @@ export interface AppSidebarProps {
 export function AppSidebar({ user }: AppSidebarProps) {
 	const location = useLocation();
 	const activeClass =
-		'bg-sky-600 text-white transition-all hover:bg-sky-600/90 hover:text-white';
+		'bg-sky-600/20 text-sky-700 hover:text-sky-700 transition-all hover:bg-sky-600/30';
 
 	return (
 		<Sidebar>
 			<SidebarHeader />
 			<SidebarContent>
+				<SidebarGroup className="mb-5">
+					<SidebarContent>
+						<SidebarMenu>
+							<SidebarMenuItem className="flex justify-center">
+								<img src="/logo.png" alt="logo" className="h-14 w-14" />
+							</SidebarMenuItem>
+						</SidebarMenu>
+					</SidebarContent>
+				</SidebarGroup>
 				{MENUS.map((group, i) => {
 					return (
 						<SidebarGroup key={i}>
@@ -51,13 +61,22 @@ export function AppSidebar({ user }: AppSidebarProps) {
 									{group.map((menu, i) => {
 										const Icon = menu.icon;
 										const isActive = location.pathname === menu.to;
-										const className = isActive ? activeClass : '';
+										const className = isActive
+											? activeClass
+											: 'hover:text-sky-700 transition-all hover:bg-sky-600/30';
 
 										return (
 											<SidebarMenuItem key={i}>
-												<SidebarMenuButton asChild className={className}>
+												<SidebarMenuButton
+													asChild
+													className={cn(
+														className,
+														'text-lg',
+														'h-10 rounded-full',
+													)}
+												>
 													<Link to={menu.to}>
-														<Icon stroke={2} />
+														<Icon strokeWidth={3} size={100} />
 														{menu.text}
 													</Link>
 												</SidebarMenuButton>
