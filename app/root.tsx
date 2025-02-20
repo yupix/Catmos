@@ -16,6 +16,7 @@ import { AppSidebar } from './components/app-sidebar';
 import { SidebarProvider } from './components/shadcn/ui/sidebar';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
+import Welcome from './routes/welcome';
 
 export const links: Route.LinksFunction = () => [
 	{ rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -54,7 +55,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-	const data = useLoaderData<typeof loader>();
 	return (
 		<html lang="en">
 			<head>
@@ -64,16 +64,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				<SidebarProvider>
-					{data?.user ? (
-						<>
-							<AppSidebar
-								user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
-							/>
-						</>
-					) : null}
-					{children}
-				</SidebarProvider>
+				{children}
 				<ScrollRestoration />
 				<Scripts />
 			</body>
@@ -82,7 +73,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-	return <Outlet />;
+	const data = useLoaderData<typeof loader>();
+
+	return (
+		<SidebarProvider>
+			{data?.user ? (
+				<>
+					<AppSidebar
+						user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
+					/>
+					<Outlet />
+				</>
+			) : (
+				<Welcome />
+			)}
+		</SidebarProvider>
+	);
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
