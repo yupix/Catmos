@@ -25,7 +25,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function User() {
 	const { user } = useLoaderData<typeof loader>();
 	return (
-		<div className="mx-5 my-20 w-full transition-all duration-300 md:mx-40">
+		<div className="mx-5 my-20 w-full transition-all duration-300  md:mx-10">
 			<div className="relative">
 				<div className="h-90 w-full rounded-lg bg-[url(https://s3.akarinext.org/misskey/*/64ec861a-4b9d-40ad-a49e-45cf6a183190.webp)] bg-center bg-cover" />
 

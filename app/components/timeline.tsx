@@ -70,7 +70,7 @@ export function Client({ initMeows }: TimelineProps) {
 	}, [isAtTop, newMeows]);
 
 	return (
-		<div className="w-full p-5">
+		<div className="w-full p-[1px] md:p-5">
 			{newMeows.length > 0 && (
 				<button
 					type="button"
