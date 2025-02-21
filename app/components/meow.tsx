@@ -6,6 +6,12 @@ import { cn, getDateTimeString } from '~/lib/utils';
 import { HoverUserCard } from './hover-user-card';
 import { PostModal } from './post-modal';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
+import {
+	ContextMenu,
+	ContextMenuContent,
+	ContextMenuItem,
+	ContextMenuTrigger,
+} from './shadcn/ui/context-menu';
 
 export type IMeow = Meow & {
 	author: User;
@@ -40,13 +46,26 @@ export function Meow(props: MeowProps) {
 	return <Render {...props} />;
 }
 
+function MeowContextMenu({ children }: { children: React.ReactNode }) {
+	return (
+		<ContextMenu>
+			<ContextMenuTrigger>{children}</ContextMenuTrigger>
+			<ContextMenuContent>
+				<ContextMenuItem>詳細</ContextMenuItem>
+				<ContextMenuItem>内容をコピー</ContextMenuItem>
+				<ContextMenuItem>リンクをコピー</ContextMenuItem>
+			</ContextMenuContent>
+		</ContextMenu>
+	);
+}
+
 function Render({ meow, disableActions, type, isSmall }: MeowProps) {
 	const dateInfo = getDateTimeString(meow.createdAt);
 	const tree = parseTextToTree(meow.text);
 
 	const { openModal, closeModal } = useModal();
 
-	return (
+	const content = (
 		<div className="max-w-[700px] px-4">
 			<div className="flex gap-4">
 				<HoverUserCard user={meow.author}>
@@ -109,4 +128,6 @@ function Render({ meow, disableActions, type, isSmall }: MeowProps) {
 			</div>
 		</div>
 	);
+
+	return isSmall ? content : <MeowContextMenu>{content}</MeowContextMenu>;
 }
