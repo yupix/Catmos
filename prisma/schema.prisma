@@ -19,16 +19,17 @@ generator erd {
 }
 
 model User {
-  id          String   @id @default(cuid())
-  sub         String   @unique
-  name        String
-  displayName String?  @map("display_name")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
-  avatarUrl   String?  @map("avatar_url")
-  meows       Meow[]
-  files       File[]
-  folders     Folder[]
+  id           String         @id @default(cuid())
+  sub          String         @unique
+  name         String
+  displayName  String?        @map("display_name")
+  createdAt    DateTime       @default(now()) @map("created_at")
+  updatedAt    DateTime       @updatedAt @map("updated_at")
+  avatarUrl    String?        @map("avatar_url")
+  meows        Meow[]
+  files        File[]
+  folders      Folder[]
+  Notification Notification[]
 }
 
 model Folder {
@@ -73,6 +74,19 @@ model Meow {
   remeowId String? @unique @map("remeow_id")
   remeow   Meow?   @relation("RemeowToMeow", fields: [remeowId], references: [id])
 
-  replies Meow[] @relation("ReplyToMeow")
-  remeows Meow[] @relation("RemeowToMeow")
+  replies      Meow[]         @relation("ReplyToMeow")
+  remeows      Meow[]         @relation("RemeowToMeow")
+  Notification Notification[]
+}
+
+// 通知
+model Notification {
+  id        String   @id @default(uuid())
+  isRead    Boolean  @default(false) @map("is_read")
+  type      String
+  meowId    String?  @map("meow_id")
+  meow      Meow?    @relation(fields: [meowId], references: [id])
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
 }
