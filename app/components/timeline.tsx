@@ -1,8 +1,10 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
+import { ClientOnly } from 'remix-utils/client-only';
 import SuperJSON from 'superjson';
 import { useModal } from '~/hooks/use-modal';
 import { socket } from '~/lib/socket.client';
+import { cn } from '~/lib/utils';
 import { type IMeow, Meow } from './meow';
 
 interface TimelineProps {
@@ -13,12 +15,8 @@ export default function Timeline({ initMeows }: TimelineProps) {
 	const { openModal } = useModal();
 
 	return (
-		<div>
-			{initMeows.map((meow) => (
-				<div key={meow.id}>
-					<Meow meow={meow} />
-				</div>
-			))}
+		<div className="inset-shadow-black/10 inset-shadow-sm rounded-2xl p-5">
+			<ClientOnly>{() => <Client initMeows={initMeows} />}</ClientOnly>
 		</div>
 	);
 }
@@ -94,7 +92,7 @@ export function Client({ initMeows }: TimelineProps) {
 				<AnimatePresence>
 					{meows.map((meow) => (
 						<motion.div
-							className="mb-4"
+							className={cn('mb-4 py-2 border-b')}
 							key={meow.id}
 							layout
 							initial={{ opacity: 0, y: -20, scale: 0.9 }}
