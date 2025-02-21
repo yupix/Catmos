@@ -1,4 +1,5 @@
 import { parseWithZod } from '@conform-to/zod';
+import type { Prisma } from '@prisma/client';
 import { TbPencil } from 'react-icons/tb';
 import { useLoaderData } from 'react-router';
 import superjson from 'superjson';
@@ -22,13 +23,25 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
+	const attachmentIncludes: Prisma.FileDefaultArgs = {
+		include: {
+			author: true,
+			Folder: true,
+		},
+	};
 	const meows = await prisma.meow.findMany({
 		orderBy: {
 			createdAt: 'desc',
 		},
 		include: {
+			attachments: attachmentIncludes,
 			author: true,
-			attachments: true,
+			reply: {
+				include: {
+					author: true,
+					attachments: attachmentIncludes,
+				},
+			},
 		},
 	});
 	return { meows };
@@ -43,6 +56,7 @@ export async function action({ request }: Route.ActionArgs) {
 				const submission = parseWithZod(formData, {
 					schema: z.object({
 						text: z.string().nonempty(),
+						replyId: z.string().optional(),
 					}),
 				});
 				console.log('hello', submission);
@@ -54,6 +68,13 @@ export async function action({ request }: Route.ActionArgs) {
 				const createdMeow = await prisma.meow.create({
 					data: {
 						text: submission.value.text,
+						reply: submission.value.replyId
+							? {
+									connect: {
+										id: submission.value.replyId,
+									},
+								}
+							: undefined,
 						author: {
 							connect: {
 								sub: user.sub,
@@ -63,6 +84,16 @@ export async function action({ request }: Route.ActionArgs) {
 					include: {
 						author: true,
 						attachments: true,
+						reply: {
+							include: {
+								attachments: {
+									include: {
+										author: true,
+									},
+								},
+								author: true,
+							},
+						},
 					},
 				});
 
