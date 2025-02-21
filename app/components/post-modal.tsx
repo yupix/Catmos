@@ -41,6 +41,7 @@ export function PostModal({ replyTo, closeModal }: PostModalProps) {
 			<Form action="/?index" method="POST" ref={form}>
 				<DialogHeader />
 				<input type="hidden" name="intent" value="post" />
+				<input type="hidden" name="replyId" value={replyTo?.id} />
 				<MeowTree handleSubmit={handleSubmit} />
 				<div className="flex justify-end">
 					<Button
