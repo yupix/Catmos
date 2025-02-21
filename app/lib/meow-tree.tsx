@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface TreeNode {
 	type: string;
@@ -111,6 +111,13 @@ interface MeowTreeProps {
 const MeowTree = ({ handleSubmit }: MeowTreeProps) => {
 	const [text, setText] = useState('');
 	const [tree, setTree] = useState<TreeNode[]>([]);
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+	useEffect(() => {
+		if (textareaRef.current) {
+			textareaRef.current.focus();
+		}
+	}, []);
 
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const parsedTree = parseTextToTree(e.target.value);
@@ -122,6 +129,7 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps) => {
 		<>
 			<div className="max-w-md">
 				<textarea
+					ref={textareaRef}
 					name="text"
 					onChange={handleChange}
 					value={text}
