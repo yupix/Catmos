@@ -1,7 +1,10 @@
 import type { File, Meow, User } from '@prisma/client';
 import { TbArrowBack, TbDots, TbPlus, TbRepeat } from 'react-icons/tb';
+import { useModal } from '~/hooks/use-modal';
+import { parseTextToTree, renderTree } from '~/lib/meow-tree';
 import { cn, getDateTimeString } from '~/lib/utils';
 import { HoverUserCard } from './hover-user-card';
+import { PostModal } from './post-modal';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
 
 export type IMeow = Meow & {
@@ -9,8 +12,17 @@ export type IMeow = Meow & {
 	attachments: File[];
 };
 
-export function Meow({ meow }: { meow: IMeow }) {
+export type MeowProps = {
+	meow: IMeow;
+	disableActions?: boolean;
+};
+
+export function Meow({ meow, disableActions }: MeowProps) {
 	const dateInfo = getDateTimeString(meow.createdAt);
+	const tree = parseTextToTree(meow.text);
+
+	const { openModal, closeModal } = useModal();
+
 	return (
 		<div className="inset-shadow-black/10 inset-shadow-sm max-w-[700px] rounded-xl border p-4">
 			<div className="flex gap-4">
@@ -46,13 +58,23 @@ export function Meow({ meow }: { meow: IMeow }) {
 							{dateInfo.text}
 						</time>
 					</div>
-					<div className="mb-2 pt-2">{meow.text}</div>
-					<div className="flex gap-4 text-slate-700 ">
-						<TbArrowBack className="cursor-pointer" strokeWidth={3} />
-						<TbRepeat className="cursor-pointer" strokeWidth={3} />
-						<TbPlus className="cursor-pointer" strokeWidth={3} />
-						<TbDots className="cursor-pointer" strokeWidth={3} />
-					</div>
+					<div className="mb-5 pt-2">{renderTree(tree)}</div>
+					{disableActions ? null : (
+						<div className="flex gap-4 text-slate-700 ">
+							<TbArrowBack
+								className="cursor-pointer"
+								strokeWidth={3}
+								onClick={() =>
+									openModal(
+										<PostModal replyTo={meow} closeModal={closeModal} />,
+									)
+								}
+							/>
+							<TbRepeat className="cursor-pointer" strokeWidth={3} />
+							<TbPlus className="cursor-pointer" strokeWidth={3} />
+							<TbDots className="cursor-pointer" strokeWidth={3} />
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

@@ -1,10 +1,13 @@
 import { parseWithZod } from '@conform-to/zod';
+import { TbPencil } from 'react-icons/tb';
 import { useLoaderData } from 'react-router';
 import superjson from 'superjson';
 import { z } from 'zod';
 import { PostModal } from '~/components/post-modal';
 import {} from '~/components/shadcn/ui/avatar';
+import { Button } from '~/components/shadcn/ui/button';
 import Timeline from '~/components/timeline';
+import { useModal } from '~/hooks/use-modal';
 import type { User } from '~/lib/auth/auth.server';
 import { getSession } from '~/lib/auth/session.server';
 import { prisma } from '~/lib/db';
@@ -72,11 +75,18 @@ export async function action({ request }: Route.ActionArgs) {
 
 export default function Home() {
 	const { meows } = useLoaderData<typeof loader>();
+	const { openModal, closeModal } = useModal();
+	const handleOpenModal = () => {
+		openModal(<PostModal closeModal={closeModal} />);
+	};
+
 	return (
 		<div className=" w-full p-5">
 			<div className="relative">
 				<div className="fixed right-5 bottom-5 z-10">
-					<PostModal />
+					<Button onClick={handleOpenModal} className="cursor-pointer">
+						<TbPencil strokeWidth={2} />
+					</Button>
 				</div>
 			</div>
 			<Timeline initMeows={meows} />

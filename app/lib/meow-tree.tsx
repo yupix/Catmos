@@ -32,7 +32,7 @@ const parseContentToTree = (content: string): TreeNode[] => {
 	});
 };
 
-const parseTextToTree = (text: string): TreeNode[] => {
+export const parseTextToTree = (text: string): TreeNode[] => {
 	const lines = text.split('\n');
 	const root: TreeNode[] = [];
 	let currentNode: TreeNode | null = null;
@@ -59,7 +59,7 @@ const parseTextToTree = (text: string): TreeNode[] => {
 	return root;
 };
 
-const renderTree = (nodes: TreeNode[]) => {
+export const renderTree = (nodes: TreeNode[]) => {
 	return nodes.map((node, index) => {
 		switch (node.type) {
 			case 'header':

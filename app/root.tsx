@@ -14,6 +14,7 @@ import './app.css';
 import { motion } from 'motion/react';
 import { AppSidebar } from './components/app-sidebar';
 import { SidebarProvider } from './components/shadcn/ui/sidebar';
+import { ModalProvider } from './hooks/use-modal';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
 import Welcome from './routes/welcome';
@@ -64,7 +65,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				{children}
+				<ModalProvider>{children}</ModalProvider>
+
 				<ScrollRestoration />
 				<Scripts />
 			</body>

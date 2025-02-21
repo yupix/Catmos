@@ -1,20 +1,25 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
-import { ClientOnly } from 'remix-utils/client-only';
 import SuperJSON from 'superjson';
+import { useModal } from '~/hooks/use-modal';
 import { socket } from '~/lib/socket.client';
 import { type IMeow, Meow } from './meow';
 
-export type TimelineProps = {
-	// 初期データ
+interface TimelineProps {
 	initMeows: IMeow[];
-};
+}
 
 export default function Timeline({ initMeows }: TimelineProps) {
+	const { openModal } = useModal();
+
 	return (
-		<ClientOnly fallback={<>loading</>}>
-			{() => <Client initMeows={initMeows} />}
-		</ClientOnly>
+		<div>
+			{initMeows.map((meow) => (
+				<div key={meow.id}>
+					<Meow meow={meow} />
+				</div>
+			))}
+		</div>
 	);
 }
 
