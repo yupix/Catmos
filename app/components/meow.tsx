@@ -9,25 +9,48 @@ import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
 
 export type IMeow = Meow & {
 	author: User;
+	reply: IMeow;
 	attachments: File[];
 };
 
 export type MeowProps = {
 	meow: IMeow;
 	disableActions?: boolean;
+	type?: 'normal' | 'reply';
+	isSmall?: boolean;
 };
 
-export function Meow({ meow, disableActions }: MeowProps) {
+export function Meow(props: MeowProps) {
+	// 返信がある場合は先に返信を少しpaddingして表示して下にメインのメウを表示する
+	if (props.meow.reply) {
+		return (
+			<div className="flex flex-col">
+				<div className="">
+					<Render meow={props.meow.reply} isSmall disableActions />
+				</div>
+				<Render
+					meow={props.meow}
+					disableActions={props.disableActions}
+					type={props.meow.replyId !== null ? 'reply' : undefined}
+				/>
+			</div>
+		);
+	}
+
+	return <Render {...props} />;
+}
+
+function Render({ meow, disableActions, type, isSmall }: MeowProps) {
 	const dateInfo = getDateTimeString(meow.createdAt);
 	const tree = parseTextToTree(meow.text);
 
 	const { openModal, closeModal } = useModal();
 
 	return (
-		<div className="inset-shadow-black/10 inset-shadow-sm max-w-[700px] rounded-xl border p-4">
+		<div className="max-w-[700px] px-4">
 			<div className="flex gap-4">
 				<HoverUserCard user={meow.author}>
-					<Avatar className="h-15 w-15">
+					<Avatar className={cn('h-15 w-15', isSmall && 'h-10 w-10')}>
 						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>
@@ -58,7 +81,14 @@ export function Meow({ meow, disableActions }: MeowProps) {
 							{dateInfo.text}
 						</time>
 					</div>
-					<div className="mb-5 pt-2">{renderTree(tree)}</div>
+					<div className="mb-5 pt-2">
+						<div className="flex">
+							{type === 'reply' ? (
+								<TbArrowBack className="mr-1 text-sky-600" strokeWidth={3} />
+							) : null}
+							{renderTree(tree)}
+						</div>
+					</div>
 					{disableActions ? null : (
 						<div className="flex gap-4 text-slate-700 ">
 							<TbArrowBack
