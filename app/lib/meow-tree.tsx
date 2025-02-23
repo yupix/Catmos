@@ -7,31 +7,37 @@ interface TreeNode {
 	children?: TreeNode[];
 }
 
+/**
+ * コンテンツを解析してツリーノードに変換する関数
+ * @param {string} content - 解析するコンテンツ
+ * @returns {TreeNode[]} 解析されたツリーノードの配列
+ */
 const parseContentToTree = (content: string): TreeNode[] => {
 	const mentionRegex = /@(\p{L}+)/gu;
 	const linkRegex = /(https?:\/\/[^\s]+)/g;
 	const boldRegex = /\*\*(.*?)\*\*/g;
 	const italicRegex = /\*(.*?)\*/g;
 
-	const parts = content.split(/(@\w+|https?:\/\/[^\s]+|\*\*.*?\*\*|\*.*?\*)/g);
+	const parts = content.split(
+		/(@\p{L}+|https?:\/\/[^\s]+|\*\*.*?\*\*|\*.*?\*)/gu,
+	);
 
 	return parts.map((part) => {
-		if (mentionRegex.test(part)) {
-			return { type: 'mention', content: part };
-		}
-		if (linkRegex.test(part)) {
-			return { type: 'link', content: part };
-		}
-		if (boldRegex.test(part)) {
+		if (mentionRegex.test(part)) return { type: 'mention', content: part };
+		if (linkRegex.test(part)) return { type: 'link', content: part };
+		if (boldRegex.test(part))
 			return { type: 'bold', content: part.replace(/\*\*/g, '') };
-		}
-		if (italicRegex.test(part)) {
+		if (italicRegex.test(part))
 			return { type: 'italic', content: part.replace(/\*/g, '') };
-		}
 		return { type: 'text', content: part };
 	});
 };
 
+/**
+ * テキストを解析してツリーノードに変換する関数
+ * @param {string} text - 解析するテキスト
+ * @returns {TreeNode[]} 解析されたツリーノードの配列
+ */
 export const parseTextToTree = (text: string): TreeNode[] => {
 	const lines = text.split('\n');
 	const root: TreeNode[] = [];
@@ -45,13 +51,13 @@ export const parseTextToTree = (text: string): TreeNode[] => {
 			if (line.trim() === '') {
 				currentNode.children?.push({ type: 'newline' });
 			} else {
-				currentNode.children?.push({ type: 'paragraph', content: line });
+				currentNode.children?.push(...parseContentToTree(line));
 			}
 		} else {
 			if (line.trim() === '') {
 				root.push({ type: 'newline' });
 			} else {
-				root.push({ type: 'paragraph', content: line });
+				root.push(...parseContentToTree(line));
 			}
 		}
 	}
@@ -59,7 +65,12 @@ export const parseTextToTree = (text: string): TreeNode[] => {
 	return root;
 };
 
-export const renderTree = (nodes: TreeNode[]) => {
+/**
+ * ツリーノードをレンダリングする関数
+ * @param {TreeNode[]} nodes - レンダリングするツリーノードの配列
+ * @returns {JSX.Element[]} レンダリングされたツリーノードの配列
+ */
+export const renderTree = (nodes: TreeNode[]): JSX.Element[] => {
 	return nodes.map((node, index) => {
 		switch (node.type) {
 			case 'header':
@@ -108,15 +119,18 @@ interface MeowTreeProps {
 	handleSubmit: (text: string) => void;
 }
 
-const MeowTree = ({ handleSubmit }: MeowTreeProps) => {
+/**
+ * MeowTreeコンポーネント
+ * @param {MeowTreeProps} props - MeowTreeコンポーネントのプロパティ
+ * @returns {JSX.Element} MeowTreeコンポーネント
+ */
+const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 	const [text, setText] = useState('');
 	const [tree, setTree] = useState<TreeNode[]>([]);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
-		if (textareaRef.current) {
-			textareaRef.current.focus();
-		}
+		if (textareaRef.current) textareaRef.current.focus();
 	}, []);
 
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -134,9 +148,8 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps) => {
 					onChange={handleChange}
 					value={text}
 					onKeyDown={(e) => {
-						console.log(e.key, e.metaKey, e.ctrlKey);
 						if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-							// e.preventDefault();
+							e.preventDefault();
 							handleSubmit(text);
 							setText('');
 						}
