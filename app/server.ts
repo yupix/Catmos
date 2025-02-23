@@ -4,9 +4,13 @@ import { redisSubscriber } from './lib/redis.server';
 
 console.log('loading server');
 
-redisSubscriber.subscribe('meow', (err, count) => {
-	console.log('Subscribed to meow channel');
-});
+const subScribeChannels = ['meow', 'notification'];
+
+for (const channel of subScribeChannels) {
+	redisSubscriber.subscribe(channel, (err, count) => {
+		console.log(`Subscribed to ${channel} channel`);
+	});
+}
 
 export default await createHonoServer({
 	onServe(server) {
@@ -32,9 +36,19 @@ export default await createHonoServer({
 		io.on('connection', (socket) => {
 			console.log('New connection 🔥', socket.id);
 
+			// ここで指定するmessageというのはデフォルトのイベント名なので実際にpublisherで指定したchannel名は引数のchannelとして受け取る
 			redisSubscriber.on('message', (channel, message) => {
-				console.log('Message received:', message);
-				socket.emit('meow', message);
+				switch (channel) {
+					case 'meow':
+						socket.emit('meow', message);
+						break;
+					case 'notification':
+						console.log('Message received:', channel, message);
+						socket.emit('notification', message);
+						break;
+					default:
+						break;
+				}
 			});
 
 			socket.on('disconnect', (reason) => {

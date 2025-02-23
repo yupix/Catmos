@@ -8,6 +8,7 @@ import Timeline from '~/components/timeline';
 import type { User } from '~/lib/auth/auth.server';
 import { getSession } from '~/lib/auth/session.server';
 import { prisma } from '~/lib/db';
+import { parseTextToTree } from '~/lib/meow-tree';
 import { redisPublisher } from '~/lib/redis.server';
 import type { Route } from './+types/index';
 
@@ -55,12 +56,16 @@ export async function action({ request }: Route.ActionArgs) {
 						replyId: z.string().optional(),
 					}),
 				});
-				console.log('hello', submission);
 
 				if (submission.status !== 'success') {
 					return submission.reply();
 				}
-				// Do something with the form data
+
+				const meowTree = parseTextToTree(submission.value.text);
+				const mentions = meowTree
+					.map((node) => node.type === 'mention' && node.content?.slice(1))
+					.filter(Boolean) as string[];
+
 				const createdMeow = await prisma.meow.create({
 					data: {
 						text: submission.value.text,
@@ -92,6 +97,36 @@ export async function action({ request }: Route.ActionArgs) {
 						},
 					},
 				});
+
+				const mentionedUsers = await prisma.user.findMany({
+					select: {
+						id: true,
+					},
+					where: {
+						name: {
+							in: mentions,
+						},
+					},
+				});
+
+				await prisma.notification.createMany({
+					data: mentionedUsers.map((user) => ({
+						type: 'mention',
+						userId: user.id,
+						meowId: createdMeow.id,
+					})),
+				});
+
+				for (const user of mentionedUsers) {
+					await redisPublisher.publish(
+						'notification',
+						superjson.stringify({
+							type: 'mention',
+							userId: user.id,
+							meowId: createdMeow.id,
+						}),
+					);
+				}
 
 				await redisPublisher.publish('meow', superjson.stringify(createdMeow));
 				return createdMeow;
