@@ -9,7 +9,6 @@ import {
 	TbPlus,
 	TbRepeat,
 } from 'react-icons/tb';
-import { Link } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
 import { cn, getDateTimeString } from '~/lib/utils';
@@ -35,6 +34,28 @@ export type MeowProps = {
 	type?: 'normal' | 'reply';
 	isSmall?: boolean;
 };
+
+const MoreMenuItems = [
+	{
+		label: '詳細',
+		icon: <TbInfoCircle className="mr-2" strokeWidth={2} />,
+	},
+	{
+		label: '内容をコピー',
+		icon: <TbCopy className="mr-2" strokeWidth={2} />,
+	},
+	{
+		label: 'リンクをコピー',
+		icon: <TbLink className="mr-2" strokeWidth={2} />,
+		onClick: () => {
+			navigator.clipboard.writeText(window.location.href);
+		},
+	},
+	{
+		label: 'お気に入り',
+		icon: <TbHeart className="mr-2" strokeWidth={2} />,
+	},
+];
 
 export function Meow(props: MeowProps) {
 	// 返信がある場合は先に返信を少しpaddingして表示して下にメインのメウを表示する
@@ -70,24 +91,18 @@ function MeowContextMenu({
 		<ContextMenu>
 			<ContextMenuTrigger>{children}</ContextMenuTrigger>
 			<ContextMenuContent>
-				<ContextMenuItem asChild>
-					<Link to={meowUrl}>
-						<TbInfoCircle className="mr-2" strokeWidth={2} />
-						詳細
-					</Link>
-				</ContextMenuItem>
-				<ContextMenuItem onClickCapture={handleCopy}>
-					<TbCopy className="mr-2" strokeWidth={2} />
-					内容をコピー
-				</ContextMenuItem>
-				<ContextMenuItem>
-					<TbLink className="mr-2" strokeWidth={2} />
-					リンクをコピー
-				</ContextMenuItem>
-				<ContextMenuItem>
-					<TbHeart className="mr-2" strokeWidth={2} />
-					お気に入り
-				</ContextMenuItem>
+				{MoreMenuItems.map((item) => (
+					<ContextMenuItem
+						key={item.label}
+						onClick={
+							item.onClick ||
+							(item.label === '内容をコピー' ? handleCopy : undefined)
+						}
+					>
+						{item.icon}
+						{item.label}
+					</ContextMenuItem>
+				))}
 			</ContextMenuContent>
 		</ContextMenu>
 	);
