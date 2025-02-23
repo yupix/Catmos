@@ -109,22 +109,27 @@ export async function action({ request }: Route.ActionArgs) {
 					},
 				});
 
-				await prisma.notification.createMany({
-					data: mentionedUsers.map((user) => ({
-						type: 'mention',
-						userId: user.id,
-						meowId: createdMeow.id,
-					})),
-				});
-
 				for (const user of mentionedUsers) {
-					await redisPublisher.publish(
-						'notification',
-						superjson.stringify({
+					const createdNotification = await prisma.notification.create({
+						data: {
 							type: 'mention',
 							userId: user.id,
 							meowId: createdMeow.id,
-						}),
+						},
+						include: {
+							user: true,
+							meow: {
+								include: {
+									author: true,
+									attachments: true,
+									reply: true,
+								},
+							},
+						},
+					});
+					await redisPublisher.publish(
+						'notification',
+						superjson.stringify(createdNotification),
 					);
 				}
 

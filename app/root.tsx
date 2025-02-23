@@ -18,9 +18,12 @@ import { AppSidebar } from './components/app-sidebar';
 import { PostModal } from './components/post-modal';
 import { Button } from './components/shadcn/ui/button';
 import { SidebarProvider } from './components/shadcn/ui/sidebar';
+import { Toaster } from './components/shadcn/ui/sonner';
+import { Sidebar } from './components/sidebar';
 import { ModalProvider, useModal } from './hooks/use-modal';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
+import { prisma } from './lib/db';
 import Welcome from './routes/welcome';
 
 export const links: Route.LinksFunction = () => [
@@ -56,7 +59,31 @@ export const links: Route.LinksFunction = () => [
 export async function loader({ request }: Route.LoaderArgs) {
 	const user = await getSession<User>(request);
 
-	return { user };
+	if (!user) {
+		return { user: null };
+	}
+
+	const notifications = await prisma.notification.findMany({
+		where: {
+			user: {
+				sub: user.sub,
+			},
+		},
+		include: {
+			meow: {
+				include: {
+					author: true,
+					attachments: true,
+				},
+			},
+			user: true,
+		},
+		orderBy: {
+			createdAt: 'desc',
+		},
+	});
+
+	return { user, notifications };
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -70,7 +97,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 			</head>
 			<body>
 				<ModalProvider>{children}</ModalProvider>
-
+				<Toaster />
 				<ScrollRestoration />
 				<Scripts />
 			</body>
@@ -79,7 +106,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function Modal() {
-	const { openModal, closeModal } = useModal();
+	const { openModal, closeModal, isModalOpen } = useModal();
 	const handleOpenModal = () => {
 		openModal(<PostModal closeModal={closeModal} />);
 	};
@@ -87,7 +114,7 @@ function Modal() {
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
 		const handleKeyDown = (e: KeyboardEvent) => {
-			if (e.key === 'n') {
+			if (e.key === 'n' && !isModalOpen) {
 				e.preventDefault();
 				handleOpenModal();
 			}
@@ -97,7 +124,7 @@ function Modal() {
 		return () => {
 			document.removeEventListener('keydown', handleKeyDown);
 		};
-	}, []);
+	}, [isModalOpen]);
 
 	return (
 		<Button onClick={handleOpenModal} className="cursor-pointer">
@@ -116,7 +143,15 @@ export default function App() {
 					<AppSidebar
 						user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
 					/>
-					<Outlet />
+					<div className="grid w-full grid-cols-12 gap-0 md:gap-8 ml-0 md:ml-8 ">
+						<div className="col-span-12 md:col-span-9 max-h-screen overflow-y-scroll">
+							<Outlet />
+						</div>
+						<div id="sidebar" className="col-span-12 md:col-span-3">
+							<Sidebar notifications={data.notifications || []} />
+						</div>
+					</div>
+
 					<div className="relative">
 						<div className="fixed right-5 bottom-5 z-10">
 							<Modal />
