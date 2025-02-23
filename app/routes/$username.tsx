@@ -69,7 +69,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function User() {
 	const { user, meows } = useLoaderData<typeof loader>();
 	return (
-		<div className="mx-5 my-20 w-full transition-all duration-300  md:mx-10">
+		<div className="mx-5 my-20 w-full transition-all duration-300 md:mx-10">
 			<div className="relative mb-15">
 				<div className="h-90 w-full rounded-lg bg-[url(https://s3.akarinext.org/misskey/*/64ec861a-4b9d-40ad-a49e-45cf6a183190.webp)] bg-center bg-cover" />
 
@@ -79,7 +79,7 @@ export default function User() {
 						<AvatarFallback>{user.name}</AvatarFallback>
 					</Avatar>
 					{/* // 背景ぼかす */}
-					<div className="text-white [text-shadow:_0_2px_4px_rgba(0,0,0,0.8)] bg-black/10 px-1">
+					<div className="bg-black/10 px-1 text-white [text-shadow:_0_2px_4px_rgba(0,0,0,0.8)]">
 						<h1 className="text-2xl">{user.name}</h1>
 						<p className="text-zinc-100">@{user.name}</p>
 					</div>

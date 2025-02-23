@@ -1,4 +1,5 @@
 import { BadgeCheck, ChevronsUpDown, LogOut } from 'lucide-react';
+import { TbSettings } from 'react-icons/tb';
 import { Link } from 'react-router';
 import {
 	Avatar,
@@ -71,6 +72,12 @@ export function NavUser({
 								<Link to={`/${user.name}`}>
 									<BadgeCheck />
 									プロフィール
+								</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<Link to={`/${user.name}`}>
+									<TbSettings />
+									設定
 								</Link>
 							</DropdownMenuItem>
 						</DropdownMenuGroup>

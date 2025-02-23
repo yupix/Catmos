@@ -1,5 +1,15 @@
 import type { File, Meow, User } from '@prisma/client';
-import { TbArrowBack, TbDots, TbPlus, TbRepeat } from 'react-icons/tb';
+import {
+	TbArrowBack,
+	TbCopy,
+	TbDots,
+	TbHeart,
+	TbInfoCircle,
+	TbLink,
+	TbPlus,
+	TbRepeat,
+} from 'react-icons/tb';
+import { Link } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
 import { cn, getDateTimeString } from '~/lib/utils';
@@ -46,14 +56,38 @@ export function Meow(props: MeowProps) {
 	return <Render {...props} />;
 }
 
-function MeowContextMenu({ children }: { children: React.ReactNode }) {
+function MeowContextMenu({
+	children,
+	meow,
+}: { children: React.ReactNode; meow: IMeow }) {
+	const handleCopy = () => {
+		navigator.clipboard.writeText(meow.text);
+	};
+
+	const meowUrl = `${window.location.origin}/meows/${meow.id}`;
+
 	return (
 		<ContextMenu>
 			<ContextMenuTrigger>{children}</ContextMenuTrigger>
 			<ContextMenuContent>
-				<ContextMenuItem>詳細</ContextMenuItem>
-				<ContextMenuItem>内容をコピー</ContextMenuItem>
-				<ContextMenuItem>リンクをコピー</ContextMenuItem>
+				<ContextMenuItem asChild>
+					<Link to={meowUrl}>
+						<TbInfoCircle className="mr-2" strokeWidth={2} />
+						詳細
+					</Link>
+				</ContextMenuItem>
+				<ContextMenuItem onClickCapture={handleCopy}>
+					<TbCopy className="mr-2" strokeWidth={2} />
+					内容をコピー
+				</ContextMenuItem>
+				<ContextMenuItem>
+					<TbLink className="mr-2" strokeWidth={2} />
+					リンクをコピー
+				</ContextMenuItem>
+				<ContextMenuItem>
+					<TbHeart className="mr-2" strokeWidth={2} />
+					お気に入り
+				</ContextMenuItem>
 			</ContextMenuContent>
 		</ContextMenu>
 	);
@@ -129,5 +163,9 @@ function Render({ meow, disableActions, type, isSmall }: MeowProps) {
 		</div>
 	);
 
-	return isSmall ? content : <MeowContextMenu>{content}</MeowContextMenu>;
+	return isSmall ? (
+		content
+	) : (
+		<MeowContextMenu meow={meow}>{content}</MeowContextMenu>
+	);
 }
