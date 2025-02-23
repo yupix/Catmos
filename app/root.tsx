@@ -12,6 +12,7 @@ import {
 import type { Route } from './+types/root';
 import './app.css';
 import { motion } from 'motion/react';
+import { useEffect } from 'react';
 import { TbPencil } from 'react-icons/tb';
 import { AppSidebar } from './components/app-sidebar';
 import { PostModal } from './components/post-modal';
@@ -83,6 +84,21 @@ function Modal() {
 		openModal(<PostModal closeModal={closeModal} />);
 	};
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === 'n') {
+				e.preventDefault();
+				handleOpenModal();
+			}
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
+
 	return (
 		<Button onClick={handleOpenModal} className="cursor-pointer">
 			<TbPencil strokeWidth={2} />
@@ -97,11 +113,11 @@ export default function App() {
 		<SidebarProvider>
 			{data?.user ? (
 				<>
+					<AppSidebar
+						user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
+					/>
+					<Outlet />
 					<div className="relative">
-						<AppSidebar
-							user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
-						/>
-						<Outlet />
 						<div className="fixed right-5 bottom-5 z-10">
 							<Modal />
 						</div>

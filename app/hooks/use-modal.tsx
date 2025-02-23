@@ -1,6 +1,12 @@
 import { AnimatePresence, motion } from 'motion/react';
 import type React from 'react';
-import { type ReactNode, createContext, useContext, useState } from 'react';
+import {
+	type ReactNode,
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+} from 'react';
 import { TbX } from 'react-icons/tb';
 
 interface ModalContextType {
@@ -24,9 +30,17 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
 	};
 
 	const closeModal = () => {
-		setModalContent(null);
 		setIsModalOpen(false);
 	};
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+	useEffect(() => {
+		document.addEventListener('keydown', (e) => {
+			if (e.key === 'Escape') {
+				closeModal();
+			}
+		});
+	}, []);
 
 	return (
 		<ModalContext.Provider
