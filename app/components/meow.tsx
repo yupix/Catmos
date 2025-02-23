@@ -1,4 +1,5 @@
 import type { File, Meow, User } from '@prisma/client';
+import type { JSX } from 'react';
 import {
 	TbArrowBack,
 	TbCopy,
@@ -9,6 +10,7 @@ import {
 	TbPlus,
 	TbRepeat,
 } from 'react-icons/tb';
+import { Link } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
 import { cn, getDateTimeString } from '~/lib/utils';
@@ -21,6 +23,12 @@ import {
 	ContextMenuItem,
 	ContextMenuTrigger,
 } from './shadcn/ui/context-menu';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from './shadcn/ui/dropdown-menu';
 
 export type IMeow = Meow & {
 	author: User;
@@ -35,10 +43,11 @@ export type MeowProps = {
 	isSmall?: boolean;
 };
 
-const MoreMenuItems = [
+const MoreMenuItems = (meowUrl: string) => [
 	{
 		label: '詳細',
 		icon: <TbInfoCircle className="mr-2" strokeWidth={2} />,
+		to: meowUrl,
 	},
 	{
 		label: '内容をコピー',
@@ -48,7 +57,7 @@ const MoreMenuItems = [
 		label: 'リンクをコピー',
 		icon: <TbLink className="mr-2" strokeWidth={2} />,
 		onClick: () => {
-			navigator.clipboard.writeText(window.location.href);
+			navigator.clipboard.writeText(meowUrl);
 		},
 	},
 	{
@@ -57,6 +66,11 @@ const MoreMenuItems = [
 	},
 ];
 
+/**
+ * Meowコンポーネント
+ * @param {MeowProps} props - Meowコンポーネントのプロパティ
+ * @returns {JSX.Element} Meowコンポーネント
+ */
 export function Meow(props: MeowProps) {
 	// 返信がある場合は先に返信を少しpaddingして表示して下にメインのメウを表示する
 	if (props.meow.reply) {
@@ -77,38 +91,116 @@ export function Meow(props: MeowProps) {
 	return <Render {...props} />;
 }
 
-function MeowContextMenu({
+/**
+ * 共通のメニューアイテムをレンダリングするコンポーネント
+ * @param {Object} props - プロパティ
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {IMeow} props.meow - Meowオブジェクト
+ * @param {boolean} props.isContextMenu - コンテキストメニューかどうか
+ * @returns {JSX.Element} メニューアイテムコンポーネント
+ */
+const MenuItems = ({
 	children,
 	meow,
-}: { children: React.ReactNode; meow: IMeow }) {
+	isContextMenu,
+}: {
+	children: React.ReactNode;
+	meow: IMeow;
+	isContextMenu: boolean;
+}) => {
 	const handleCopy = () => {
 		navigator.clipboard.writeText(meow.text);
 	};
 
 	const meowUrl = `${window.location.origin}/meows/${meow.id}`;
 
-	return (
-		<ContextMenu>
-			<ContextMenuTrigger>{children}</ContextMenuTrigger>
-			<ContextMenuContent>
-				{MoreMenuItems.map((item) => (
-					<ContextMenuItem
-						key={item.label}
-						onClick={
-							item.onClick ||
-							(item.label === '内容をコピー' ? handleCopy : undefined)
-						}
-					>
-						{item.icon}
-						{item.label}
-					</ContextMenuItem>
-				))}
-			</ContextMenuContent>
-		</ContextMenu>
-	);
-}
+	const MenuComponent = isContextMenu ? ContextMenu : DropdownMenu;
+	const MenuTriggerComponent = isContextMenu
+		? ContextMenuTrigger
+		: DropdownMenuTrigger;
+	const MenuContentComponent = isContextMenu
+		? ContextMenuContent
+		: DropdownMenuContent;
+	const MenuItemComponent = isContextMenu ? ContextMenuItem : DropdownMenuItem;
 
-function Render({ meow, disableActions, type, isSmall }: MeowProps) {
+	const MenuItemChild = (item: any) => {
+		console.log(item.item.icon);
+		return (
+			<MenuItemComponent
+				key={item.item.label}
+				onClick={
+					item.item.onClick ||
+					(item.item.label === '内容をコピー' ? handleCopy : undefined)
+				}
+			>
+				{item.item.icon}
+				{item.item.label}
+			</MenuItemComponent>
+		);
+	};
+
+	return (
+		<MenuComponent>
+			<MenuTriggerComponent>{children}</MenuTriggerComponent>
+			<MenuContentComponent>
+				{MoreMenuItems(meowUrl).map((item) =>
+					item.to ? (
+						<Link to={item.to} key={item.label}>
+							<MenuItemChild item={item} />
+						</Link>
+					) : (
+						<MenuItemChild item={item} key={item.label} />
+					),
+				)}
+			</MenuContentComponent>
+		</MenuComponent>
+	);
+};
+
+/**
+ * MeowContextMenuコンポーネント
+ * @param {Object} props - プロパティ
+ * @param {React.ReactNode} props.children - 子要素
+ * @param {IMeow} props.meow - Meowオブジェクト
+ * @returns {JSX.Element} MeowContextMenuコンポーネント
+ */
+const MeowContextMenu = ({
+	children,
+	meow,
+}: {
+	children: React.ReactNode;
+	meow: IMeow;
+}) => (
+	<MenuItems meow={meow} isContextMenu>
+		{children}
+	</MenuItems>
+);
+
+/**
+ * MeowMoreMenuコンポーネント
+ * @param {Object} props - プロパティ
+ * @param {IMeow} props.meow - Meowオブジェクト
+ * @param {React.ReactNode} props.children - 子要素
+ * @returns {JSX.Element} MeowMoreMenuコンポーネント
+ */
+const MeowMoreMenu = ({
+	meow,
+	children,
+}: {
+	meow: IMeow;
+	children: React.ReactNode;
+}): JSX.Element => (
+	<MenuItems meow={meow} isContextMenu={false}>
+		{children}
+	</MenuItems>
+);
+
+/**
+ * Renderコンポーネント
+ * @param {MeowProps} props - Meowコンポーネントのプロパティ
+ * @returns {JSX.Element} Renderコンポーネント
+ */
+const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 	const dateInfo = getDateTimeString(meow.createdAt);
 	const tree = parseTextToTree(meow.text);
 
@@ -170,7 +262,9 @@ function Render({ meow, disableActions, type, isSmall }: MeowProps) {
 							/>
 							<TbRepeat className="cursor-pointer" strokeWidth={3} />
 							<TbPlus className="cursor-pointer" strokeWidth={3} />
-							<TbDots className="cursor-pointer" strokeWidth={3} />
+							<MeowMoreMenu meow={meow}>
+								<TbDots className="cursor-pointer" strokeWidth={3} />
+							</MeowMoreMenu>
 						</div>
 					)}
 				</div>
@@ -183,4 +277,4 @@ function Render({ meow, disableActions, type, isSmall }: MeowProps) {
 	) : (
 		<MeowContextMenu meow={meow}>{content}</MeowContextMenu>
 	);
-}
+};
