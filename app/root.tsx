@@ -12,9 +12,12 @@ import {
 import type { Route } from './+types/root';
 import './app.css';
 import { motion } from 'motion/react';
+import { TbPencil } from 'react-icons/tb';
 import { AppSidebar } from './components/app-sidebar';
+import { PostModal } from './components/post-modal';
+import { Button } from './components/shadcn/ui/button';
 import { SidebarProvider } from './components/shadcn/ui/sidebar';
-import { ModalProvider } from './hooks/use-modal';
+import { ModalProvider, useModal } from './hooks/use-modal';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
 import Welcome from './routes/welcome';
@@ -74,6 +77,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 	);
 }
 
+function Modal() {
+	const { openModal, closeModal } = useModal();
+	const handleOpenModal = () => {
+		openModal(<PostModal closeModal={closeModal} />);
+	};
+
+	return (
+		<Button onClick={handleOpenModal} className="cursor-pointer">
+			<TbPencil strokeWidth={2} />
+		</Button>
+	);
+}
+
 export default function App() {
 	const data = useLoaderData<typeof loader>();
 
@@ -81,10 +97,15 @@ export default function App() {
 		<SidebarProvider>
 			{data?.user ? (
 				<>
-					<AppSidebar
-						user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
-					/>
-					<Outlet />
+					<div className="relative">
+						<AppSidebar
+							user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
+						/>
+						<Outlet />
+						<div className="fixed right-5 bottom-5 z-10">
+							<Modal />
+						</div>
+					</div>
 				</>
 			) : (
 				<Welcome />
