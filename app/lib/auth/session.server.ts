@@ -14,6 +14,13 @@ export const sessionStorage = createMemorySessionStorage({
 	cookie: sessionCookie,
 });
 
+export const honoSideGetSession = async <User>(
+	cookie: string,
+): Promise<User> => {
+	const session = await sessionStorage.getSession(cookie);
+	return session.get(sessionUserKey);
+};
+
 export const getSession = async <User>(request: Request): Promise<User> => {
 	const session = await sessionStorage.getSession(
 		request.headers.get('Cookie'),

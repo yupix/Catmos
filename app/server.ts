@@ -1,6 +1,8 @@
 import { createHonoServer } from 'react-router-hono-server/node';
 import { Server } from 'socket.io';
-import { redisSubscriber } from './lib/redis.server';
+import SuperJSON from 'superjson';
+import { honoSideGetSession } from './lib/auth/session.server';
+import { redis, redisSubscriber } from './lib/redis.server';
 
 console.log('loading server');
 
@@ -33,27 +35,46 @@ export default await createHonoServer({
 			},
 		});
 
-		io.on('connection', (socket) => {
-			console.log('New connection 🔥', socket.id);
+		io.use(async (socket, next) => {
+			if (socket.handshake.headers.cookie === undefined) {
+				return next(new Error('Unauthorized'));
+			}
 
-			// ここで指定するmessageというのはデフォルトのイベント名なので実際にpublisherで指定したchannel名は引数のchannelとして受け取る
-			redisSubscriber.on('message', (channel, message) => {
-				switch (channel) {
-					case 'meow':
-						socket.emit('meow', message);
+			const session = await honoSideGetSession(socket.handshake.headers.cookie);
+			if (session) {
+				socket.data.user = session;
+				return next();
+			}
+			next(new Error('Unauthorized'));
+		});
+
+		redisSubscriber.on('message', async (channel, message) => {
+			switch (channel) {
+				case 'meow':
+					io.emit('meow', message);
+					break;
+				case 'notification': {
+					const data = SuperJSON.parse(message);
+					const socketId = await redis.get(`socket:${data.user.sub}`);
+					if (!socketId) {
 						break;
-					case 'notification':
-						console.log('Message received:', channel, message);
-						socket.emit('notification', message);
-						break;
-					default:
-						break;
+					}
+					io.to(socketId).emit('notification', message);
+					break;
 				}
-			});
+				default:
+					break;
+			}
+		});
 
-			socket.on('disconnect', (reason) => {
+		io.on('connection', async (socket) => {
+			console.log('New connection 🔥', socket.id);
+			await redis.set(`socket:${socket.data.user.sub}`, socket.id);
+
+			socket.on('disconnect', async (reason) => {
 				// called when the underlying connection is closed
 				console.log('Connection closed');
+				await redis.del(`socket:${socket.data.user.sub}`);
 			});
 
 			socket.on('message', (message) => {
