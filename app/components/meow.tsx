@@ -207,7 +207,7 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 	const { openModal, closeModal } = useModal();
 
 	const content = (
-		<div className="max-w-[700px] px-4">
+		<div className="px-4">
 			<div className="flex gap-4">
 				<HoverUserCard user={meow.author}>
 					<Avatar className={cn('h-15 w-15', isSmall && 'h-10 w-10')}>
