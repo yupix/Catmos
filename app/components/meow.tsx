@@ -13,8 +13,9 @@ import {
 import { Link } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
-import { cn, getDateTimeString } from '~/lib/utils';
+import { cn } from '~/lib/utils';
 import { HoverUserCard } from './hover-user-card';
+import { TimeDisplay } from './meow/time';
 import { PostModal } from './post-modal';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
 import {
@@ -112,7 +113,7 @@ const MenuItems = ({
 		navigator.clipboard.writeText(meow.text);
 	};
 
-	const meowUrl = `${window.location.origin}/meows/${meow.id}`;
+	const meowUrl = `${import.meta.env.VITE_PUBLIC_ORIGIN}/meows/${meow.id}`;
 
 	const MenuComponent = isContextMenu ? ContextMenu : DropdownMenu;
 	const MenuTriggerComponent = isContextMenu
@@ -201,7 +202,6 @@ const MeowMoreMenu = ({
  * @returns {JSX.Element} Renderコンポーネント
  */
 const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
-	const dateInfo = getDateTimeString(meow.createdAt);
 	const tree = parseTextToTree(meow.text);
 
 	const { openModal, closeModal } = useModal();
@@ -228,18 +228,7 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 							</div>
 						</HoverUserCard>
 
-						<time
-							className={cn(
-								dateInfo.color === 'red'
-									? 'text-red-400'
-									: dateInfo.color === 'yellow'
-										? 'text-yellow-400'
-										: null,
-							)}
-							title={meow.createdAt.toString()}
-						>
-							{dateInfo.text}
-						</time>
+						<TimeDisplay date={meow.createdAt} />
 					</div>
 					<div className="mb-5 pt-2">
 						<div className="flex">
