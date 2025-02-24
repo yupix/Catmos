@@ -32,7 +32,7 @@ const strategy = await OIDCStrategy.init<User>(
 		client_id: env.OIDC_CLIENT_ID,
 		redirect_uris: [
 			process.env.NODE_ENV === 'development'
-				? 'http://localhost:5173/auth/callback'
+				? `${env.VITE_PUBLIC_ORIGIN}/auth/callback`
 				: 'https://mos.catarks.org/auth/callback',
 		],
 		response_type: 'code',
@@ -40,13 +40,13 @@ const strategy = await OIDCStrategy.init<User>(
 		token_endpoint_auth_method: 'none',
 		post_logout_redirect_uris: [
 			process.env.NODE_ENV === 'development'
-				? 'http://localhost:5173/'
+				? `${env.VITE_PUBLIC_ORIGIN}/`
 				: 'https://mos.catarks.org/',
 		],
 		revocation_endpoint: 'https://auth.akarinext.org/oauth/v2/revoke',
 		end_session_endpoint: 'https://auth.akarinext.org/oidc/v1/end_session',
 		userinfo_endpoint: 'https://auth.akarinext.org/oidc/v1/userinfo',
-		https: true,
+		https: process.env.NODE_ENV === 'production',
 	},
 	async ({ tokens, request }): Promise<User> => {
 		if (!tokens.id_token) {
