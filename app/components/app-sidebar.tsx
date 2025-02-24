@@ -1,4 +1,4 @@
-import { TbBell, TbHome } from 'react-icons/tb';
+import { TbBell, TbHome, TbSettings } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router';
 import {
 	Sidebar,
@@ -24,6 +24,13 @@ const MENUS = [
 			to: '/notifications',
 			icon: TbBell,
 			text: '通知',
+		},
+	],
+	[
+		{
+			to: '/settings/profile',
+			icon: TbSettings,
+			text: '設定',
 		},
 	],
 ];
@@ -55,37 +62,39 @@ export function AppSidebar({ user }: AppSidebarProps) {
 				</SidebarGroup>
 				{MENUS.map((group, i) => {
 					return (
-						<SidebarGroup key={i}>
-							<SidebarContent>
-								<SidebarMenu>
-									{group.map((menu, i) => {
-										const Icon = menu.icon;
-										const isActive = location.pathname === menu.to;
-										const className = isActive
-											? activeClass
-											: 'hover:text-sky-700 transition-all hover:bg-sky-600/30';
+						<>
+							<SidebarGroup key={i}>
+								<SidebarContent>
+									<SidebarMenu>
+										{group.map((menu, i) => {
+											const Icon = menu.icon;
+											const isActive = location.pathname === menu.to;
+											const className = isActive
+												? activeClass
+												: 'hover:text-sky-700 transition-all hover:bg-sky-600/30';
 
-										return (
-											<SidebarMenuItem key={i}>
-												<SidebarMenuButton
-													asChild
-													className={cn(
-														className,
-														'text-lg',
-														'h-10 rounded-full',
-													)}
-												>
-													<Link to={menu.to}>
-														<Icon strokeWidth={3} size={100} />
-														{menu.text}
-													</Link>
-												</SidebarMenuButton>
-											</SidebarMenuItem>
-										);
-									})}
-								</SidebarMenu>
-							</SidebarContent>
-						</SidebarGroup>
+											return (
+												<SidebarMenuItem key={i}>
+													<SidebarMenuButton
+														asChild
+														className={cn(
+															className,
+															'h-10 rounded-full px-4 text-lg',
+														)}
+													>
+														<Link to={menu.to}>
+															<Icon strokeWidth={3} size={100} />
+															{menu.text}
+														</Link>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											);
+										})}
+									</SidebarMenu>
+								</SidebarContent>
+							</SidebarGroup>
+							{MENUS.length - 1 !== i && <div className="mx-2 border-b" />}
+						</>
 					);
 				})}
 			</SidebarContent>
