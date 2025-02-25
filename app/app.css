@@ -19,9 +19,28 @@ body {
 
   font-size: 15px;
   line-height: 17px;
-  font-family: 'BIZ UDPGothic', Roboto,  serif;
+  font-family: "BIZ UDPGothic", Roboto, serif;
   font-weight: 400;
   color: #484848;
+}
+
+::-webkit-scrollbar {
+  background: #000;
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #d1d1d1;
+  border-radius: 10px;
+
+  &:hover {
+    background-color: #b1b1b1;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
 }
 
 :root {
