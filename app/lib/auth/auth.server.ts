@@ -4,11 +4,11 @@ import { OIDCStrategy } from 'remix-auth-openid';
 import { prisma } from '../db';
 import { env } from '../env.server';
 import { clearSession, getSession, setSession } from './session.server';
-
 export interface User extends OIDCStrategy.BaseUser {
 	name: string;
 	displayName: string | null;
 	avatarUrl?: string;
+	bannerUrl?: string;
 }
 
 interface Profile {
@@ -64,6 +64,7 @@ const strategy = await OIDCStrategy.init<User>(
 				name: true,
 				displayName: true,
 				avatarUrl: true,
+				bannerUrl: true,
 			},
 			where: {
 				sub,
@@ -94,6 +95,7 @@ const strategy = await OIDCStrategy.init<User>(
 				name: profile.name,
 				displayName: profile.preferred_username,
 				avatarUrl: profile.picture,
+				bannerUrl: null,
 			};
 		}
 

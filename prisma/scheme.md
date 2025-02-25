@@ -9,6 +9,7 @@ erDiagram
     DateTime created_at 
     DateTime updated_at 
     String avatar_url "❓"
+    String banner_url "❓"
     }
   
 
