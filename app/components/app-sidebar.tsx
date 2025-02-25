@@ -1,4 +1,4 @@
-import { TbBell, TbHome, TbSettings } from 'react-icons/tb';
+import { TbBell, TbCloud, TbHome, TbSettings } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router';
 import {
 	Sidebar,
@@ -24,6 +24,11 @@ const MENUS = [
 			to: '/notifications',
 			icon: TbBell,
 			text: '通知',
+		},
+		{
+			to: '/drives',
+			icon: TbCloud,
+			text: 'ドライブ',
 		},
 	],
 	[
