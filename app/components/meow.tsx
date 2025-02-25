@@ -231,7 +231,7 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 						<TimeDisplay date={meow.createdAt} />
 					</div>
 					<div className="mb-5 pt-2">
-						<div className="flex">
+						<div className="inline-block break-all">
 							{type === 'reply' ? (
 								<TbArrowBack className="mr-1 text-sky-600" strokeWidth={3} />
 							) : null}
