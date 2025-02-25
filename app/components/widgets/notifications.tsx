@@ -108,6 +108,16 @@ function Clint({ notifications }: NotificationProps) {
 				</h1>
 			</div>
 			<div className="max-h-[300px] overflow-y-scroll">
+				{notificationsState.length === 0 && (
+					<div className="flex h-40 flex-col items-center justify-center">
+						<img
+							src="/mihoyo/not_notification.webp"
+							alt="通知はありません"
+							className="mb-4 h-30 w-30 rounded-xl"
+						/>
+						<p>通知はありません</p>
+					</div>
+				)}
 				{notificationsState.map((notification, i) => (
 					<div
 						key={notification.id}
