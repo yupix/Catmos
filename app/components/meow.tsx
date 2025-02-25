@@ -113,7 +113,7 @@ const MenuItems = ({
 		navigator.clipboard.writeText(meow.text);
 	};
 
-	const meowUrl = `${import.meta.env.VITE_PUBLIC_ORIGIN}/meows/${meow.id}`;
+	const meowUrl = `${import.meta.env.VITE_ORIGIN}/meows/${meow.id}`;
 
 	const MenuComponent = isContextMenu ? ContextMenu : DropdownMenu;
 	const MenuTriggerComponent = isContextMenu
