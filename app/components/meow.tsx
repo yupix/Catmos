@@ -221,9 +221,7 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 							<div className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap">
 								<p className="max-w-40 overflow-hidden text-ellipsis whitespace-nowrap">
 									{meow.author.displayName || meow.author.name}{' '}
-									<span className="ml-1 text-gray-400">
-										@{meow.author.name}
-									</span>
+									{meow.author.displayName ? `@${meow.author.name}` : null}
 								</p>
 							</div>
 						</HoverUserCard>
@@ -231,11 +229,11 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 						<TimeDisplay date={meow.createdAt} />
 					</div>
 					<div className="mb-5 pt-2">
-						<div className="inline-block break-all">
+						<div className="flex">
 							{type === 'reply' ? (
 								<TbArrowBack className="mr-1 text-sky-600" strokeWidth={3} />
 							) : null}
-							{renderTree(tree)}
+							<div className="inline-block break-all">{renderTree(tree)}</div>
 						</div>
 					</div>
 					{disableActions ? null : (
