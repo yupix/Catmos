@@ -182,7 +182,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 						animate={{ x: [0, 2, -2, 0], y: [2, -2, 2, 2] }}
 						transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY }}
 					>
-						<img src="/404.webp" alt="404" className="h-50 w-50" />
+						<img src="/mihoyo/404.webp" alt="404" className="h-50 w-50" />
 					</motion.div>
 					<div>
 						<p className="text-xl">このページは存在しません。</p>
