@@ -8,7 +8,6 @@ export function Sidebar({ notifications }: SidebarProps) {
 	return (
 		<aside className="h-full w-full border-gray-200 border-l bg-white">
 			<div className="p-4">
-				<h2 className="font-bold text-lg">Sidebar</h2>
 				<Notifications notifications={notifications} />
 			</div>
 		</aside>
