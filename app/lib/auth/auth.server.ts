@@ -8,7 +8,7 @@ import { clearSession, getSession, setSession } from './session.server';
 export interface User extends OIDCStrategy.BaseUser {
 	name: string;
 	displayName: string | null;
-	avatarUrl: string | null;
+	avatarUrl?: string;
 }
 
 interface Profile {
