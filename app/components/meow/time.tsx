@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { cn, getDateTimeString } from '~/lib/utils';
 
 interface TimeDisplayProps {
@@ -5,13 +6,22 @@ interface TimeDisplayProps {
 }
 
 export function TimeDisplay({ date }: TimeDisplayProps) {
-	const dateInfo = getDateTimeString(date);
+	const [currentDate, setCurrentDate] = useState(getDateTimeString(date));
+
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			setCurrentDate(getDateTimeString(date));
+		}, 1000);
+
+		return () => clearInterval(intervalId);
+	}, [date]);
+
 	return (
 		<time
 			className={cn(
-				dateInfo.color === 'red'
+				currentDate.color === 'red'
 					? 'text-red-400'
-					: dateInfo.color === 'yellow'
+					: currentDate.color === 'yellow'
 						? 'text-yellow-400'
 						: null,
 			)}
@@ -27,7 +37,7 @@ export function TimeDisplay({ date }: TimeDisplayProps) {
 				})
 				.replaceAll('/', '-')}
 		>
-			{dateInfo.text}
+			{currentDate.text}
 		</time>
 	);
 }
