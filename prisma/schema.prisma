@@ -27,6 +27,7 @@ model User {
   updatedAt    DateTime       @updatedAt @map("updated_at")
   avatarUrl    String?        @map("avatar_url")
   meows        Meow[]
+  bannerUrl    String?        @map("banner_url")
   files        File[]
   folders      Folder[]
   Notification Notification[]
