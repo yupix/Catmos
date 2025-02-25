@@ -90,7 +90,7 @@ export const renderTree = (nodes: TreeNode[]): JSX.Element[] => {
 				return (
 					<span
 						key={index}
-						className="bg-blue-100 text-blue-500 p-1 rounded-full"
+						className="h-fit break-all rounded-full bg-blue-100 p-1 text-blue-500"
 					>
 						{node.content}
 					</span>
