@@ -1,23 +1,11 @@
-import type { Meow as MeowModel, User } from '@prisma/client';
 import { useEffect, useState } from 'react';
 import { TbBell } from 'react-icons/tb';
 import { ClientOnly } from 'remix-utils/client-only';
 import SuperJSON from 'superjson';
+import { type INotification, Notification } from '~/components/notification';
 import { socket } from '~/lib/socket.client';
 import { cn } from '~/lib/utils';
-import { Meow } from '../meow';
-import { Avatar, AvatarFallback, AvatarImage } from '../shadcn/ui/avatar';
 import { Skeleton } from '../shadcn/ui/skeleton';
-
-export interface INotification {
-	id: string;
-	type: 'reaction' | 'reply' | 'mention' | 'remeow';
-	meow?: MeowModel & {
-		author: User;
-	};
-	user: User;
-	createdAt: Date;
-}
 
 interface NotificationProps {
 	notifications: INotification[];
@@ -59,16 +47,6 @@ function Clint({ notifications }: NotificationProps) {
 	const [notificationsState, setNotifications] =
 		useState<INotification[]>(notifications);
 	const [isConnected, setIsConnected] = useState(socket.connected);
-	const notificationIcon = (type: INotification['type']) => {
-		switch (type) {
-			case 'reaction':
-				return <TbBell className="h-5 w-5" />;
-			case 'reply':
-				return <TbBell className="h-5 w-5" />;
-			default:
-				return <TbBell className="h-5 w-5" />;
-		}
-	};
 
 	useEffect(() => {
 		const handleConnect = () => {
@@ -100,8 +78,8 @@ function Clint({ notifications }: NotificationProps) {
 	}, []);
 
 	return (
-		<div className=" w-full rounded-3xl inset-shadow-sm inset-shadow-black/20">
-			<div className="mb-4 h-10 w-full rounded-t-3xl bg-gray-200 flex items-center pl-3 sticky top-0 z-10">
+		<div className=" inset-shadow-black/20 inset-shadow-sm w-full rounded-3xl">
+			<div className="sticky top-0 z-10 mb-4 flex h-10 w-full items-center rounded-t-3xl bg-gray-200 pl-3">
 				<h1 className="flex items-center gap-1 text-gray-500">
 					<TbBell className="h-5 w-5" />
 					<span className="text-sm">通知</span>
@@ -125,51 +103,7 @@ function Clint({ notifications }: NotificationProps) {
 							i < notifications.length - 1 ? 'border-b pb-2' : 'py-2',
 						)}
 					>
-						{notification.meow ? (
-							<div>
-								<Meow meow={notification.meow} isSmall />
-							</div>
-						) : (
-							<div className="mb-2 flex w-full items-center gap-2 p-2">
-								<div className="relative shrink-0">
-									<Avatar className="h-12 w-12">
-										<AvatarImage
-											src={notification.user.avatarUrl}
-											alt="avatar"
-											className=""
-										/>
-										<AvatarFallback>{notification.user.name}</AvatarFallback>
-									</Avatar>
-									<div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5">
-										{notificationIcon(notification.type)}
-									</div>
-								</div>
-
-								<div className="flex w-full flex-col gap-2">
-									<span className="text-sm">
-										{notification.type === 'reaction' && (
-											<>
-												<span className="text-blue-500 font-bold">
-													{notification.user.name}
-												</span>
-												<span>さんがあなたの鳴き声にリアクションしました</span>
-											</>
-										)}
-										{notification.type === 'remeow' && (
-											<>
-												<span className="text-blue-500 font-bold">
-													{notification.user.name}
-												</span>
-												<span>さんがあなたの鳴き声をリメウしました</span>
-											</>
-										)}
-									</span>
-									<span className="text-xs text-gray-500">
-										{notification.createdAt.toLocaleString()}
-									</span>
-								</div>
-							</div>
-						)}
+						<Notification notification={notification} />
 					</div>
 				))}
 			</div>
