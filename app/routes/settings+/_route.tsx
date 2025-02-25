@@ -13,7 +13,7 @@ export function loader({ request }: Route.LoaderArgs) {
 
 export default function Layout() {
 	return (
-		<div className="bg-red-300">
+		<div>
 			<Outlet />
 		</div>
 	);

@@ -107,7 +107,7 @@ export async function action({ request }: Route.ActionArgs) {
 export default function Index() {
 	const { user } = useLoaderData<typeof loader>();
 	return (
-		<div className="max-w-[600px] mx-auto">
+		<div className="inset-shadow-black/20 inset-shadow-sm mx-auto max-w-[600px] rounded-3xl bg-slate-50 pb-5">
 			<div>
 				<div className="relative mb-20">
 					<div
