@@ -10,6 +10,7 @@ import {
 	TbPlus,
 	TbRepeat,
 } from 'react-icons/tb';
+import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { Link } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
@@ -30,7 +31,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
-
+import 'react-photo-view/dist/react-photo-view.css';
 export type IMeow = Meow & {
 	author: User;
 	reply: IMeow;
