@@ -70,7 +70,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function User() {
 	const { user, meows } = useLoaderData<typeof loader>();
 	return (
-		<div className="mx-5 my-20 w-full transition-all duration-300 md:mx-10">
+		<div className="my-20 w-full mb:px-0 px-4 transition-all duration-300 ">
 			<div className="relative mb-15">
 				<div
 					className="h-90 w-full rounded-lg bg-center bg-cover"
