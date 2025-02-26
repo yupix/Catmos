@@ -34,7 +34,7 @@ erDiagram
 
   "Meow" {
     String id "🗝️"
-    String text 
+    String text "❓"
     String author_id 
     DateTime created_at 
     String reply_id "❓"
