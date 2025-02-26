@@ -61,8 +61,4 @@ docker run -p 3000:3000 catmos
 
 このコンテナ化されたアプリケーションは、Docker をサポートする任意のプラットフォームにデプロイできます。
 
-Built with ❤️ using React Router. ```
-
-"text": "(.\*)"
-
-- $1
+Built with ❤️ using React Router. 
