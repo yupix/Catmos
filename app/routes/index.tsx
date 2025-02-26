@@ -51,18 +51,26 @@ export async function action({ request }: Route.ActionArgs) {
 		switch (formData.get('intent')) {
 			case 'post': {
 				const submission = parseWithZod(formData, {
-					schema: z.object({
-						text: z.string().nonempty(),
-						replyId: z.string().optional(),
-						fileId: z.array(z.string()).optional(),
-					}),
+					schema: z
+						.object({
+							text: z.string().nonempty().optional(),
+							replyId: z.string().optional(),
+							fileId: z.array(z.string()).optional(),
+						})
+						.refine(
+							(data) => data.text || (data.fileId && data.fileId.length > 0),
+							{
+								message: 'textかfileIdのどちらかが必要です',
+								path: ['text', 'fileId'],
+							},
+						),
 				});
 
 				if (submission.status !== 'success') {
 					return submission.reply();
 				}
 
-				const meowTree = parseTextToTree(submission.value.text);
+				const meowTree = parseTextToTree(submission.value.text ?? '');
 				const mentions = meowTree
 					.map((node) => node.type === 'mention' && node.content?.slice(1))
 					.filter(Boolean) as string[];
