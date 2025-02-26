@@ -99,7 +99,13 @@ export const renderTree = (nodes: TreeNode[]): JSX.Element[] => {
 				);
 			case 'link':
 				return (
-					<a key={index} href={node.content} style={{ color: 'blue' }}>
+					<a
+						key={index}
+						href={node.content}
+						style={{ color: 'blue' }}
+						target="_blank"
+						rel="noreferrer"
+					>
 						{node.content}
 					</a>
 				);
