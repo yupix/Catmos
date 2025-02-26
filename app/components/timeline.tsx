@@ -2,7 +2,6 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
 import SuperJSON from 'superjson';
-import { useModal } from '~/hooks/use-modal';
 import { socket } from '~/lib/socket.client';
 import { cn } from '~/lib/utils';
 import { type IMeow, Meow } from './meow';
@@ -12,8 +11,6 @@ interface TimelineProps {
 }
 
 export default function Timeline({ initMeows }: TimelineProps) {
-	const { openModal } = useModal();
-
 	return (
 		<div className="inset-shadow-black/10 inset-shadow-sm rounded-2xl p-5">
 			<ClientOnly>{() => <Client initMeows={initMeows} />}</ClientOnly>
@@ -26,6 +23,10 @@ export function Client({ initMeows }: TimelineProps) {
 	const [newMeows, setNewMeows] = useState<IMeow[]>([]);
 	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [isAtTop, setIsAtTop] = useState(true);
+
+	useEffect(() => {
+		setMeows(initMeows);
+	}, [initMeows]);
 
 	const handleScrollToTop = () => {
 		window.scrollTo({ top: 0, behavior: 'smooth' });
