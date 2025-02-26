@@ -92,7 +92,7 @@ export function Client({ initMeows }: TimelineProps) {
 				<AnimatePresence>
 					{meows.map((meow) => (
 						<motion.div
-							className={cn('mb-4 py-2 border-b')}
+							className={cn('my-6 border-b pb-6')}
 							key={meow.id}
 							layout
 							initial={{ opacity: 0, y: -20, scale: 0.9 }}
