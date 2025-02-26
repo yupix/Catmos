@@ -79,7 +79,7 @@ function Clint({ notifications }: NotificationProps) {
 
 	return (
 		<div className=" inset-shadow-black/20 inset-shadow-sm w-full rounded-3xl">
-			<div className="sticky top-0 z-10 mb-4 flex h-10 w-full items-center rounded-t-3xl bg-gray-200 pl-3">
+			<div className="sticky top-15 z-10 mb-4 flex h-10 w-full items-center rounded-t-3xl bg-gray-200 pl-3">
 				<h1 className="flex items-center gap-1 text-gray-500">
 					<TbBell className="h-5 w-5" />
 					<span className="text-sm">通知</span>

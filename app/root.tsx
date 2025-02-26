@@ -17,7 +17,10 @@ import { TbPencil } from 'react-icons/tb';
 import { AppSidebar } from './components/app-sidebar';
 import { PostModal } from './components/post-modal';
 import { Button } from './components/shadcn/ui/button';
-import { SidebarProvider } from './components/shadcn/ui/sidebar';
+import {
+	SidebarProvider,
+	SidebarTrigger,
+} from './components/shadcn/ui/sidebar';
 import { Toaster } from './components/shadcn/ui/sonner';
 import { Sidebar } from './components/sidebar';
 import { ModalProvider, useModal } from './hooks/use-modal';
@@ -143,18 +146,21 @@ export default function App() {
 					<AppSidebar
 						user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
 					/>
-					<div className="grid w-full grid-cols-12 gap-0 md:gap-8 ml-0 md:ml-8 ">
-						<div className="col-span-12 md:col-span-9 max-h-screen overflow-y-scroll">
-							<Outlet />
-						</div>
-						<div id="sidebar" className="col-span-12 md:col-span-3">
-							<Sidebar notifications={data.notifications || []} />
-						</div>
-					</div>
-
-					<div className="relative">
-						<div className="fixed right-5 bottom-5 z-10">
+					<div className="w-full">
+						<div className="sticky bottom-0 z-10 flex w-full items-center justify-between bg-slate-200/60 backdrop-blur-md px-10 py-2 md:top-0">
+							<SidebarTrigger className="-ml-1 cursor-pointer" />
 							<Modal />
+						</div>
+
+						<div className="block md:flex md:flex-grow">
+							<div className="max-h-screen w-full w-[80%] overflow-y-scroll">
+								<div className="max-w-full md:max-w-[80%] mx-auto">
+									<Outlet />
+								</div>
+							</div>
+							<div id="sidebar" className="w-[20%] md:col-span-3">
+								<Sidebar notifications={data.notifications || []} />
+							</div>
 						</div>
 					</div>
 				</>

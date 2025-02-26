@@ -53,7 +53,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 		'bg-sky-600/20 text-sky-700 hover:text-sky-700 transition-all hover:bg-sky-600/30';
 
 	return (
-		<Sidebar>
+		<Sidebar collapsible="icon">
 			<SidebarHeader />
 			<SidebarContent>
 				<SidebarGroup className="mb-5">
