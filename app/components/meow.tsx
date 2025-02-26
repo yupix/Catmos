@@ -202,7 +202,7 @@ const MeowMoreMenu = ({
  * @returns {JSX.Element} Renderコンポーネント
  */
 const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
-	const tree = parseTextToTree(meow.text);
+	const tree = parseTextToTree(meow.text ?? '');
 
 	const { openModal, closeModal } = useModal();
 
