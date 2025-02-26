@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFetcher } from 'react-router';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -9,6 +9,9 @@ import { v4 as uuidV4 } from 'uuid';
 export const useFileUpload = () => {
 	const { submit, data, state, formData } = useFetcher();
 	const isUploading = state !== 'idle';
+	const [uploadedFiles, setUploadedFiles] = useState<
+		{ url: string; fileId: string }[]
+	>([]);
 
 	// アップロード中のファイルを取得
 	const uploadingFiles = useMemo(() => {
@@ -22,7 +25,7 @@ export const useFileUpload = () => {
 	}, [formData]);
 
 	// アップロード済みのファイルとアップロード中のファイルを結合
-	const images = useMemo(() => {
+	const images = useMemo<{ url: string; fileId: string }[]>(() => {
 		return (data ?? []).concat(uploadingFiles ?? []);
 	}, [data, uploadingFiles]);
 
@@ -34,19 +37,29 @@ export const useFileUpload = () => {
 		(files: FileList | null) => {
 			if (!files) return;
 			const form = new FormData();
-			for (const file of files) form.append('files', file);
+			for (const file of files) {
+				form.append('files', file);
+			}
 			submit(form, {
 				method: 'POST',
 				action: `/upload/${uuidV4()}`,
 				encType: 'multipart/form-data',
 			});
+			// setUploadedFiles((prev) => [...prev, ...Array.from(files)]);
 		},
 		[submit],
 	);
+
+	useEffect(() => {
+		if (state === 'idle' && data?.length > 0) {
+			setUploadedFiles(data);
+		}
+	}, [data, state]);
 
 	return {
 		submit: handleFileUpload,
 		isUploading,
 		images,
+		uploadedFiles,
 	};
 };

@@ -136,17 +136,17 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 	const [text, setText] = useState('');
 	const [tree, setTree] = useState<TreeNode[]>([]);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
-	const { submit, images, isUploading } = useFileUpload();
+	const { submit, uploadedFiles, isUploading } = useFileUpload();
 
-	const [files, setFiles] = useState([]);
+	const [files, setFiles] = useState<{ fileId: string; url: string }[]>([]);
 
 	useEffect(() => {
 		if (textareaRef.current) textareaRef.current.focus();
 	}, []);
 
 	useEffect(() => {
-		setFiles((prev) => [...prev, ...images]);
-	}, [images]);
+		setFiles((prev) => [...prev, ...uploadedFiles]);
+	}, [uploadedFiles]);
 
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const parsedTree = parseTextToTree(e.target.value);
@@ -174,9 +174,9 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 			</div>
 			<div className="max-w-md break-words break-all">{renderTree(tree)}</div>
 			{isUploading ? (
-				<Skeleton className="w-20 h-20" />
+				<Skeleton className="h-20 w-20" />
 			) : (
-				<div className="flex gap-2 mb-2">
+				<div className="mb-2 flex flex-wrap gap-2">
 					{files.map((image) => (
 						<div key={image.fileId}>
 							{image?.fileId ? (
@@ -192,7 +192,7 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 							<img
 								src={image.url}
 								alt="uploaded"
-								className="aspect-square h-15 object-cover rounded-lg"
+								className="aspect-square h-15 rounded-lg object-cover"
 							/>
 						</div>
 					))}
