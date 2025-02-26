@@ -1,3 +1,4 @@
+import type { User } from '@prisma/client';
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -30,4 +31,10 @@ export function getDateTimeString(date: Date) {
 		return { text: `${diffMonths}ヶ月前`, color: 'yellow' };
 	}
 	return { text: `${diffYears}年前`, color: 'red' };
+}
+export function getUserName(user: User, isMentionStyle = false) {
+	if (isMentionStyle) {
+		return user.displayName ? `@${user.displayName}` : `@${user.name}`;
+	}
+	return user.displayName || user.name;
 }
