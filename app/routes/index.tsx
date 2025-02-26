@@ -54,6 +54,7 @@ export async function action({ request }: Route.ActionArgs) {
 					schema: z.object({
 						text: z.string().nonempty(),
 						replyId: z.string().optional(),
+						fileId: z.array(z.string()).optional(),
 					}),
 				});
 
@@ -80,6 +81,11 @@ export async function action({ request }: Route.ActionArgs) {
 							connect: {
 								sub: user.sub,
 							},
+						},
+						attachments: {
+							connect: submission.value.fileId?.map((id) => ({
+								id,
+							})),
 						},
 					},
 					include: {

@@ -1,5 +1,4 @@
 import { parseWithZod } from '@conform-to/zod';
-import { parseMultipartRequest } from '@mjackson/multipart-parser';
 import { Form, data, redirect, useLoaderData } from 'react-router';
 import { z } from 'zod';
 import { FileUpload } from '~/components/fileupload';
@@ -14,7 +13,7 @@ import { Label } from '~/components/shadcn/ui/label';
 import { type User, getUserSession } from '~/lib/auth/auth.server';
 import { setSession } from '~/lib/auth/session.server';
 import { prisma } from '~/lib/db';
-import { uploadHandler } from '~/lib/s3.server';
+import { multipartUploader } from '~/lib/uploader';
 import { cn } from '~/lib/utils';
 import type { Route } from '../+types';
 export async function loader({ request }: Route.LoaderArgs) {
@@ -74,14 +73,7 @@ export async function action({ request }: Route.ActionArgs) {
 		});
 	}
 
-	const formData: FormData = new FormData();
-	await parseMultipartRequest(request, async (part) => {
-		const _formData = await uploadHandler(user.sub).s3UploadHandler(part);
-
-		for (const [key, value] of _formData.entries()) {
-			formData.append(key, value);
-		}
-	});
+	const formData = await multipartUploader({ request, user });
 
 	const intent = formData.get('intent');
 	for (const [key, value] of formData.entries()) {
@@ -95,7 +87,7 @@ export async function action({ request }: Route.ActionArgs) {
 				console.error('No file uploaded');
 				return;
 			}
-			await updateAvatar(user, file.toString());
+			await updateAvatar(user, JSON.parse(file.toString()).url);
 			break;
 		}
 
@@ -104,7 +96,7 @@ export async function action({ request }: Route.ActionArgs) {
 				console.error('No file uploaded');
 				return;
 			}
-			await updateBanner(user, file.toString());
+			await updateBanner(user, JSON.parse(file.toString()).url);
 			break;
 		}
 		case 'basic': {

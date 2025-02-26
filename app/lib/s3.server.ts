@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream';
 import { S3Client } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
+import type { FileUploadHandler } from '@mjackson/form-data-parser';
 import type { MultipartPart } from '@mjackson/multipart-parser';
 import { type FileTypeResult, fileTypeFromBuffer } from 'file-type';
 import { v4 as uuidv4 } from 'uuid';
@@ -47,7 +48,7 @@ export async function uploadStreamToSpaces(
 		throw new Error('Could not upload');
 	}
 
-	await prisma.file.create({
+	const createdFile = await prisma.file.create({
 		data: {
 			id: key,
 			filename,
@@ -56,7 +57,7 @@ export async function uploadStreamToSpaces(
 			author: { connect: { sub: authorId } },
 		},
 	});
-	return res.Location;
+	return { location: res.Location, fileId: createdFile.id };
 }
 
 export const uploadFromUrl = async (authorId: string, url: string) => {
@@ -78,7 +79,45 @@ export const uploadFromUrl = async (authorId: string, url: string) => {
 	return uploadedFileLocation;
 };
 
-export const uploadHandler = (
+export const uploadFormDataHandler = (
+	authorId: string,
+	allowedContentTypes?: string[],
+) => {
+	const s3UploadHandler: FileUploadHandler = async (file: File) => {
+		const buffer = Buffer.from(await file.arrayBuffer());
+		const body = convertToStream(buffer);
+		const contentType = await fileTypeFromBuffer(buffer);
+		if (!contentType) {
+			throw new Error('Could not determine file type');
+		}
+
+		if (allowedContentTypes) {
+			let canUpload = false;
+			for (const allowedType of allowedContentTypes) {
+				if (contentType.mime === allowedType) {
+					canUpload = true;
+					break;
+				}
+			}
+
+			if (!canUpload) {
+				throw new Error('File type not allowed');
+			}
+		}
+
+		const uploadedFileLocation = await uploadStreamToSpaces(
+			authorId,
+			body,
+			file.name,
+			contentType,
+		);
+
+		return JSON.stringify(uploadedFileLocation);
+	};
+
+	return { s3UploadHandler };
+};
+export const uploadMultipartHandler = (
 	authorId: string,
 	allowedContentTypes?: string[],
 ) => {
@@ -116,14 +155,20 @@ export const uploadHandler = (
 			}
 		}
 
-		const uploadedFileLocation = await uploadStreamToSpaces(
+		const createdFile = await uploadStreamToSpaces(
 			authorId,
 			body,
 			part.filename,
 			contentType,
 		);
 
-		formData.append(part.name, uploadedFileLocation);
+		formData.append(
+			part.name,
+			JSON.stringify({
+				url: createdFile.location,
+				fileId: createdFile.fileId,
+			}),
+		);
 		return formData;
 	};
 
