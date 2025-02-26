@@ -8,13 +8,14 @@ import {
 	TbInfoCircle,
 	TbLink,
 	TbPlus,
+	TbQuote,
 	TbRepeat,
 } from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
-import { Link } from 'react-router';
+import { Form, Link } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
-import { cn } from '~/lib/utils';
+import { cn, getUserName } from '~/lib/utils';
 import { HoverUserCard } from './hover-user-card';
 import { TimeDisplay } from './meow/time';
 import { PostModal } from './post-modal';
@@ -35,6 +36,7 @@ import 'react-photo-view/dist/react-photo-view.css';
 export type IMeow = Meow & {
 	author: User;
 	reply: IMeow;
+	remeow: IMeow;
 	attachments: File[];
 };
 
@@ -111,7 +113,7 @@ const MenuItems = ({
 	isContextMenu: boolean;
 }) => {
 	const handleCopy = () => {
-		navigator.clipboard.writeText(meow.text);
+		navigator.clipboard.writeText(meow.text ?? '');
 	};
 
 	const meowUrl = `${import.meta.env.VITE_ORIGIN}/meows/${meow.id}`;
@@ -206,10 +208,26 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 	const tree = parseTextToTree(meow.text ?? '');
 
 	const { openModal, closeModal } = useModal();
+	if (meow.remeow) {
+		return (
+			<div>
+				<span className="mb-2 flex items-center gap-2 px-4 text-sky-600">
+					<Avatar className="h-8 w-8">
+						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
+						<AvatarFallback>{meow.author.name}</AvatarFallback>
+					</Avatar>
+					<TbRepeat className="mr-1" strokeWidth={3} />
+					<span>Remeow by</span>
+					<span className="font-semibold">{getUserName(meow.author)}</span>
+				</span>
+				<Render meow={meow.remeow} disableActions />
+			</div>
+		);
+	}
 
 	const content = (
 		<div className="px-4">
-			<div className="flex gap-4">
+			<div className="flex gap-2">
 				<HoverUserCard user={meow.author}>
 					<Avatar className={cn('h-15 w-15', isSmall && 'h-10 w-10')}>
 						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
@@ -265,7 +283,7 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 						) : null}
 					</div>
 					{disableActions ? null : (
-						<div className="flex gap-4 text-slate-700 ">
+						<div className="flex gap-14 text-slate-400 text-xl">
 							<TbArrowBack
 								className="cursor-pointer"
 								strokeWidth={3}
@@ -275,7 +293,30 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 									)
 								}
 							/>
-							<TbRepeat className="cursor-pointer" strokeWidth={3} />
+							<DropdownMenu>
+								<DropdownMenuTrigger>
+									<TbRepeat className="cursor-pointer" strokeWidth={3} />
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<Form action="/?index" method="POST">
+										<input type="hidden" name="intent" value="post" />
+										<input type="hidden" name="remeowId" value={meow.id} />
+										<DropdownMenuItem className="cursor-pointer">
+											<button
+												type="submit"
+												className="flex w-full items-center gap-2"
+											>
+												<TbRepeat strokeWidth={2} />
+												ReMeow
+											</button>
+										</DropdownMenuItem>
+									</Form>
+									<DropdownMenuItem className="cursor-pointer">
+										<TbQuote strokeWidth={2} />
+										Quote
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
 							<TbPlus className="cursor-pointer" strokeWidth={3} />
 							<MeowMoreMenu meow={meow}>
 								<TbDots className="cursor-pointer" strokeWidth={3} />

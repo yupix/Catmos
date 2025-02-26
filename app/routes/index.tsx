@@ -39,6 +39,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 					attachments: attachmentIncludes,
 				},
 			},
+			remeow: {
+				include: {
+					author: true,
+					attachments: attachmentIncludes,
+				},
+			},
 		},
 	});
 	return { meows };
@@ -56,9 +62,13 @@ export async function action({ request }: Route.ActionArgs) {
 							text: z.string().nonempty().optional(),
 							replyId: z.string().optional(),
 							fileId: z.array(z.string()).optional(),
+							remeowId: z.string().optional(),
 						})
 						.refine(
-							(data) => data.text || (data.fileId && data.fileId.length > 0),
+							(data) =>
+								data.remeowId ||
+								data.text ||
+								(data.fileId && data.fileId.length > 0),
 							{
 								message: 'textかfileIdのどちらかが必要です',
 								path: ['text', 'fileId'],
@@ -90,6 +100,13 @@ export async function action({ request }: Route.ActionArgs) {
 								sub: user.sub,
 							},
 						},
+						remeow: submission.value.remeowId
+							? {
+									connect: {
+										id: submission.value.remeowId,
+									},
+								}
+							: undefined,
 						attachments: {
 							connect: submission.value.fileId?.map((id) => ({
 								id,
@@ -100,6 +117,16 @@ export async function action({ request }: Route.ActionArgs) {
 						author: true,
 						attachments: true,
 						reply: {
+							include: {
+								attachments: {
+									include: {
+										author: true,
+									},
+								},
+								author: true,
+							},
+						},
+						remeow: {
 							include: {
 								attachments: {
 									include: {
