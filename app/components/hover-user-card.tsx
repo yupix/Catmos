@@ -15,10 +15,10 @@ interface HoverUserCardProps {
 export function HoverUserCard({ children, user }: HoverUserCardProps) {
 	return (
 		<HoverCard>
-			<HoverCardTrigger>{children}</HoverCardTrigger>
+			<HoverCardTrigger className="h-fit">{children}</HoverCardTrigger>
 			<Link to={user.name}>
 				<HoverCardContent className="w-80 cursor-pointer">
-					<div className="flex  space-x-4">
+					<div className="flex space-x-4">
 						<Avatar className="h-15 w-15">
 							<AvatarImage src={user.avatarUrl} />
 							<AvatarFallback>{user.name}</AvatarFallback>
