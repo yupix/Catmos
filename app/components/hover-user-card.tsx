@@ -1,6 +1,6 @@
 import type { User } from '@prisma/client';
 import { Link } from 'react-router';
-import { getUserName } from '~/lib/utils';
+import { cn, getUserName } from '~/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
 import {
 	HoverCard,
@@ -11,12 +11,19 @@ import {
 interface HoverUserCardProps {
 	children: React.ReactNode;
 	user: User;
+	className?: string;
 }
 
-export function HoverUserCard({ children, user }: HoverUserCardProps) {
+export function HoverUserCard({
+	children,
+	user,
+	className,
+}: HoverUserCardProps) {
 	return (
 		<HoverCard>
-			<HoverCardTrigger className="h-fit">{children}</HoverCardTrigger>
+			<HoverCardTrigger className={cn('h-fit', className)}>
+				{children}
+			</HoverCardTrigger>
 			<Link to={user.name}>
 				<HoverCardContent className="w-80 cursor-pointer">
 					<div className="flex space-x-4">

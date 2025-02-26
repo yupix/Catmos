@@ -92,18 +92,23 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>
 				</HoverUserCard>
-				<div className="w-full">
-					<div className="flex justify-between">
-						<HoverUserCard user={meow.author}>
+				<div className="@container w-full">
+					<div className="flex justify-between whitespace-nowrap text-nowrap">
+						<HoverUserCard
+							user={meow.author}
+							className="flex-shrink-2 overflow-hidden truncate whitespace-nowrap"
+						>
 							<div className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap">
-								<p className="max-w-40 overflow-hidden text-ellipsis whitespace-nowrap">
+								<p>
 									{meow.author.displayName || meow.author.name}{' '}
 									{meow.author.displayName ? `@${meow.author.name}` : null}
 								</p>
 							</div>
 						</HoverUserCard>
 
-						<TimeDisplay date={meow.createdAt} />
+						<div className="flex-shirnk-0">
+							<TimeDisplay date={meow.createdAt} />
+						</div>
 					</div>
 					<div className="mb-5 pt-2">
 						<div className="flex">
@@ -141,7 +146,7 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 						) : null}
 					</div>
 					{disableActions ? null : (
-						<div className="flex gap-14 text-slate-400 text-xl">
+						<div className="flex flex-wrap gap-2 text-slate-400 text-xl @min-[300px]:gap-14">
 							<TbArrowBack
 								className="cursor-pointer"
 								strokeWidth={3}
@@ -153,7 +158,10 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 							/>
 							<DropdownMenu>
 								<DropdownMenuTrigger>
-									<TbRepeat className="cursor-pointer" strokeWidth={3} />
+									<TbRepeat
+										className="shrink-0 cursor-pointer"
+										strokeWidth={3}
+									/>
 								</DropdownMenuTrigger>
 								<DropdownMenuContent>
 									<Form action="/?index" method="POST">
@@ -175,9 +183,9 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
-							<TbPlus className="cursor-pointer" strokeWidth={3} />
+							<TbPlus className="shrink-0 cursor-pointer" strokeWidth={3} />
 							<MeowMoreMenu meow={meow}>
-								<TbDots className="cursor-pointer" strokeWidth={3} />
+								<TbDots className="shrink-0 cursor-pointer" strokeWidth={3} />
 							</MeowMoreMenu>
 						</div>
 					)}
@@ -186,8 +194,6 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 		</div>
 	);
 
-	return isSmall
-		? content
-		: content;
-			// <MeowContextMenu meow={meow}>{content}</MeowContextMenu>
+	return isSmall ? content : content;
+	// <MeowContextMenu meow={meow}>{content}</MeowContextMenu>
 };
