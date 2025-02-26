@@ -27,7 +27,6 @@ export function PostModal({ replyTo, closeModal }: PostModalProps) {
 
 	const handleSubmit = () => {
 		submit(form.current, { method: 'POST' });
-		console.log(closeModal);
 		closeModal();
 	};
 
@@ -38,7 +37,7 @@ export function PostModal({ replyTo, closeModal }: PostModalProps) {
 					<ReplyTo meow={replyTo} />
 				</div>
 			)}
-			<Form action="/?index" method="POST" ref={form}>
+			<Form action="/?index" method="POST" ref={form} onSubmit={handleSubmit}>
 				<DialogHeader />
 				<input type="hidden" name="intent" value="post" />
 				<input type="hidden" name="replyId" value={replyTo?.id} />
