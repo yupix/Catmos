@@ -235,6 +235,33 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 							) : null}
 							<div className="inline-block break-all">{renderTree(tree)}</div>
 						</div>
+
+						{meow.attachments.length > 0 ? (
+							<div
+								className={cn(
+									'mt-2 block md:flex md:max-w-[80%] md:flex-wrap md:gap-2',
+									isSmall && 'max-w-[80%] md:max-w-[40%]',
+								)}
+							>
+								<PhotoProvider>
+									{meow.attachments.map((attachment) =>
+										attachment.mimetype.startsWith('image/') ? (
+											<PhotoView key={attachment.id} src={attachment.url}>
+												<img
+													src={attachment.url}
+													alt={attachment.filename}
+													className="mb-2 max-h-[300px] rounded-sm object-contain object-center md:mb-0 md:w-[calc(50%-8px)]"
+												/>
+											</PhotoView>
+										) : (
+											<div key={attachment.id}>
+												<p>{attachment.filename}</p>
+											</div>
+										),
+									)}
+								</PhotoProvider>
+							</div>
+						) : null}
 					</div>
 					{disableActions ? null : (
 						<div className="flex gap-4 text-slate-700 ">
