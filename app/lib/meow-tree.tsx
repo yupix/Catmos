@@ -1,6 +1,8 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
-
+import { TbPhotoPlus } from 'react-icons/tb';
+import { Skeleton } from '~/components/shadcn/ui/skeleton';
+import { useFileUpload } from '~/hooks/use-upload';
 interface TreeNode {
 	type: string;
 	content?: string;
@@ -128,10 +130,17 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 	const [text, setText] = useState('');
 	const [tree, setTree] = useState<TreeNode[]>([]);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const { submit, images, isUploading } = useFileUpload();
+
+	const [files, setFiles] = useState([]);
 
 	useEffect(() => {
 		if (textareaRef.current) textareaRef.current.focus();
 	}, []);
+
+	useEffect(() => {
+		setFiles((prev) => [...prev, ...images]);
+	}, [images]);
 
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		const parsedTree = parseTextToTree(e.target.value);
@@ -158,6 +167,45 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 				/>
 			</div>
 			<div className="max-w-md break-words break-all">{renderTree(tree)}</div>
+			{isUploading ? (
+				<Skeleton className="w-20 h-20" />
+			) : (
+				<div className="flex gap-2 mb-2">
+					{files.map((image) => (
+						<div key={image.fileId}>
+							{image?.fileId ? (
+								<input
+									type="text"
+									name="fileId"
+									className="hidden"
+									value={image.fileId}
+									key={image.fileId}
+								/>
+							) : null}
+							{/* 縦横維持で正方形に */}
+							<img
+								src={image.url}
+								alt="uploaded"
+								className="aspect-square h-15 object-cover rounded-lg"
+							/>
+						</div>
+					))}
+				</div>
+			)}
+			<div className="flex">
+				<label htmlFor="photo" className="cursor-pointer">
+					<TbPhotoPlus strokeWidth={3} className="text-2xl" />
+				</label>
+
+				<input
+					type="file"
+					id="photo"
+					accept="image/*"
+					className="hidden"
+					multiple
+					onChange={(event) => submit(event.target.files)}
+				/>
+			</div>
 		</>
 	);
 };
