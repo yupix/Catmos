@@ -1,5 +1,6 @@
 import type { User } from '@prisma/client';
 import { Link } from 'react-router';
+import { getUserName } from '~/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
 import {
 	HoverCard,
@@ -25,9 +26,7 @@ export function HoverUserCard({ children, user }: HoverUserCardProps) {
 						</Avatar>
 						<div className="space-y-1">
 							<h4 className="font-semibold text-sm max-w-[200px] truncate">
-								{user.displayName
-									? `${user.displayName}@${user.name}`
-									: user.name}
+								{getUserName(user, true)}
 							</h4>
 							<p className="text-sm">{/* BIO */}</p>
 							<div className="flex items-center pt-2">

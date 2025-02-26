@@ -143,9 +143,7 @@ export default function App() {
 		<SidebarProvider>
 			{data?.user ? (
 				<>
-					<AppSidebar
-						user={{ name: data.user.name, avatarUrl: data.user.avatarUrl }}
-					/>
+					<AppSidebar user={data.user} />
 					<div className="w-full">
 						<div className="sticky bottom-0 z-10 flex w-full items-center justify-between bg-slate-200/60 backdrop-blur-md px-10 py-2 md:top-0">
 							<SidebarTrigger className="-ml-1 cursor-pointer" />

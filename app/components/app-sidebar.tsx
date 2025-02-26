@@ -10,6 +10,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 } from '~/components/shadcn/ui/sidebar';
+import type { User } from '~/lib/auth/auth.server';
 import { cn } from '~/lib/utils';
 import { NavUser } from './nav-user';
 
@@ -41,10 +42,7 @@ const MENUS = [
 ];
 
 export interface AppSidebarProps {
-	user: {
-		name: string;
-		avatarUrl: string | null;
-	};
+	user: User;
 }
 
 export function AppSidebar({ user }: AppSidebarProps) {
@@ -104,12 +102,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 				})}
 			</SidebarContent>
 			<SidebarFooter>
-				<NavUser
-					user={{
-						avatarUrl: user.avatarUrl,
-						name: user.name,
-					}}
-				/>
+				<NavUser user={user} />
 			</SidebarFooter>
 		</Sidebar>
 	);

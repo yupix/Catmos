@@ -12,6 +12,7 @@ import {
 	TabsTrigger,
 } from '~/components/shadcn/ui/tabs';
 import { prisma } from '~/lib/db';
+import { getUserName } from '~/lib/utils';
 import type { Route } from './+types/$username';
 
 export async function loader({ params }: Route.LoaderArgs) {
@@ -85,7 +86,7 @@ export default function User() {
 					</Avatar>
 					{/* // 背景ぼかす */}
 					<div className="bg-black/10 px-1 text-white [text-shadow:_0_2px_4px_rgba(0,0,0,0.8)]">
-						<h1 className="text-2xl">{user.displayName}</h1>
+						<h1 className="text-2xl">{getUserName(user)}</h1>
 						<p className="text-zinc-100">@{user.name}</p>
 					</div>
 				</div>
