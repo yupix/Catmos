@@ -27,6 +27,16 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 		navigator.clipboard.writeText(meowLink);
 	};
 
+	const handleFavorite = () => {
+		submit(
+			{},
+			{
+				method: meow.isFavorited ? 'DELETE' : 'POST',
+				action: `/api/meows/${meow.id}/favorite`,
+			},
+		);
+	};
+
 	const handleDelete = () => {
 		const formData = new FormData();
 		formData.append('meowId', meow.id);
@@ -55,9 +65,9 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 					リンクをコピー
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem>
+				<DropdownMenuItem onClick={handleFavorite} className="cursor-pointer">
 					<TbHeart className="mr-2" strokeWidth={2} />
-					お気に入り
+					{meow.isFavorited ? 'お気に入りを解除' : 'お気に入り'}
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem className="text-red-400" onClick={handleDelete}>
