@@ -57,7 +57,11 @@ export async function uploadStreamToSpaces(
 			author: { connect: { sub: authorId } },
 		},
 	});
-	return { location: res.Location, fileId: createdFile.id };
+	return {
+		location: res.Location,
+		fileId: createdFile.id,
+		mime: contentType.mime,
+	};
 }
 
 export const uploadFromUrl = async (authorId: string, url: string) => {
@@ -162,13 +166,7 @@ export const uploadMultipartHandler = (
 			contentType,
 		);
 
-		formData.append(
-			part.name,
-			JSON.stringify({
-				url: createdFile.location,
-				fileId: createdFile.fileId,
-			}),
-		);
+		formData.append(part.name, JSON.stringify(createdFile));
 		return formData;
 	};
 

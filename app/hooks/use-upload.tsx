@@ -10,7 +10,7 @@ export const useFileUpload = () => {
 	const { submit, data, state, formData } = useFetcher();
 	const isUploading = state !== 'idle';
 	const [uploadedFiles, setUploadedFiles] = useState<
-		{ url: string; fileId: string }[]
+		{ url: string; fileId: string; mime: string }[]
 	>([]);
 
 	// アップロード中のファイルを取得
@@ -21,6 +21,7 @@ export const useFileUpload = () => {
 			.map((file) => ({
 				name: file.name,
 				url: URL.createObjectURL(file),
+				mime: file.type,
 			}));
 	}, [formData]);
 

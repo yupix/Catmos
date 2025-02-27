@@ -135,11 +135,15 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 													className="mb-2 max-h-[300px] rounded-sm object-contain object-center md:mb-0 md:w-[calc(50%-8px)]"
 												/>
 											</PhotoView>
-										) : (
-											<div key={attachment.id}>
-												<p>{attachment.filename}</p>
-											</div>
-										),
+										) : // videoの条件分岐を追加
+										attachment.mimetype.startsWith('video/') ? (
+											<video
+												key={attachment.id}
+												src={attachment.url}
+												controls
+												className="mb-2 max-h-[300px] rounded-sm object-contain object-center md:mb-0 md:w-[calc(50%-8px)]"
+											/>
+										) : null,
 									)}
 								</PhotoProvider>
 							</div>
