@@ -1,3 +1,4 @@
+import { AnimatePresence, motion } from 'motion/react';
 import { useLoaderData } from 'react-router';
 import { Meow } from '~/components/meow';
 import { getUserSession } from '~/lib/auth/auth.server';
@@ -28,18 +29,34 @@ export default function Index() {
 	const { favorites } = useLoaderData<typeof loader>();
 	return (
 		<div className="inset-shadow-black/10 inset-shadow-sm mt-4 rounded-2xl p-5">
-			{favorites?.map((favorite, i) => (
-				<div
-					key={favorite.meow.id}
-					className={cn(
-						'my-6 border-b pb-6',
-						i === favorites.length - 1 && 'my-0 border-none pb-0',
-					)}
-				>
-					<Meow meow={favorite.meow} />
+			<AnimatePresence>
+				{favorites?.map((favorite, i) => (
+					<motion.div
+						className={cn(
+							'my-6 border-b pb-6',
+							i === favorites.length - 1 && 'my-0 border-none pb-0',
+						)}
+						key={favorite.meow.id}
+						layout
+						initial={{ opacity: 0, y: -20, scale: 0.9 }}
+						animate={{ opacity: 1, y: 0, scale: 1 }}
+						exit={{ opacity: 0, y: -20, scale: 0.9 }}
+						transition={{ duration: 0.4, ease: 'easeOut' }}
+					>
+						<Meow meow={favorite.meow} />
+					</motion.div>
+				))}
+			</AnimatePresence>
+			{favorites?.length === 0 && (
+				<div className="flex flex-col items-center justify-center">
+					<img
+						src="/mihoyo/no_favorites.webp"
+						alt="no favorites"
+						className="mb-4 mb-4w-fit rounded-4xl border-2 h-50 w-50"
+					/>
+					<p>お気に入りはまだありません。</p>
 				</div>
-			))}
-			{favorites?.length === 0 && <p>No favorites found.</p>}
+			)}
 		</div>
 	);
 }
