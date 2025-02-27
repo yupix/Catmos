@@ -2,9 +2,9 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
 import SuperJSON from 'superjson';
+import type { IMeow } from '~/lib/const.server';
 import { socket } from '~/lib/socket.client';
-import { cn } from '~/lib/utils';
-import { type IMeow, Meow } from './meow';
+import { Meow } from './meow';
 
 interface TimelineProps {
 	initMeows: IMeow[];
@@ -93,7 +93,7 @@ export function Client({ initMeows }: TimelineProps) {
 				<AnimatePresence>
 					{meows.map((meow) => (
 						<motion.div
-							className={cn('my-6 border-b pb-6')}
+							className="my-6 border-b pb-6"
 							key={meow.id}
 							layout
 							initial={{ opacity: 0, y: -20, scale: 0.9 }}

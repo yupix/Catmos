@@ -1,5 +1,12 @@
 import { useMemo } from 'react';
-import { TbCopy, TbHeart, TbInfoCircle, TbLink, TbTrash } from 'react-icons/tb';
+import {
+	TbCopy,
+	TbHeart,
+	TbHeartOff,
+	TbInfoCircle,
+	TbLink,
+	TbTrash,
+} from 'react-icons/tb';
 import { Link, useFetcher } from 'react-router';
 import type { IMeow } from '~/lib/const.server';
 import {
@@ -67,8 +74,17 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={handleFavorite} className="cursor-pointer">
-					<TbHeart className="mr-2" strokeWidth={2} />
-					{isFavorited ? 'お気に入りを解除' : 'お気に入り'}
+					{isFavorited ? (
+						<>
+							<TbHeartOff className="mr-2" strokeWidth={2} />
+							お気に入り解除
+						</>
+					) : (
+						<>
+							<TbHeart className="mr-2" strokeWidth={2} />
+							お気に入り
+						</>
+					)}
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem className="text-red-400" onClick={handleDelete}>
