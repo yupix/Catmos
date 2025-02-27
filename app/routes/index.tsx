@@ -1,5 +1,4 @@
 import { parseWithZod } from '@conform-to/zod';
-import type { Prisma } from '@prisma/client';
 import { useLoaderData } from 'react-router';
 import superjson from 'superjson';
 import { z } from 'zod';
@@ -7,6 +6,7 @@ import {} from '~/components/shadcn/ui/avatar';
 import Timeline from '~/components/timeline';
 import type { User } from '~/lib/auth/auth.server';
 import { getSession } from '~/lib/auth/session.server';
+import { MeowIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
 import { parseTextToTree } from '~/lib/meow-tree';
 import { redisPublisher } from '~/lib/redis.server';
@@ -20,38 +20,26 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export async function loader({ request }: Route.LoaderArgs) {
-	const attachmentIncludes: Prisma.FileDefaultArgs = {
-		include: {
-			author: true,
-			Folder: true,
-		},
-	};
+	const user = await getSession<User>(request);
+
 	const meows = await prisma.meow.findMany({
 		orderBy: {
 			createdAt: 'desc',
 		},
-		include: {
-			attachments: attachmentIncludes,
-			author: true,
-			reply: {
-				include: {
-					author: true,
-					attachments: attachmentIncludes,
-				},
-			},
-			remeow: {
-				include: {
-					author: true,
-					attachments: attachmentIncludes,
-				},
-			},
-		},
+		include: MeowIncludes(user),
 	});
-	return { meows };
+
+	// isFavoritedフラグを追加
+	const meowsWithFavorites = meows.map((meow) => ({
+		...meow,
+		isFavorited: meow.favorites.length > 0,
+	}));
+
+	return { meows: meowsWithFavorites };
 }
 
 export async function action({ request }: Route.ActionArgs) {
-	const user = await getSession<User>(request);
+	const me = await getSession<User>(request);
 	if (request.method === 'POST') {
 		const formData = await request.formData();
 		switch (formData.get('intent')) {
@@ -97,7 +85,7 @@ export async function action({ request }: Route.ActionArgs) {
 							: undefined,
 						author: {
 							connect: {
-								sub: user.sub,
+								id: me.id,
 							},
 						},
 						remeow: submission.value.remeowId
@@ -113,30 +101,7 @@ export async function action({ request }: Route.ActionArgs) {
 							})),
 						},
 					},
-					include: {
-						author: true,
-						attachments: true,
-						reply: {
-							include: {
-								attachments: {
-									include: {
-										author: true,
-									},
-								},
-								author: true,
-							},
-						},
-						remeow: {
-							include: {
-								attachments: {
-									include: {
-										author: true,
-									},
-								},
-								author: true,
-							},
-						},
-					},
+					include: MeowIncludes(me),
 				});
 
 				const mentionedUsers = await prisma.user.findMany({
@@ -160,27 +125,10 @@ export async function action({ request }: Route.ActionArgs) {
 						include: {
 							user: true,
 							meow: {
-								include: {
-									author: true,
-									attachments: true,
-									reply: {
-										include: {
-											author: true,
-											attachments: true,
-										},
-									},
-									remeow: {
-										include: {
-											author: true,
-											attachments: true,
-										},
-									},
-								},
+								include: MeowIncludes(me),
 							},
 						},
 					});
-
-					console.log(createdNotification);
 
 					await redisPublisher.publish(
 						'notification',
@@ -198,11 +146,7 @@ export async function action({ request }: Route.ActionArgs) {
 						include: {
 							user: true,
 							meow: {
-								include: {
-									author: true,
-									attachments: true,
-									reply: true,
-								},
+								include: MeowIncludes(me),
 							},
 						},
 					});

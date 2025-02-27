@@ -1,6 +1,7 @@
 import { useLoaderData } from 'react-router';
 import { Notification } from '~/components/notification';
 import { getUserSession } from '~/lib/auth/auth.server';
+import { MeowIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
 import type { Route } from './+types';
 
@@ -24,22 +25,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		include: {
 			user: true,
 			meow: {
-				include: {
-					author: true,
-					attachments: true,
-					reply: {
-						include: {
-							author: true,
-							attachments: true,
-						},
-					},
-					remeow: {
-						include: {
-							author: true,
-							attachments: true,
-						},
-					},
-				},
+				include: MeowIncludes(user),
 			},
 		},
 	});

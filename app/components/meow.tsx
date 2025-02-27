@@ -1,4 +1,4 @@
-import type { Meow, User } from '@prisma/client';
+import type {} from '@prisma/client';
 import { TbArrowBack, TbDots, TbPlus, TbQuote, TbRepeat } from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { Form } from 'react-router';
@@ -17,15 +17,9 @@ import {
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
-import type { File as FileModel } from '@prisma/client';
+import type { IMeow } from '~/lib/const.server';
 import { FileViewer } from './file-viewer';
 import { MeowMoreMenu } from './meow/more-menu';
-export type IMeow = Meow & {
-	author: User;
-	reply: IMeow;
-	remeow: IMeow;
-	attachments: FileModel[];
-};
 
 export type MeowProps = {
 	meow: IMeow;
