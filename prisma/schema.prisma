@@ -71,10 +71,10 @@ model Meow {
   createdAt   DateTime @default(now()) @map("created_at")
   attachments File[]
   // 1:1でreplyとremeowを持つ
-  replyId     String?  @unique @map("reply_id")
+  replyId     String?  @map("reply_id")
   reply       Meow?    @relation("ReplyToMeow", fields: [replyId], references: [id])
 
-  remeowId String? @unique @map("remeow_id")
+  remeowId String? @map("remeow_id")
   remeow   Meow?   @relation("RemeowToMeow", fields: [remeowId], references: [id])
 
   replies      Meow[]         @relation("ReplyToMeow")
