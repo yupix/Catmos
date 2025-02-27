@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { TbCopy, TbHeart, TbInfoCircle, TbLink, TbTrash } from 'react-icons/tb';
 import { Link, useFetcher } from 'react-router';
-import type { IMeow } from '../meow';
+import type { IMeow } from '~/lib/const.server';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -26,12 +26,13 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 	const handleLinkCopy = () => {
 		navigator.clipboard.writeText(meowLink);
 	};
+	const isFavorited = meow.favorites?.length > 0;
 
 	const handleFavorite = () => {
 		submit(
 			{},
 			{
-				method: meow.isFavorited ? 'DELETE' : 'POST',
+				method: isFavorited ? 'DELETE' : 'POST',
 				action: `/api/meows/${meow.id}/favorite`,
 			},
 		);
@@ -67,7 +68,7 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 				<DropdownMenuSeparator />
 				<DropdownMenuItem onClick={handleFavorite} className="cursor-pointer">
 					<TbHeart className="mr-2" strokeWidth={2} />
-					{meow.isFavorited ? 'お気に入りを解除' : 'お気に入り'}
+					{isFavorited ? 'お気に入りを解除' : 'お気に入り'}
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem className="text-red-400" onClick={handleDelete}>

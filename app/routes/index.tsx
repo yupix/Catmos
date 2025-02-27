@@ -29,13 +29,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		include: MeowIncludes(user),
 	});
 
-	// isFavoritedフラグを追加
-	const meowsWithFavorites = meows.map((meow) => ({
-		...meow,
-		isFavorited: meow.favorites.length > 0,
-	}));
-
-	return { meows: meowsWithFavorites };
+	return { meows: meows };
 }
 
 export async function action({ request }: Route.ActionArgs) {

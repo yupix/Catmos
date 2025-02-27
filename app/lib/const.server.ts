@@ -43,10 +43,3 @@ export const MeowIncludes = (user: User) =>
 export type IMeow = Prisma.MeowGetPayload<{
 	include: ReturnType<typeof MeowIncludes>;
 }>;
-
-/**
- * 詳細なMeowの型定義
- */
-export type IMeowDetailed = IMeow & {
-	isFavorited: boolean;
-};
