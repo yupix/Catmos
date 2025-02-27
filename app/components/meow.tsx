@@ -42,7 +42,7 @@ export function Meow(props: MeowProps) {
 				<div className="">
 					<Render
 						meow={props.meow.reply}
-						size={props.size}
+						size={'sm'}
 						disableActions
 						hideDate={props.hideDate}
 					/>
@@ -101,7 +101,13 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 		<div className="px-4">
 			<div className="flex gap-2">
 				<HoverUserCard user={meow.author}>
-					<Avatar className={cn('h-15 w-15', isSmall && 'h-8 w-8')}>
+					<Avatar
+						className={cn(
+							'h-15 w-15',
+							size === 'sm' && 'h-10 w-10',
+							size === 'xs' && 'h-8 w-8',
+						)}
+					>
 						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>
