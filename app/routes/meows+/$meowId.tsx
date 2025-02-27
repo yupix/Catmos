@@ -17,8 +17,19 @@ export async function loader({ params }: Route.LoaderArgs) {
 					author: true,
 				},
 			},
+			remeow: {
+				include: {
+					attachments: true,
+					author: true,
+				},
+			},
 		},
 	});
+
+	if (!meow) {
+		throw new Response('Not Found', { status: 404 });
+	}
+
 	return { meow };
 }
 

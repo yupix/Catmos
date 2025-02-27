@@ -77,6 +77,18 @@ export async function loader({ request }: Route.LoaderArgs) {
 				include: {
 					author: true,
 					attachments: true,
+					reply: {
+						include: {
+							author: true,
+							attachments: true,
+						},
+					},
+					remeow: {
+						include: {
+							author: true,
+							attachments: true,
+						},
+					},
 				},
 			},
 			user: true,
@@ -151,12 +163,12 @@ export default function App() {
 						</div>
 
 						<div className="block md:flex md:flex-grow">
-							<div className="max-h-screen w-full w-[80%] overflow-y-scroll">
+							<div className="max-h-screen w-full w-[75%] overflow-y-scroll">
 								<div className="max-w-full md:max-w-[80%] mx-auto">
 									<Outlet />
 								</div>
 							</div>
-							<div id="sidebar" className="w-[20%] md:col-span-3">
+							<div id="sidebar" className="w-[25%] md:col-span-3">
 								<Sidebar notifications={data.notifications || []} />
 							</div>
 						</div>

@@ -150,6 +150,44 @@ export async function action({ request }: Route.ActionArgs) {
 					},
 				});
 
+				if (createdMeow.remeowId && createdMeow.remeow) {
+					const createdNotification = await prisma.notification.create({
+						data: {
+							type: 'remeow',
+							userId: createdMeow.remeow.author.id,
+							meowId: createdMeow.id,
+						},
+						include: {
+							user: true,
+							meow: {
+								include: {
+									author: true,
+									attachments: true,
+									reply: {
+										include: {
+											author: true,
+											attachments: true,
+										},
+									},
+									remeow: {
+										include: {
+											author: true,
+											attachments: true,
+										},
+									},
+								},
+							},
+						},
+					});
+
+					console.log(createdNotification);
+
+					await redisPublisher.publish(
+						'notification',
+						superjson.stringify(createdNotification),
+					);
+				}
+
 				for (const user of mentionedUsers) {
 					const createdNotification = await prisma.notification.create({
 						data: {

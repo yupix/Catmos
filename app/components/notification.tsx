@@ -1,4 +1,8 @@
-import type { Meow as MeowModel, User } from '@prisma/client';
+import type {
+	File as FileModel,
+	Meow as MeowModel,
+	User,
+} from '@prisma/client';
 import { TbBell } from 'react-icons/tb';
 import { Meow } from './meow';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
@@ -12,6 +16,15 @@ export interface INotification {
 	type: 'reaction' | 'reply' | 'mention' | 'remeow';
 	meow?: MeowModel & {
 		author: User;
+		attachments: FileModel[];
+		reply: MeowModel & {
+			attachments: FileModel[];
+			author: User;
+		};
+		remeow: MeowModel & {
+			attachments: FileModel[];
+			author: User;
+		};
 	};
 	user: User;
 	createdAt: Date;
@@ -33,7 +46,7 @@ export function Notification({ notification }: NotificationProps) {
 		<>
 			{notification.meow ? (
 				<div>
-					<Meow meow={notification.meow} isSmall />
+					<Meow meow={notification.meow} size="xs" />
 				</div>
 			) : (
 				<div className="mb-2 flex w-full items-center gap-2 p-2">

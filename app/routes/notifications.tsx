@@ -33,6 +33,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 							attachments: true,
 						},
 					},
+					remeow: {
+						include: {
+							author: true,
+							attachments: true,
+						},
+					},
 				},
 			},
 		},
