@@ -55,6 +55,8 @@ erDiagram
     "User" o{--}o "File" : "files"
     "User" o{--}o "Folder" : "folders"
     "User" o{--}o "Notification" : "Notification"
+    "User" o{--}o "User" : "following"
+    "User" o{--}o "User" : "followers"
     "Folder" o|--|| "User" : "author"
     "Folder" o{--}o "File" : "files"
     "Folder" o|--|o "Folder" : "parent"

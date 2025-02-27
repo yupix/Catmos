@@ -31,6 +31,8 @@ model User {
   files        File[]
   folders      Folder[]
   Notification Notification[]
+  following    User[]         @relation("UserToUser")
+  followers    User[]         @relation("UserToUser")
 }
 
 model Folder {
