@@ -5,7 +5,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	try {
 		const user = await getUserSession(request);
 		if (user) {
-			throw redirect('/auth/test');
+			throw redirect('/');
 		}
 	} catch (e) {
 		if (e instanceof Response) {
