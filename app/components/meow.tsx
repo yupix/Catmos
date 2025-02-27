@@ -1,4 +1,4 @@
-import type { File, Meow, User } from '@prisma/client';
+import type { Meow, User } from '@prisma/client';
 import { TbArrowBack, TbDots, TbPlus, TbQuote, TbRepeat } from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { Form } from 'react-router';
@@ -17,19 +17,22 @@ import {
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
+import type { File as FileModel } from '@prisma/client';
+import { FileViewer } from './file-viewer';
 import { MeowMoreMenu } from './meow/more-menu';
 export type IMeow = Meow & {
 	author: User;
 	reply: IMeow;
 	remeow: IMeow;
-	attachments: File[];
+	attachments: FileModel[];
 };
 
 export type MeowProps = {
 	meow: IMeow;
+	hideDate?: boolean;
 	disableActions?: boolean;
 	type?: 'normal' | 'reply';
-	isSmall?: boolean;
+	size?: 'xs' | 'sm' | 'md';
 };
 
 /**
@@ -43,12 +46,19 @@ export function Meow(props: MeowProps) {
 		return (
 			<div className="flex flex-col">
 				<div className="">
-					<Render meow={props.meow.reply} isSmall disableActions />
+					<Render
+						meow={props.meow.reply}
+						size={props.size}
+						disableActions
+						hideDate={props.hideDate}
+					/>
 				</div>
 				<Render
 					meow={props.meow}
 					disableActions={props.disableActions}
 					type={props.meow.replyId !== null ? 'reply' : undefined}
+					size={props.size}
+					hideDate={props.hideDate}
 				/>
 			</div>
 		);
@@ -62,23 +72,33 @@ export function Meow(props: MeowProps) {
  * @param {MeowProps} props - Meowコンポーネントのプロパティ
  * @returns {JSX.Element} Renderコンポーネント
  */
-const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
+const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 	const tree = parseTextToTree(meow.text ?? '');
+	const isSmall = size === 'xs' || size === 'sm';
 
 	const { openModal, closeModal } = useModal();
 	if (meow.remeow) {
 		return (
 			<div>
-				<span className="mb-2 flex items-center gap-2 px-4 text-sky-600">
-					<Avatar className="h-8 w-8">
-						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
-						<AvatarFallback>{meow.author.name}</AvatarFallback>
-					</Avatar>
-					<TbRepeat className="mr-1" strokeWidth={3} />
-					<span>Remeow by</span>
-					<span className="font-semibold">{getUserName(meow.author)}</span>
+				<span className="mb-2 flex items-center justify-between gap-2 overflow-hidden whitespace-nowrap text-nowrap px-4">
+					<div className="flex shrink-99999 items-center gap-2 overflow-hidden whitespace-nowrap text-nowrap text-sky-600">
+						<Avatar className="h-8 w-8">
+							<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
+							<AvatarFallback>{meow.author.name}</AvatarFallback>
+						</Avatar>
+						<TbRepeat className="mr-1" strokeWidth={3} />
+						<div className="flex gap-2 dw">
+							<span className="shrink-0">Remeow by</span>
+							<span className="shrink-99999 truncate font-semibold">
+								{getUserName(meow.author)}
+							</span>
+						</div>
+					</div>
+					<div className="flex-shirnk-0">
+						<TimeDisplay date={meow.createdAt} />
+					</div>
 				</span>
-				<Render meow={meow.remeow} disableActions />
+				<Render meow={meow.remeow} size={size} hideDate />
 			</div>
 		);
 	}
@@ -87,16 +107,18 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 		<div className="px-4">
 			<div className="flex gap-2">
 				<HoverUserCard user={meow.author}>
-					<Avatar className={cn('h-15 w-15', isSmall && 'h-10 w-10')}>
+					<Avatar className={cn('h-15 w-15', isSmall && 'h-8 w-8')}>
 						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>
 				</HoverUserCard>
-				<div className="@container w-full">
+				<div
+					className={cn('@container w-full', size === 'xs' && 'text-[13px]')}
+				>
 					<div className="flex justify-between whitespace-nowrap text-nowrap">
 						<HoverUserCard
 							user={meow.author}
-							className="flex-shrink-2 overflow-hidden truncate whitespace-nowrap"
+							className="flex-shrink-2 overflow-hidden truncate whitespace-nowrap font-semibold"
 						>
 							<div className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap">
 								<p>
@@ -106,9 +128,11 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 							</div>
 						</HoverUserCard>
 
-						<div className="flex-shirnk-0">
-							<TimeDisplay date={meow.createdAt} />
-						</div>
+						{hideDate ? null : (
+							<div className="flex-shirnk-0">
+								<TimeDisplay date={meow.createdAt} />
+							</div>
+						)}
 					</div>
 					<div className="mb-5 pt-2">
 						<div className="flex">
@@ -119,38 +143,30 @@ const Render = ({ meow, disableActions, type, isSmall }: MeowProps) => {
 						</div>
 
 						{meow.attachments.length > 0 ? (
-							<div
-								className={cn(
-									'mt-2 block md:flex md:max-w-[80%] md:flex-wrap md:gap-2',
-									isSmall && 'max-w-[80%] md:max-w-[40%]',
-								)}
-							>
-								<PhotoProvider>
-									{meow.attachments.map((attachment) =>
-										attachment.mimetype.startsWith('image/') ? (
-											<PhotoView key={attachment.id} src={attachment.url}>
-												<img
-													src={attachment.url}
-													alt={attachment.filename}
-													className="mb-2 max-h-[300px] rounded-sm object-contain object-center md:mb-0 md:w-[calc(50%-8px)]"
-												/>
-											</PhotoView>
-										) : // videoの条件分岐を追加
-										attachment.mimetype.startsWith('video/') ? (
-											<video
-												key={attachment.id}
-												src={attachment.url}
-												controls
-												className="mb-2 max-h-[300px] rounded-sm object-contain object-center md:mb-0 md:w-[calc(50%-8px)]"
-											/>
-										) : null,
+							<div className="@container">
+								<div
+									className={cn(
+										'mt-2 flex flex-wrap @max-[300px]:flex-col  md:gap-2',
+										isSmall && '@min-[500px]:max-w-[40%]',
 									)}
-								</PhotoProvider>
+								>
+									<PhotoProvider>
+										{meow.attachments.map((attachment) =>
+											attachment.mimetype.startsWith('image/') ? (
+												<PhotoView key={attachment.id} src={attachment.url}>
+													<FileViewer file={attachment} />
+												</PhotoView>
+											) : attachment.mimetype.startsWith('video/') ? (
+												<FileViewer key={attachment.id} file={attachment} />
+											) : null,
+										)}
+									</PhotoProvider>
+								</div>
 							</div>
 						) : null}
 					</div>
 					{disableActions ? null : (
-						<div className="flex flex-wrap gap-2 text-slate-400 text-xl @min-[300px]:gap-14">
+						<div className="flex flex-wrap @min-[300px]:gap-14 gap-2 text-slate-400 text-xl">
 							<TbArrowBack
 								className="cursor-pointer"
 								strokeWidth={3}
