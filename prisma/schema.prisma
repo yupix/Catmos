@@ -33,6 +33,7 @@ model User {
   Notification Notification[]
   following    User[]         @relation("UserToUser")
   followers    User[]         @relation("UserToUser")
+  favorites    Favorite[]
 }
 
 model Folder {
@@ -58,7 +59,7 @@ model File {
   createdAt DateTime @default(now()) @map("created_at")
   meow      Meow?    @relation(fields: [meowId], references: [id])
   meowId    String?  @map("meow_id")
-  Folder    Folder?  @relation(fields: [folderId], references: [id])
+  folder    Folder?  @relation(fields: [folderId], references: [id])
   folderId  String?
 }
 
@@ -79,7 +80,20 @@ model Meow {
 
   replies      Meow[]         @relation("ReplyToMeow")
   remeows      Meow[]         @relation("RemeowToMeow")
-  Notification Notification[]
+  notification Notification[]
+  favorites    Favorite[]
+}
+
+// お気に入り
+model Favorite {
+  id        String   @id @default(uuid())
+  meowId    String   @map("meow_id")
+  meow      Meow     @relation(fields: [meowId], references: [id])
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([meowId, userId], name: "unique_meow_user")
 }
 
 // 通知

@@ -1,7 +1,14 @@
 import { useMemo } from 'react';
-import { TbCopy, TbHeart, TbInfoCircle, TbLink, TbTrash } from 'react-icons/tb';
+import {
+	TbCopy,
+	TbHeart,
+	TbHeartOff,
+	TbInfoCircle,
+	TbLink,
+	TbTrash,
+} from 'react-icons/tb';
 import { Link, useFetcher } from 'react-router';
-import type { IMeow } from '../meow';
+import type { IMeow } from '~/lib/const.server';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -25,6 +32,17 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 
 	const handleLinkCopy = () => {
 		navigator.clipboard.writeText(meowLink);
+	};
+	const isFavorited = meow.favorites?.length > 0;
+
+	const handleFavorite = () => {
+		submit(
+			{},
+			{
+				method: isFavorited ? 'DELETE' : 'POST',
+				action: `/api/meows/${meow.id}/favorite`,
+			},
+		);
 	};
 
 	const handleDelete = () => {
@@ -55,9 +73,18 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 					リンクをコピー
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
-				<DropdownMenuItem>
-					<TbHeart className="mr-2" strokeWidth={2} />
-					お気に入り
+				<DropdownMenuItem onClick={handleFavorite} className="cursor-pointer">
+					{isFavorited ? (
+						<>
+							<TbHeartOff className="mr-2" strokeWidth={2} />
+							お気に入り解除
+						</>
+					) : (
+						<>
+							<TbHeart className="mr-2" strokeWidth={2} />
+							お気に入り
+						</>
+					)}
 				</DropdownMenuItem>
 				<DropdownMenuSeparator />
 				<DropdownMenuItem className="text-red-400" onClick={handleDelete}>

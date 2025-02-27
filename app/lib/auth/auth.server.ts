@@ -5,10 +5,11 @@ import { prisma } from '../db';
 import { env } from '../env.server';
 import { clearSession, getSession, setSession } from './session.server';
 export interface User extends OIDCStrategy.BaseUser {
+	id: string;
 	name: string;
 	displayName: string | null;
-	avatarUrl?: string;
-	bannerUrl?: string;
+	avatarUrl?: string | null;
+	bannerUrl?: string | null;
 }
 
 interface Profile {
@@ -61,6 +62,7 @@ const strategy = await OIDCStrategy.init<User>(
 
 		let foundUser = await prisma.user.findFirst({
 			select: {
+				id: true,
 				name: true,
 				displayName: true,
 				avatarUrl: true,
@@ -82,7 +84,7 @@ const strategy = await OIDCStrategy.init<User>(
 
 			console.log(profile, env.OIDC_USERINFO_ENDPOINT, tokens.access_token);
 
-			await prisma.user.create({
+			const createdUser = await prisma.user.create({
 				data: {
 					sub,
 					name: profile.name,
@@ -92,6 +94,7 @@ const strategy = await OIDCStrategy.init<User>(
 			});
 
 			foundUser = {
+				id: createdUser.id,
 				name: profile.name,
 				displayName: profile.preferred_username,
 				avatarUrl: profile.picture,

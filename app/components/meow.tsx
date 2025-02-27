@@ -1,4 +1,4 @@
-import type { Meow, User } from '@prisma/client';
+import type {} from '@prisma/client';
 import { TbArrowBack, TbDots, TbPlus, TbQuote, TbRepeat } from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { Form } from 'react-router';
@@ -17,15 +17,9 @@ import {
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
-import type { File as FileModel } from '@prisma/client';
+import type { IMeow } from '~/lib/const.server';
 import { FileViewer } from './file-viewer';
 import { MeowMoreMenu } from './meow/more-menu';
-export type IMeow = Meow & {
-	author: User;
-	reply: IMeow;
-	remeow: IMeow;
-	attachments: FileModel[];
-};
 
 export type MeowProps = {
 	meow: IMeow;
@@ -48,7 +42,7 @@ export function Meow(props: MeowProps) {
 				<div className="">
 					<Render
 						meow={props.meow.reply}
-						size={props.size}
+						size={'sm'}
 						disableActions
 						hideDate={props.hideDate}
 					/>
@@ -107,7 +101,13 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 		<div className="px-4">
 			<div className="flex gap-2">
 				<HoverUserCard user={meow.author}>
-					<Avatar className={cn('h-15 w-15', isSmall && 'h-8 w-8')}>
+					<Avatar
+						className={cn(
+							'h-15 w-15',
+							size === 'sm' && 'h-10 w-10',
+							size === 'xs' && 'h-8 w-8',
+						)}
+					>
 						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>

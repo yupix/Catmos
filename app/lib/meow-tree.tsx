@@ -15,13 +15,13 @@ interface TreeNode {
  * @returns {TreeNode[]} 解析されたツリーノードの配列
  */
 const parseContentToTree = (content: string): TreeNode[] => {
-	const mentionRegex = /@(\p{L}+)/gu;
+	const mentionRegex = /@([a-zA-Z0-9]+)(?=\s|$)/g;
 	const linkRegex = /(https?:\/\/[^\s]+)/g;
 	const boldRegex = /\*\*(.*?)\*\*/g;
 	const italicRegex = /\*(.*?)\*/g;
 
 	const parts = content.split(
-		/(@\p{L}+|https?:\/\/[^\s]+|\*\*.*?\*\*|\*.*?\*)/gu,
+		/(@[a-zA-Z0-9]+|https?:\/\/[^\s]+|\*\*.*?\*\*|\*.*?\*)/g,
 	);
 
 	return parts.map((part) => {
@@ -138,7 +138,9 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const { submit, uploadedFiles, isUploading } = useFileUpload();
 
-	const [files, setFiles] = useState<{ fileId: string; url: string }[]>([]);
+	const [files, setFiles] = useState<
+		{ fileId: string; url: string; mime: string }[]
+	>([]);
 
 	useEffect(() => {
 		if (textareaRef.current) textareaRef.current.focus();
@@ -188,12 +190,19 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 									key={image.fileId}
 								/>
 							) : null}
-							{/* 縦横維持で正方形に */}
-							<img
-								src={image.url}
-								alt="uploaded"
-								className="aspect-square h-15 rounded-lg object-cover"
-							/>
+							{image.mime.startsWith('image/') ? (
+								<img
+									src={image.url}
+									alt="uploaded"
+									className="aspect-square h-15 rounded-lg object-cover"
+								/>
+							) : image.mime.startsWith('video/') ? (
+								<video
+									src={image.url}
+									controls
+									className="aspect-square h-15 rounded-lg"
+								/>
+							) : null}
 						</div>
 					))}
 				</div>
@@ -206,7 +215,7 @@ const MeowTree = ({ handleSubmit }: MeowTreeProps): JSX.Element => {
 				<input
 					type="file"
 					id="photo"
-					accept="image/*"
+					accept="image/*, video/*"
 					className="hidden"
 					multiple
 					onChange={(event) => submit(event.target.files)}
