@@ -1,4 +1,4 @@
-import { TbBell, TbCloud, TbHome, TbSettings } from 'react-icons/tb';
+import { TbBell, TbCloud, TbHeart, TbHome, TbSettings } from 'react-icons/tb';
 import { Link, useLocation } from 'react-router';
 import {
 	Sidebar,
@@ -30,6 +30,11 @@ const MENUS = [
 			to: '/drives',
 			icon: TbCloud,
 			text: 'ドライブ',
+		},
+		{
+			to: '/favorites',
+			icon: TbHeart,
+			text: 'お気に入り',
 		},
 	],
 	[
@@ -86,7 +91,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 														)}
 													>
 														<Link to={menu.to}>
-															<Icon strokeWidth={3} size={100} />
+															<Icon strokeWidth={3} />
 															{menu.text}
 														</Link>
 													</SidebarMenuButton>
