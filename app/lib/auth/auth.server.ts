@@ -82,8 +82,6 @@ const strategy = await OIDCStrategy.init<User>(
 
 			const profile: Profile = await profileResponse.json();
 
-			console.log(profile, env.OIDC_USERINFO_ENDPOINT, tokens.access_token);
-
 			const createdUser = await prisma.user.create({
 				data: {
 					sub,

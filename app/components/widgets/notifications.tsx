@@ -59,7 +59,6 @@ function Clint({ notifications }: NotificationProps) {
 		};
 
 		const handleMessage = (_notification: string) => {
-			console.log(_notification);
 			const audio = new Audio('/bell.mp3');
 			audio.play();
 			const notification = SuperJSON.parse<INotification>(_notification);
