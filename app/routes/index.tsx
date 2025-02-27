@@ -35,11 +35,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 			},
 		},
 	});
+
 	const meows = await prisma.meow.findMany({
 		where: {
 			author: {
 				id: {
-					in: following.map((user) => user.id),
+					in: [...following.map((user) => user.id), user.id],
 				},
 			},
 		},
