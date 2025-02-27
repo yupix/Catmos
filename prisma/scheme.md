@@ -42,6 +42,14 @@ erDiagram
     }
   
 
+  "Favorite" {
+    String id "🗝️"
+    String meow_id 
+    String user_id 
+    DateTime created_at 
+    }
+  
+
   "Notification" {
     String id "🗝️"
     Boolean is_read 
@@ -57,20 +65,24 @@ erDiagram
     "User" o{--}o "Notification" : "Notification"
     "User" o{--}o "User" : "following"
     "User" o{--}o "User" : "followers"
+    "User" o{--}o "Favorite" : "favorites"
     "Folder" o|--|| "User" : "author"
     "Folder" o{--}o "File" : "files"
     "Folder" o|--|o "Folder" : "parent"
     "Folder" o{--}o "Folder" : "children"
     "File" o|--|| "User" : "author"
     "File" o|--|o "Meow" : "meow"
-    "File" o|--|o "Folder" : "Folder"
+    "File" o|--|o "Folder" : "folder"
     "Meow" o|--|| "User" : "author"
     "Meow" o{--}o "File" : "attachments"
     "Meow" o|--|o "Meow" : "reply"
     "Meow" o|--|o "Meow" : "remeow"
     "Meow" o{--}o "Meow" : "replies"
     "Meow" o{--}o "Meow" : "remeows"
-    "Meow" o{--}o "Notification" : "Notification"
+    "Meow" o{--}o "Notification" : "notification"
+    "Meow" o{--}o "Favorite" : "favorites"
+    "Favorite" o|--|| "Meow" : "meow"
+    "Favorite" o|--|| "User" : "user"
     "Notification" o|--|o "Meow" : "meow"
     "Notification" o|--|| "User" : "user"
 ```
