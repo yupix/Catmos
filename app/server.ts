@@ -2,6 +2,8 @@ import { createHonoServer } from 'react-router-hono-server/node';
 import { Server } from 'socket.io';
 import SuperJSON from 'superjson';
 import { honoSideGetSession } from './lib/auth/session.server';
+import type { IMeow } from './lib/const.server';
+import { prisma } from './lib/db';
 import { redis, redisSubscriber } from './lib/redis.server';
 
 console.log('loading server');
@@ -50,12 +52,34 @@ export default await createHonoServer({
 
 		redisSubscriber.on('message', async (channel, message) => {
 			switch (channel) {
-				case 'meow':
-					io.emit('meow', message);
+				case 'meow': {
+					const followers = await prisma.user.findFirst({
+						where: { id: SuperJSON.parse<IMeow>(message).authorId },
+						select: {
+							followers: {
+								select: {
+									id: true,
+								},
+							},
+						},
+					});
+
+					if (!followers) {
+						break;
+					}
+
+					for (const follower of followers.followers) {
+						const socketId = await redis.get(`socket:${follower.id}`);
+						if (!socketId) {
+							continue;
+						}
+						io.to(socketId).emit('meow', message);
+					}
 					break;
+				}
 				case 'notification': {
 					const data = SuperJSON.parse(message);
-					const socketId = await redis.get(`socket:${data.user.sub}`);
+					const socketId = await redis.get(`socket:${data.user.id}`);
 					if (!socketId) {
 						break;
 					}
@@ -69,12 +93,12 @@ export default await createHonoServer({
 
 		io.on('connection', async (socket) => {
 			console.log('New connection 🔥', socket.id);
-			await redis.set(`socket:${socket.data.user.sub}`, socket.id);
+			await redis.set(`socket:${socket.data.user.id}`, socket.id);
 
 			socket.on('disconnect', async (reason) => {
 				// called when the underlying connection is closed
 				console.log('Connection closed');
-				await redis.del(`socket:${socket.data.user.sub}`);
+				await redis.del(`socket:${socket.data.user.id}`);
 			});
 
 			socket.on('message', (message) => {
