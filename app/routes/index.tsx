@@ -26,7 +26,23 @@ export async function loader({ request }: Route.LoaderArgs) {
 		return { meows: [] };
 	}
 
+	const following = await prisma.user.findMany({
+		where: {
+			followers: {
+				some: {
+					id: user.id,
+				},
+			},
+		},
+	});
 	const meows = await prisma.meow.findMany({
+		where: {
+			author: {
+				id: {
+					in: following.map((user) => user.id),
+				},
+			},
+		},
 		orderBy: {
 			createdAt: 'desc',
 		},
