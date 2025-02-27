@@ -22,6 +22,10 @@ export function meta({}: Route.MetaArgs) {
 export async function loader({ request }: Route.LoaderArgs) {
 	const user = await getSession<User>(request);
 
+	if (!user) {
+		return { meows: [] };
+	}
+
 	const meows = await prisma.meow.findMany({
 		orderBy: {
 			createdAt: 'desc',
