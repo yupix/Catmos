@@ -79,7 +79,11 @@ export async function action({ request }: Route.ActionArgs) {
 	for (const [key, value] of formData.entries()) {
 		console.log(key, value);
 	}
-	const file = formData.get('file');
+	const file = JSON.parse(formData.get('file')?.toString() || '') as {
+		location: string;
+		fileId: string;
+		mime: string;
+	};
 
 	switch (intent) {
 		case 'avatar': {
@@ -87,7 +91,7 @@ export async function action({ request }: Route.ActionArgs) {
 				console.error('No file uploaded');
 				return;
 			}
-			await updateAvatar(user, JSON.parse(file.toString()).url);
+			await updateAvatar(user, file.location);
 			break;
 		}
 
@@ -96,7 +100,7 @@ export async function action({ request }: Route.ActionArgs) {
 				console.error('No file uploaded');
 				return;
 			}
-			await updateBanner(user, JSON.parse(file.toString()).url);
+			await updateBanner(user, file.location);
 			break;
 		}
 		case 'basic': {
