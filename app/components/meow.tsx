@@ -1,15 +1,14 @@
-import type {} from '@prisma/client';
 import { TbArrowBack, TbDots, TbPlus, TbQuote, TbRepeat } from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { Form } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
+import type { IMeow } from '~/lib/const.server';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
 import { cn, getUserName } from '~/lib/utils';
 import { HoverUserCard } from './hover-user-card';
 import { TimeDisplay } from './meow/time';
 import { PostModal } from './post-modal';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
-import {} from './shadcn/ui/context-menu';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -17,7 +16,6 @@ import {
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
-import type { IMeow } from '~/lib/const.server';
 import { FileViewer } from './file-viewer';
 import { MeowMoreMenu } from './meow/more-menu';
 
@@ -75,13 +73,13 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 		return (
 			<div>
 				<span className="mb-2 flex items-center justify-between gap-2 overflow-hidden whitespace-nowrap text-nowrap px-4">
-					<div className="flex shrink-99999 items-center gap-2 overflow-hidden whitespace-nowrap text-nowrap text-sky-600">
+					<div className="flex shrink-[9999] items-center gap-2 overflow-hidden whitespace-nowrap text-nowrap text-sky-600">
 						<Avatar className="h-8 w-8">
 							<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
 							<AvatarFallback>{meow.author.name}</AvatarFallback>
 						</Avatar>
 						<TbRepeat className="mr-1" strokeWidth={3} />
-						<div className="flex gap-2 dw">
+						<div className="flex gap-2">
 							<span className="shrink-0">Remeow by</span>
 							<span className="shrink-99999 truncate font-semibold">
 								{getUserName(meow.author)}
@@ -113,13 +111,10 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 					</Avatar>
 				</HoverUserCard>
 				<div className={cn('w-full', size === 'xs' && 'text-[13px]')}>
-					<div className="flex justify-between whitespace-nowrap text-nowrap">
-						<HoverUserCard
-							user={meow.author}
-							className="@container-normal flex-shrink-2 overflow-hidden truncate whitespace-nowrap font-semibold"
-						>
-							<div className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap">
-								<p>
+					<div className="flex max-w-full justify-between">
+						<HoverUserCard user={meow.author} className="overflow-hidden">
+							<div className="text-ellipsis whitespace-nowrap">
+								<p className="truncate">
 									{meow.author.displayName || meow.author.name}{' '}
 									{meow.author.displayName ? `@${meow.author.name}` : null}
 								</p>
@@ -127,7 +122,7 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 						</HoverUserCard>
 
 						{hideDate ? null : (
-							<div className="flex-shirnk-0">
+							<div className="shrink-0">
 								<TimeDisplay date={meow.createdAt} />
 							</div>
 						)}
@@ -163,8 +158,8 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 							</div>
 						) : null}
 					</div>
-					{disableActions ? null : (
-						<div className="@container ">
+					<div className="@container w-full">
+						{disableActions ? null : (
 							<div className="flex flex-wrap @min-[300px]:gap-14 gap-2 text-slate-400 text-xl">
 								<TbArrowBack
 									className="cursor-pointer"
@@ -207,8 +202,8 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 									<TbDots className="shrink-0 cursor-pointer" strokeWidth={3} />
 								</MeowMoreMenu>
 							</div>
-						</div>
-					)}
+						)}
+					</div>
 				</div>
 			</div>
 		</div>
