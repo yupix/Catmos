@@ -7,8 +7,9 @@ import {
 	TbLink,
 	TbTrash,
 } from 'react-icons/tb';
-import { Link, useFetcher } from 'react-router';
+import { Link, useFetcher, useMatches } from 'react-router';
 import type { IMeow } from '~/lib/const.server';
+import type { Route } from '../../+types/root';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -24,6 +25,8 @@ interface MeowMoreMenuProps {
 
 export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 	const meowLink = useMemo(() => `/meows/${meow.id}`, [meow.id]);
+	const { user: me } = (useMatches() as Route.ComponentProps['matches'])[0]
+		.data;
 	const { submit } = useFetcher();
 
 	const handleTextCopy = () => {
@@ -86,11 +89,15 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 						</>
 					)}
 				</DropdownMenuItem>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem className="text-red-400" onClick={handleDelete}>
-					<TbTrash className="mr-2 text-red-400" strokeWidth={2} />
-					削除
-				</DropdownMenuItem>
+				{me.id === meow.authorId && (
+					<>
+						<DropdownMenuSeparator />
+						<DropdownMenuItem className="text-red-400" onClick={handleDelete}>
+							<TbTrash className="mr-2 text-red-400" strokeWidth={2} />
+							削除
+						</DropdownMenuItem>
+					</>
+				)}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
