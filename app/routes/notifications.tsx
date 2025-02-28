@@ -1,7 +1,7 @@
 import { useLoaderData } from 'react-router';
 import { Notification } from '~/components/notification';
 import { getUserSession } from '~/lib/auth/auth.server';
-import { MeowIncludes } from '~/lib/const.server';
+import { MeowIncludes, UserCardIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
 import type { Route } from './+types';
 
@@ -23,7 +23,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 			createdAt: 'desc',
 		},
 		include: {
-			user: true,
+			user: { include: UserCardIncludes },
 			meow: {
 				include: MeowIncludes(user),
 			},

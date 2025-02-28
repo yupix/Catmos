@@ -16,20 +16,37 @@ const favoriteIncludes = (userId: string) =>
 		},
 	}) as const satisfies Prisma.MeowInclude['favorites'];
 
+export const UserCardIncludes = {
+	followers: {
+		select: {
+			id: true,
+		},
+	},
+	_count: {
+		select: {
+			following: true,
+			followers: true,
+			meows: true,
+		},
+	},
+} as const satisfies Prisma.UserInclude;
+
 export const MeowIncludes = (user: User) =>
 	({
 		attachments: { include: attachmentIncludes },
-		author: true,
+		author: { include: UserCardIncludes },
 		reply: {
 			include: {
-				author: true,
+				author: {
+					include: UserCardIncludes,
+				},
 				attachments: { include: attachmentIncludes },
 				favorites: favoriteIncludes(user.id),
 			},
 		},
 		remeow: {
 			include: {
-				author: true,
+				author: { include: UserCardIncludes },
 				attachments: { include: attachmentIncludes },
 				favorites: favoriteIncludes(user.id),
 			},
@@ -42,4 +59,8 @@ export const MeowIncludes = (user: User) =>
  */
 export type IMeow = Prisma.MeowGetPayload<{
 	include: ReturnType<typeof MeowIncludes>;
+}>;
+
+export type IUserCard = Prisma.UserGetPayload<{
+	include: typeof UserCardIncludes;
 }>;

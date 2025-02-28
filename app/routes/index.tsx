@@ -2,11 +2,12 @@ import { parseWithZod } from '@conform-to/zod';
 import { useLoaderData } from 'react-router';
 import superjson from 'superjson';
 import { z } from 'zod';
+import { MainLayout } from '~/components/layouts/main-layout';
 import {} from '~/components/shadcn/ui/avatar';
 import Timeline from '~/components/timeline';
 import type { User } from '~/lib/auth/auth.server';
 import { getSession } from '~/lib/auth/session.server';
-import { MeowIncludes } from '~/lib/const.server';
+import { MeowIncludes, UserCardIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
 import { parseTextToTree } from '~/lib/meow-tree';
 import { redisPublisher } from '~/lib/redis.server';
@@ -138,7 +139,7 @@ export async function action({ request }: Route.ActionArgs) {
 							meowId: createdMeow.id,
 						},
 						include: {
-							user: true,
+							user: { include: UserCardIncludes },
 							meow: {
 								include: MeowIncludes(me),
 							},
@@ -159,7 +160,7 @@ export async function action({ request }: Route.ActionArgs) {
 							meowId: createdMeow.id,
 						},
 						include: {
-							user: true,
+							user: { include: UserCardIncludes },
 							meow: {
 								include: MeowIncludes(me),
 							},
@@ -182,8 +183,8 @@ export default function Home() {
 	const { meows } = useLoaderData<typeof loader>();
 
 	return (
-		<div className=" w-full p-5">
+		<MainLayout>
 			<Timeline initMeows={meows} />
-		</div>
+		</MainLayout>
 	);
 }

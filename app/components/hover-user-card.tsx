@@ -1,7 +1,9 @@
 import type { User } from '@prisma/client';
-import { Link } from 'react-router';
-import { cn, getUserName } from '~/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
+import { Link, useMatches } from 'react-router';
+import { cn } from '~/lib/utils';
+import type { Route } from '../+types/root';
+import { ProfileCard } from './profile-card';
+import {} from './shadcn/ui/avatar';
 import {
 	HoverCard,
 	HoverCardContent,
@@ -19,31 +21,17 @@ export function HoverUserCard({
 	user,
 	className,
 }: HoverUserCardProps) {
+	const routes = useMatches() as Route.ComponentProps['matches'];
+	const me = routes[0].data.user;
+
 	return (
 		<HoverCard>
 			<HoverCardTrigger className={cn('h-fit', className)}>
 				{children}
 			</HoverCardTrigger>
 			<Link to={user.name}>
-				<HoverCardContent className="w-80 cursor-pointer">
-					<div className="flex space-x-4">
-						<Avatar className="h-15 w-15">
-							<AvatarImage src={user.avatarUrl} />
-							<AvatarFallback>{user.name}</AvatarFallback>
-						</Avatar>
-						<div className="space-y-1">
-							<h4 className="font-semibold text-sm max-w-[200px] truncate">
-								{getUserName(user, true)}
-							</h4>
-							<p className="text-sm">{/* BIO */}</p>
-							<div className="flex items-center pt-2">
-								{/* <CalendarDays className="mr-2 h-4 w-4 opacity-70" />{' '} */}
-								<span className="text-xs text-muted-foreground">
-									Joined December {user.createdAt.getFullYear()}
-								</span>
-							</div>
-						</div>
-					</div>
+				<HoverCardContent className="w-80 cursor-pointer p-0 m-0">
+					<ProfileCard user={user} me={me} />
 				</HoverCardContent>
 			</Link>
 		</HoverCard>

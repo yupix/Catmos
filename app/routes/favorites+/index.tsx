@@ -28,7 +28,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function Index() {
 	const { favorites } = useLoaderData<typeof loader>();
 	return (
-		<div className="inset-shadow-black/10 inset-shadow-sm mt-4 rounded-2xl p-5">
+		<>
 			<AnimatePresence>
 				{favorites?.map((favorite, i) => (
 					<motion.div
@@ -57,6 +57,6 @@ export default function Index() {
 					<p>お気に入りはまだありません。</p>
 				</div>
 			)}
-		</div>
+		</>
 	);
 }

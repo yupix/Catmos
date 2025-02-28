@@ -11,11 +11,7 @@ interface TimelineProps {
 }
 
 export default function Timeline({ initMeows }: TimelineProps) {
-	return (
-		<div className="inset-shadow-black/10 inset-shadow-sm rounded-2xl p-5">
-			<ClientOnly>{() => <Client initMeows={initMeows} />}</ClientOnly>
-		</div>
-	);
+	return <ClientOnly>{() => <Client initMeows={initMeows} />}</ClientOnly>;
 }
 
 export function Client({ initMeows }: TimelineProps) {

@@ -26,6 +26,7 @@ import { Sidebar } from './components/sidebar';
 import { ModalProvider, useModal } from './hooks/use-modal';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
+import { UserCardIncludes } from './lib/const.server';
 import { prisma } from './lib/db';
 import Welcome from './routes/welcome';
 
@@ -91,7 +92,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 					},
 				},
 			},
-			user: true,
+			user: { include: UserCardIncludes },
 		},
 		orderBy: {
 			createdAt: 'desc',
@@ -163,8 +164,8 @@ export default function App() {
 						</div>
 
 						<div className="block md:flex md:flex-grow">
-							<div className="max-h-screen w-full w-[75%] overflow-y-scroll">
-								<div className="max-w-full md:max-w-[80%] mx-auto">
+							<div className="max-h-screen w-[75%] w-full overflow-y-scroll">
+								<div className="mx-auto max-w-full md:max-w-[80%]">
 									<Outlet />
 								</div>
 							</div>
