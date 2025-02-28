@@ -1,5 +1,6 @@
 import { parseWithZod } from '@conform-to/zod';
 import { Form, data, redirect, useLoaderData } from 'react-router';
+import { redirectWithSuccess } from 'remix-toast';
 import { z } from 'zod';
 import { FileUpload } from '~/components/fileupload';
 import {
@@ -18,14 +19,19 @@ import { cn } from '~/lib/utils';
 import type { Route } from '../+types';
 export async function loader({ request }: Route.LoaderArgs) {
 	const user = await getUserSession(request);
-	if (!user) {
+	const me = await prisma.user.findFirst({
+		where: {
+			sub: user?.sub,
+		},
+	});
+	if (!user || !me) {
 		throw {
 			status: 401,
 		};
 	}
 
 	return {
-		user,
+		me,
 	};
 }
 
@@ -79,11 +85,18 @@ export async function action({ request }: Route.ActionArgs) {
 	for (const [key, value] of formData.entries()) {
 		console.log(key, value);
 	}
-	const file = JSON.parse(formData.get('file')?.toString() || '') as {
-		location: string;
-		fileId: string;
-		mime: string;
-	};
+
+	let file;
+
+	if (formData.get('file')) {
+		file = JSON.parse(formData.get('file')?.toString() || '') as {
+			location: string;
+			fileId: string;
+			mime: string;
+		};
+	} else {
+		file = undefined;
+	}
 
 	switch (intent) {
 		case 'avatar': {
@@ -105,8 +118,9 @@ export async function action({ request }: Route.ActionArgs) {
 		}
 		case 'basic': {
 			const schema = z.object({
-				username: z.string(),
+				username: z.string().optional(),
 				'display-name': z.string().optional(),
+				bio: z.string().optional(),
 			});
 
 			const submission = parseWithZod(formData, {
@@ -118,21 +132,22 @@ export async function action({ request }: Route.ActionArgs) {
 			}
 
 			const { username, 'display-name': displayName } = submission.value;
-			await prisma.user.update({
+			const updatedUser = await prisma.user.update({
 				where: {
 					sub: user.sub,
 				},
 				data: {
 					name: username,
 					displayName: displayName,
+					bio: submission.value.bio,
 				},
 			});
 
-			user.name = username;
-			user.displayName = displayName ?? null;
+			user.name = updatedUser.name;
+			user.displayName = updatedUser.displayName;
 			const headers = await setSession(request, user); // Cookieを更新
 
-			throw redirect('/settings/profile', {
+			throw await redirectWithSuccess('/settings/profile', 'Saved', {
 				headers: headers,
 			});
 		}
@@ -142,7 +157,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Index() {
-	const { user } = useLoaderData<typeof loader>();
+	const { me: user } = useLoaderData<typeof loader>();
 	return (
 		<>
 			<div className="inset-shadow-black/20 inset-shadow-sm mx-auto  rounded-3xl bg-slate-50 pb-5 mb-5">
@@ -200,6 +215,16 @@ export default function Index() {
 						id="display-name"
 						name="display-name"
 						defaultValue={user.displayName ?? ''}
+					/>
+				</div>
+				<div className="mb-4 grid w-full max-w-sm items-center gap-1.5">
+					<Label htmlFor="bio">自己紹介</Label>
+					<textarea
+						name="bio"
+						defaultValue={user.bio ?? ''}
+						placeholder="Tell us about yourself..."
+						rows={4}
+						className="w-full resize-none rounded border p-2"
 					/>
 				</div>
 				<Button type="submit">保存</Button>
