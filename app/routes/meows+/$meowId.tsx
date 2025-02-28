@@ -1,5 +1,6 @@
 import { useLoaderData } from 'react-router';
 import { Meow } from '~/components/meow';
+import { UserCardIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
 import type { Route } from './+types/$meowId';
 
@@ -10,17 +11,17 @@ export async function loader({ params }: Route.LoaderArgs) {
 		},
 		include: {
 			attachments: true,
-			author: true,
+			author: { include: UserCardIncludes },
 			reply: {
 				include: {
 					attachments: true,
-					author: true,
+					author: { include: UserCardIncludes },
 				},
 			},
 			remeow: {
 				include: {
 					attachments: true,
-					author: true,
+					author: { include: UserCardIncludes },
 				},
 			},
 		},

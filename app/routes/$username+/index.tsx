@@ -14,6 +14,7 @@ import {
 	TabsList,
 	TabsTrigger,
 } from '~/components/shadcn/ui/tabs';
+import { parseTextToTree, renderTree } from '~/lib/meow-tree';
 import { getUserName } from '~/lib/utils';
 import type { Route } from './+types';
 
@@ -115,6 +116,7 @@ export default function User() {
 							</p>
 						</Link>
 					</div>
+					<p className="py-2">{renderTree(parseTextToTree(user.bio ?? ''))}</p>
 				</div>
 			</div>
 			<div>

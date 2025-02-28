@@ -48,16 +48,16 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 		include: {
 			attachments: {
 				include: {
-					author: true,
+					author: { include: UserCardIncludes },
 				},
 			},
-			author: true,
+			author: { include: UserCardIncludes },
 			reply: {
 				include: {
-					author: true,
+					author: { include: UserCardIncludes },
 					attachments: {
 						include: {
-							author: true,
+							author: { include: UserCardIncludes },
 						},
 					},
 				},

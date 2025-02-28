@@ -76,17 +76,17 @@ export async function loader({ request }: Route.LoaderArgs) {
 		include: {
 			meow: {
 				include: {
-					author: true,
+					author: { include: UserCardIncludes },
 					attachments: true,
 					reply: {
 						include: {
-							author: true,
+							author: { include: UserCardIncludes },
 							attachments: true,
 						},
 					},
 					remeow: {
 						include: {
-							author: true,
+							author: { include: UserCardIncludes },
 							attachments: true,
 						},
 					},
