@@ -112,13 +112,11 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>
 				</HoverUserCard>
-				<div
-					className={cn('@container w-full', size === 'xs' && 'text-[13px]')}
-				>
+				<div className={cn('w-full', size === 'xs' && 'text-[13px]')}>
 					<div className="flex justify-between whitespace-nowrap text-nowrap">
 						<HoverUserCard
 							user={meow.author}
-							className="flex-shrink-2 overflow-hidden truncate whitespace-nowrap font-semibold"
+							className="@container-normal flex-shrink-2 overflow-hidden truncate whitespace-nowrap font-semibold"
 						>
 							<div className="flex items-center overflow-hidden text-ellipsis whitespace-nowrap">
 								<p>
@@ -166,47 +164,49 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 						) : null}
 					</div>
 					{disableActions ? null : (
-						<div className="flex flex-wrap @min-[300px]:gap-14 gap-2 text-slate-400 text-xl">
-							<TbArrowBack
-								className="cursor-pointer"
-								strokeWidth={3}
-								onClick={() =>
-									openModal(
-										<PostModal replyTo={meow} closeModal={closeModal} />,
-									)
-								}
-							/>
-							<DropdownMenu>
-								<DropdownMenuTrigger>
-									<TbRepeat
-										className="shrink-0 cursor-pointer"
-										strokeWidth={3}
-									/>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent>
-									<Form action="/?index" method="POST">
-										<input type="hidden" name="intent" value="post" />
-										<input type="hidden" name="remeowId" value={meow.id} />
+						<div className="@container ">
+							<div className="flex flex-wrap @min-[300px]:gap-14 gap-2 text-slate-400 text-xl">
+								<TbArrowBack
+									className="cursor-pointer"
+									strokeWidth={3}
+									onClick={() =>
+										openModal(
+											<PostModal replyTo={meow} closeModal={closeModal} />,
+										)
+									}
+								/>
+								<DropdownMenu>
+									<DropdownMenuTrigger>
+										<TbRepeat
+											className="shrink-0 cursor-pointer"
+											strokeWidth={3}
+										/>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<Form action="/?index" method="POST">
+											<input type="hidden" name="intent" value="post" />
+											<input type="hidden" name="remeowId" value={meow.id} />
+											<DropdownMenuItem className="cursor-pointer">
+												<button
+													type="submit"
+													className="flex w-full items-center gap-2"
+												>
+													<TbRepeat strokeWidth={2} />
+													ReMeow
+												</button>
+											</DropdownMenuItem>
+										</Form>
 										<DropdownMenuItem className="cursor-pointer">
-											<button
-												type="submit"
-												className="flex w-full items-center gap-2"
-											>
-												<TbRepeat strokeWidth={2} />
-												ReMeow
-											</button>
+											<TbQuote strokeWidth={2} />
+											Quote
 										</DropdownMenuItem>
-									</Form>
-									<DropdownMenuItem className="cursor-pointer">
-										<TbQuote strokeWidth={2} />
-										Quote
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-							<TbPlus className="shrink-0 cursor-pointer" strokeWidth={3} />
-							<MeowMoreMenu meow={meow}>
-								<TbDots className="shrink-0 cursor-pointer" strokeWidth={3} />
-							</MeowMoreMenu>
+									</DropdownMenuContent>
+								</DropdownMenu>
+								<TbPlus className="shrink-0 cursor-pointer" strokeWidth={3} />
+								<MeowMoreMenu meow={meow}>
+									<TbDots className="shrink-0 cursor-pointer" strokeWidth={3} />
+								</MeowMoreMenu>
+							</div>
 						</div>
 					)}
 				</div>
