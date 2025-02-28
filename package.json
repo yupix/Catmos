@@ -58,6 +58,7 @@
 		"react-router-hono-server": "^2.8.5",
 		"remix-auth": "^4.1.0",
 		"remix-auth-openid": "^0.3.0",
+		"remix-toast": "^2.0.0",
 		"remix-utils": "^8.1.0",
 		"socket.io": "^4.8.1",
 		"socket.io-client": "^4.8.1",

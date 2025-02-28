@@ -125,6 +125,9 @@ importers:
       remix-auth-openid:
         specifier: ^0.3.0
         version: 0.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)(remix-auth@4.1.0)
+      remix-toast:
+        specifier: ^2.0.0
+        version: 2.0.0(react-router@7.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
       remix-utils:
         specifier: ^8.1.0
         version: 8.1.0(react-router@7.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@3.24.2)
@@ -4781,6 +4784,11 @@ packages:
     peerDependenciesMeta:
       react-router:
         optional: true
+
+  remix-toast@2.0.0:
+    resolution: {integrity: sha512-kLIiOKjR9syUxkXrqT/OtcYQ9PuuyYIiGhjzCGgplIHIq/JEdq6ff9TcDDlpSD3VvydOsIe4U5ZCGK00FCdXmw==}
+    peerDependencies:
+      react-router: '>=7.0.0'
 
   remix-utils@8.1.0:
     resolution: {integrity: sha512-k44K4FOPyMv6QQ+yaQrCrXdnzkKE1b86ZUODAK5fvmWsmi7ntZAAA+Ods+nzNAxFEAPDTreCzl7cGWnxWd6ibw==}
@@ -10803,6 +10811,11 @@ snapshots:
       minimatch: 10.0.1
     optionalDependencies:
       react-router: 7.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+
+  remix-toast@2.0.0(react-router@7.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)):
+    dependencies:
+      react-router: 7.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      zod: 3.24.2
 
   remix-utils@8.1.0(react-router@7.1.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)(zod@3.24.2):
     dependencies:
