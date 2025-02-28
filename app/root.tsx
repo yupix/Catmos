@@ -5,15 +5,18 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	data,
 	isRouteErrorResponse,
 	useLoaderData,
 } from 'react-router';
+import { getToast } from 'remix-toast';
 
 import type { Route } from './+types/root';
 import './app.css';
 import { motion } from 'motion/react';
 import { useEffect } from 'react';
 import { TbPencil } from 'react-icons/tb';
+import { toast } from 'sonner';
 import { AppSidebar } from './components/app-sidebar';
 import { PostModal } from './components/post-modal';
 import { Button } from './components/shadcn/ui/button';
@@ -62,9 +65,10 @@ export const links: Route.LinksFunction = () => [
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const user = await getSession<User>(request);
+	const { toast, headers } = await getToast(request);
 
 	if (!user) {
-		return { user: null };
+		return data({ user: null, toast }, { headers });
 	}
 
 	const notifications = await prisma.notification.findMany({
@@ -99,7 +103,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		},
 	});
 
-	return { user, notifications };
+	return data({ user, notifications, toast }, { headers });
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -151,6 +155,25 @@ function Modal() {
 
 export default function App() {
 	const data = useLoaderData<typeof loader>();
+	useEffect(() => {
+		if (data.toast) {
+			// Call your toast function here
+			switch (data.toast.type) {
+				case 'success':
+					toast.success(data.toast.message);
+					break;
+				case 'error':
+					toast.error(data.toast.message);
+					break;
+				case 'warning':
+					toast.warning(data.toast.message);
+					break;
+				case 'info':
+					toast.info(data.toast.message);
+					break;
+			}
+		}
+	}, [data.toast]);
 
 	return (
 		<SidebarProvider>
