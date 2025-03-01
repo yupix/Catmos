@@ -78,7 +78,7 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 							<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
 							<AvatarFallback>{meow.author.name}</AvatarFallback>
 						</Avatar>
-						<TbRepeat className="mr-1" strokeWidth={3} />
+						<TbRepeat className="mr-1 shrink-0" strokeWidth={3} />
 						<div className="flex gap-2">
 							<span className="shrink-0">Remeow by</span>
 							<span className="shrink-99999 truncate font-semibold">
@@ -86,7 +86,7 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 							</span>
 						</div>
 					</div>
-					<div className="flex-shirnk-0">
+					<div className="shirnk-0">
 						<TimeDisplay date={meow.createdAt} />
 					</div>
 				</span>
@@ -110,15 +110,19 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 						<AvatarFallback>{meow.author.name}</AvatarFallback>
 					</Avatar>
 				</HoverUserCard>
-				<div className={cn('w-full', size === 'xs' && 'text-[13px]')}>
-					<div className="flex max-w-full justify-between">
-						<HoverUserCard user={meow.author} className="overflow-hidden">
-							<div className="text-ellipsis whitespace-nowrap">
-								<p className="truncate">
-									{meow.author.displayName || meow.author.name}{' '}
-									{meow.author.displayName ? `@${meow.author.name}` : null}
-								</p>
-							</div>
+				<div
+					className={cn(
+						'w-full overflow-hidden',
+						size === 'xs' && 'text-[13px]',
+					)}
+				>
+					<div className="flex justify-between">
+						<HoverUserCard
+							user={meow.author}
+							className="shrink-999999 overflow-hidden overflow-ellipsis whitespace-nowrap"
+						>
+							{meow.author.displayName || meow.author.name}
+							{meow.author.displayName ? `@${meow.author.name}` : null}
 						</HoverUserCard>
 
 						{hideDate ? null : (
