@@ -143,7 +143,7 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 							<div className="@container">
 								<div
 									className={cn(
-										'mt-2 flex flex-wrap @max-[300px]:flex-col  md:gap-2',
+										'mt-2 flex @max-[300px]:flex-col flex-wrap gap-2',
 										isSmall && '@min-[500px]:max-w-[40%]',
 									)}
 								>

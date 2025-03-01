@@ -19,14 +19,18 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function Index() {
 	const { files } = useLoaderData<typeof loader>();
 	return (
-		<div className="@container grid grid-cols-1 gap-8 md:grid-cols-12">
+		<div className=" flex flex-wrap justify-center gap-8 bg-slate-50">
 			{files.map((file) => (
 				<div
 					key={file.id}
-					className="@min-[300px]:col-span-4 col-span-12 mb-2 flex flex-col items-center gap-2"
+					className="@container mb-2 flex w-full max-w-28 shrink-0 flex-col items-center gap-2 rounded-xl p-4 transition-all duration-75 hover:bg-slate-100"
 				>
-					<FileViewer file={file} />
-					<p className="break-all">{file.filename}</p>
+					<FileViewer
+						file={file}
+						className="aspect-square shrink-0 bg-white"
+						isCompact
+					/>
+					<p className="break-all text-gray-500 text-xs">{file.filename}</p>
 				</div>
 			))}
 		</div>
