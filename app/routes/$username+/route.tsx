@@ -23,12 +23,6 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 	const foundUser = await prisma.user.findFirst({
 		where: {
 			name: username,
-			meows: {
-				// repliesが無いものだけ取得
-				some: {
-					replyId: null,
-				},
-			},
 		},
 		include: UserCardIncludes,
 	});
