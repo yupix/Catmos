@@ -1,4 +1,6 @@
+import { AnimatePresence, motion } from 'motion/react';
 import { useLoaderData } from 'react-router';
+import { MainLayout } from '~/components/layouts/main-layout';
 import { Notification } from '~/components/notification';
 import { getUserSession } from '~/lib/auth/auth.server';
 import { MeowIncludes, UserCardIncludes } from '~/lib/const.server';
@@ -40,11 +42,24 @@ export default function Notifications() {
 
 	return (
 		<div>
-			{notifications.map((notification) => (
-				<div key={notification.id}>
-					<Notification notification={notification} />
-				</div>
-			))}
+			<MainLayout>
+				<AnimatePresence>
+					{notifications.map((notification) => (
+						<motion.div
+							className="my-6 border-b pb-6"
+							key={notification.id}
+							layout
+							initial={{ opacity: 0, y: -20, scale: 0.9 }}
+							animate={{ opacity: 1, y: 0, scale: 1 }}
+							exit={{ opacity: 0, y: -20, scale: 0.9 }}
+							transition={{ duration: 0.4, ease: 'easeOut' }}
+						>
+							{' '}
+							<Notification notification={notification} />
+						</motion.div>
+					))}
+				</AnimatePresence>
+			</MainLayout>
 		</div>
 	);
 }
