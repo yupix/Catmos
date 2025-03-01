@@ -187,11 +187,7 @@ export default function App() {
 						</div>
 
 						<div className="block md:flex md:flex-grow">
-							<div className="max-h-screen w-[75%] w-full overflow-y-scroll">
-								<div className="mx-auto max-w-full md:max-w-[80%]">
-									<Outlet />
-								</div>
-							</div>
+							<Outlet />
 							<div id="sidebar" className="w-[25%] md:col-span-3">
 								<Sidebar notifications={data.notifications || []} />
 							</div>

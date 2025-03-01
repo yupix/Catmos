@@ -1,4 +1,5 @@
 import { Outlet, redirect } from 'react-router';
+import { MainLayout } from '~/components/layouts/main-layout';
 import type { Route } from '../+types';
 
 export function loader({ request }: Route.LoaderArgs) {
@@ -13,8 +14,8 @@ export function loader({ request }: Route.LoaderArgs) {
 
 export default function Layout() {
 	return (
-		<div>
+		<MainLayout>
 			<Outlet />
-		</div>
+		</MainLayout>
 	);
 }
