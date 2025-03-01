@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { ClientOnly } from 'remix-utils/client-only';
 import SuperJSON from 'superjson';
+import { useScrollPosition } from '~/hooks/use-scroll';
 import type { IMeow } from '~/lib/const.server';
 import { socket } from '~/lib/socket.client';
 import { Meow } from './meow';
@@ -19,13 +20,25 @@ export function Client({ initMeows }: TimelineProps) {
 	const [newMeows, setNewMeows] = useState<IMeow[]>([]);
 	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [isAtTop, setIsAtTop] = useState(true);
+	const { scrollHeight, scrollTop, ref } = useScrollPosition();
+
+	useEffect(() => {
+		console.log(scrollHeight, scrollTop);
+		const isTop = scrollTop === 0;
+		setIsAtTop(isTop);
+		console.log(isTop, newMeows);
+		if (isTop && newMeows.length > 0) {
+			setMeows((prev) => [...newMeows, ...prev]);
+			setNewMeows([]);
+		}
+	}, [scrollHeight, scrollTop, newMeows]);
 
 	useEffect(() => {
 		setMeows(initMeows);
 	}, [initMeows]);
 
 	const handleScrollToTop = () => {
-		window.scrollTo({ top: 0, behavior: 'smooth' });
+		ref.current?.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
 	useEffect(() => {
@@ -42,6 +55,7 @@ export function Client({ initMeows }: TimelineProps) {
 			const audio = new Audio('/notification.mp3');
 			audio.play();
 			const meow = SuperJSON.parse<IMeow>(_meow);
+			console.log('新着', isAtTop);
 			if (isAtTop) {
 				setMeows((prev) => [meow, ...prev]);
 			} else {
@@ -53,22 +67,10 @@ export function Client({ initMeows }: TimelineProps) {
 		socket.on('disconnect', handleDisconnect);
 		socket.on('meow', handleMessage);
 
-		const handleScroll = () => {
-			const atTop = window.scrollY === 0;
-			setIsAtTop(atTop);
-			if (atTop && newMeows.length > 0) {
-				setMeows((prev) => [...newMeows, ...prev]);
-				setNewMeows([]);
-			}
-		};
-
-		window.addEventListener('scroll', handleScroll);
-
 		return () => {
 			socket.off('connect', handleConnect);
 			socket.off('disconnect', handleDisconnect);
 			socket.off('meow', handleMessage);
-			window.removeEventListener('scroll', handleScroll);
 		};
 	}, [isAtTop, newMeows]);
 
