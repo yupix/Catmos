@@ -10,11 +10,14 @@ export function TimeDisplay({ date }: TimeDisplayProps) {
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {
-			setCurrentDate(getDateTimeString(date));
+			const newCurrentDate = getDateTimeString(date);
+			if (newCurrentDate.text !== currentDate.text) {
+				setCurrentDate(newCurrentDate);
+			}
 		}, 1000);
 
 		return () => clearInterval(intervalId);
-	}, [date]);
+	}, [date, currentDate]);
 
 	return (
 		<time
