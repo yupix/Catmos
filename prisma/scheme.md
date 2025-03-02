@@ -1,6 +1,17 @@
 ```mermaid
 erDiagram
 
+  "CustomEmoji" {
+    String id "🗝️"
+    String name 
+    String aliases 
+    String category 
+    String url 
+    DateTime created_at 
+    DateTime updated_at 
+    }
+  
+
   "User" {
     String id "🗝️"
     String sub 
@@ -60,6 +71,7 @@ erDiagram
     DateTime created_at 
     }
   
+    "CustomEmoji" o|--|o "File" : "File"
     "User" o{--}o "Meow" : "meows"
     "User" o{--}o "File" : "files"
     "User" o{--}o "Folder" : "folders"
@@ -74,6 +86,7 @@ erDiagram
     "File" o|--|| "User" : "author"
     "File" o|--|o "Meow" : "meow"
     "File" o|--|o "Folder" : "folder"
+    "File" o{--}o "CustomEmoji" : "CustomEmoji"
     "Meow" o|--|| "User" : "author"
     "Meow" o{--}o "File" : "attachments"
     "Meow" o|--|o "Meow" : "reply"

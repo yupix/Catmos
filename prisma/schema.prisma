@@ -18,6 +18,18 @@ generator erd {
   output   = "scheme.md"
 }
 
+model CustomEmoji {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  aliases   String[]
+  category  String
+  url       String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  File      File?    @relation(fields: [fileId], references: [id])
+  fileId    String?
+}
+
 model User {
   id           String         @id @default(cuid())
   sub          String         @unique
@@ -51,17 +63,18 @@ model Folder {
 
 // ファイル
 model File {
-  id        String   @id @default(uuid())
-  filename  String
-  mimetype  String
-  url       String   @unique
-  authorId  String   @map("author_id")
-  author    User     @relation(fields: [authorId], references: [id])
-  createdAt DateTime @default(now()) @map("created_at")
-  meow      Meow?    @relation(fields: [meowId], references: [id])
-  meowId    String?  @map("meow_id")
-  folder    Folder?  @relation(fields: [folderId], references: [id])
-  folderId  String?
+  id          String        @id @default(uuid())
+  filename    String
+  mimetype    String
+  url         String        @unique
+  authorId    String        @map("author_id")
+  author      User          @relation(fields: [authorId], references: [id])
+  createdAt   DateTime      @default(now()) @map("created_at")
+  meow        Meow?         @relation(fields: [meowId], references: [id])
+  meowId      String?       @map("meow_id")
+  folder      Folder?       @relation(fields: [folderId], references: [id])
+  folderId    String?
+  CustomEmoji CustomEmoji[]
 }
 
 // 投稿
