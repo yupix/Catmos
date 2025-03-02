@@ -1,4 +1,4 @@
-import { useLoaderData } from 'react-router';
+import {Link, useLoaderData } from 'react-router';
 import { FileViewer } from '~/components/file-viewer';
 import { getUserSession } from '~/lib/auth/auth.server';
 import { prisma } from '~/lib/db';
@@ -21,7 +21,8 @@ export default function Index() {
 	return (
 		<div className=" flex flex-wrap justify-center gap-8 bg-slate-50">
 			{files.map((file) => (
-				<div
+				<Link
+					to={`/drives/file/${file.id}`}
 					key={file.id}
 					className="@container mb-2 flex w-full max-w-28 shrink-0 cursor-pointer flex-col items-center gap-2 rounded-xl p-4 transition-all duration-75 hover:bg-slate-100"
 				>
@@ -31,7 +32,7 @@ export default function Index() {
 						isCompact
 					/>
 					<p className="break-all text-gray-500 text-xs">{file.filename}</p>
-				</div>
+				</Link>
 			))}
 		</div>
 	);
