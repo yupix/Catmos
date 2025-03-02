@@ -1,11 +1,5 @@
-import {
-	createContext,
-	useCallback,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import throttle from 'lodash.throttle';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
 
 // スクロール位置を管理するコンテキストを作成
 export const scrollContext = createContext<{
@@ -40,14 +34,14 @@ export const useScrollPosition = () => {
 	const [scrollTop, setScrollTop] = useState(0);
 	const { ref } = useScroll();
 
-	const onScroll = useCallback(() => {
-		if (ref.current) {
-			setScrollHeight(ref.current.scrollHeight);
-			setScrollTop(ref.current.scrollTop);
-		}
-	}, [ref]);
-
 	useEffect(() => {
+		const onScroll = throttle(() => {
+			if (ref.current) {
+				setScrollHeight(ref.current.scrollHeight);
+				setScrollTop(ref.current.scrollTop);
+			}
+		}, 400);
+
 		if (ref.current) {
 			ref.current.addEventListener('scroll', onScroll);
 		}
@@ -56,7 +50,7 @@ export const useScrollPosition = () => {
 				ref.current.removeEventListener('scroll', onScroll);
 			}
 		};
-	}, [onScroll, ref]);
+	}, [ref]);
 
 	return { scrollHeight, scrollTop, ref };
 };
