@@ -14,7 +14,7 @@ function ReplyTo({ meow }: { meow: IMeow }) {
 	// 返信元のメッセージを表示する
 	return (
 		<div className="p-2">
-			<Meow meow={meow} disableActions />
+			<Meow meow={meow} disableActions isCompactFile />
 		</div>
 	);
 }

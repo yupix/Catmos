@@ -1,4 +1,11 @@
-import { TbArrowBack, TbDots, TbPlus, TbQuote, TbRepeat } from 'react-icons/tb';
+import {
+	TbArrowBack,
+	TbArrowRight,
+	TbDots,
+	TbPlus,
+	TbQuote,
+	TbRepeat,
+} from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { Form } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
@@ -16,7 +23,8 @@ import {
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
-import { useCallback } from 'react';
+import { motion } from 'motion/react';
+import { useCallback, useState } from 'react';
 import { FileViewer } from './file-viewer';
 import { MeowMoreMenu } from './meow/more-menu';
 
@@ -26,6 +34,7 @@ export type MeowProps = {
 	disableActions?: boolean;
 	type?: 'normal' | 'reply';
 	size?: 'xs' | 'sm' | 'md';
+	isCompactFile?: boolean;
 };
 
 /**
@@ -44,6 +53,7 @@ export function Meow(props: MeowProps) {
 						size={'sm'}
 						disableActions
 						hideDate={props.hideDate}
+						isCompactFile
 					/>
 				</div>
 				<Render
@@ -65,14 +75,26 @@ export function Meow(props: MeowProps) {
  * @param {MeowProps} props - Meowコンポーネントのプロパティ
  * @returns {JSX.Element} Renderコンポーネント
  */
-const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
+const Render = ({
+	meow,
+	disableActions,
+	type,
+	size,
+	hideDate,
+	isCompactFile,
+}: MeowProps) => {
 	const tree = parseTextToTree(meow.text ?? '');
 	const isSmall = size === 'xs' || size === 'sm';
+	const [showFile, setShowFile] = useState<boolean>(!isCompactFile);
 	const { openModal, closeModal } = useModal();
 
 	const handleReplyClick = useCallback(() => {
 		openModal(<PostModal replyTo={meow} closeModal={closeModal} />);
 	}, [openModal, closeModal, meow]);
+
+	const handleFileToggle = () => {
+		setShowFile((prev) => !prev);
+	};
 
 	if (meow.remeow) {
 		return (
@@ -95,7 +117,7 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 						<TimeDisplay date={meow.createdAt} />
 					</div>
 				</span>
-				<Render meow={meow.remeow} size={size} hideDate />
+				<Render meow={meow.remeow} size={size} hideDate isCompactFile />
 			</div>
 		);
 	}
@@ -145,26 +167,45 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 						</div>
 
 						{meow.attachments.length > 0 ? (
-							<div className="@container">
+							<>
+								{isCompactFile ? (
+									<div
+										onClick={handleFileToggle}
+										onKeyDown={handleFileToggle}
+										className="flex cursor-pointer gap-1"
+									>
+										<motion.div
+											initial={{ rotate: 0 }}
+											animate={{ rotate: showFile ? 90 : 0 }}
+										>
+											<TbArrowRight />
+										</motion.div>
+										<p>{meow.attachments.length}つのファイル</p>
+									</div>
+								) : null}
 								<div
-									className={cn(
-										'mt-2 flex @max-[300px]:flex-col flex-wrap gap-2',
-										isSmall && '@min-[500px]:max-w-[40%]',
-									)}
+									className={cn('@container', showFile ? 'block' : 'hidden')}
 								>
-									<PhotoProvider>
-										{meow.attachments.map((attachment) =>
-											attachment.mimetype.startsWith('image/') ? (
-												<PhotoView key={attachment.id} src={attachment.url}>
-													<FileViewer file={attachment} />
-												</PhotoView>
-											) : attachment.mimetype.startsWith('video/') ? (
-												<FileViewer key={attachment.id} file={attachment} />
-											) : null,
+									<div
+										className={cn(
+											'mt-2 flex @max-[300px]:flex-col flex-wrap gap-2',
+											isSmall && '@min-[500px]:max-w-[40%]',
 										)}
-									</PhotoProvider>
+									>
+										<PhotoProvider>
+											{meow.attachments.map((attachment) =>
+												attachment.mimetype.startsWith('image/') ? (
+													<PhotoView key={attachment.id} src={attachment.url}>
+														<FileViewer file={attachment} />
+													</PhotoView>
+												) : attachment.mimetype.startsWith('video/') ? (
+													<FileViewer key={attachment.id} file={attachment} />
+												) : null,
+											)}
+										</PhotoProvider>
+									</div>
 								</div>
-							</div>
+							</>
 						) : null}
 					</div>
 					<div className="@container w-full">

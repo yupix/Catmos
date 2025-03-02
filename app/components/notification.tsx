@@ -46,7 +46,7 @@ export function Notification({ notification }: NotificationProps) {
 		<>
 			{notification.meow ? (
 				<div>
-					<Meow meow={notification.meow} size="xs" />
+					<Meow meow={notification.meow} size="xs" isCompactFile />
 				</div>
 			) : (
 				<div className="mb-2 flex w-full items-center gap-2 p-2">
