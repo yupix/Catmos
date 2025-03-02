@@ -1,4 +1,4 @@
-import {Link, useLoaderData } from 'react-router';
+import { Link, useLoaderData } from 'react-router';
 import { FileViewer } from '~/components/file-viewer';
 import { getUserSession } from '~/lib/auth/auth.server';
 import { prisma } from '~/lib/db';
@@ -11,6 +11,9 @@ export async function loader({ request }: Route.LoaderArgs) {
 			author: {
 				sub: user?.sub,
 			},
+		},
+		orderBy: {
+			createdAt: 'desc',
 		},
 	});
 	return { files };
