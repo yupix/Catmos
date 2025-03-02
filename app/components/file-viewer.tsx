@@ -29,7 +29,7 @@ export const FileViewer: FC<FileViewerProps> = ({
 					src={file.url}
 					alt={file.filename}
 					className={cn(
-						'object-contain aspect-video',
+						'aspect-video object-contain',
 						!isCompact && 'xs:w-[calc(50%-8px)]',
 						className,
 					)}
@@ -51,7 +51,7 @@ export const FileViewer: FC<FileViewerProps> = ({
 					src={file.url}
 					controls
 					className={cn(
-						'object-contain aspect-video mb-2 h-full max-h-[400px] @min-[500px]:w-[calc(50%-8px)] rounded-sm object-center md:mb-0',
+						'mb-2 aspect-video h-full max-h-[400px] @min-[500px]:w-[calc(50%-8px)] rounded-sm object-contain object-center md:mb-0',
 						className,
 					)}
 					onClick={onClick}

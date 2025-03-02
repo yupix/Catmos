@@ -1,4 +1,4 @@
-import type { FCX } from 'react';
+import type { FC } from 'react';
 import { Link as RouterLink } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 
@@ -7,7 +7,7 @@ interface LinkProps {
 	children: React.ReactNode;
 }
 
-export const Link: FCX<LinkProps> = (props) => {
+export const Link: FC<LinkProps> = (props) => {
 	const isExternal = isAbsoluteUrl(props.to);
 
 	const { openModal } = useModal();

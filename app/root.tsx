@@ -14,7 +14,7 @@ import { getToast } from 'remix-toast';
 import type { Route } from './+types/root';
 import './app.css';
 import { motion } from 'motion/react';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
 import { TbPencil } from 'react-icons/tb';
 import { toast } from 'sonner';
 import { AppSidebar } from './components/app-sidebar';
@@ -127,9 +127,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function Modal() {
 	const { openModal, closeModal, isModalOpen } = useModal();
-	const handleOpenModal = () => {
+	const handleOpenModal = useCallback(() => {
 		openModal(<PostModal closeModal={closeModal} />);
-	};
+	}, [closeModal, openModal]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
