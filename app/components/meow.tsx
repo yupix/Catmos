@@ -16,6 +16,7 @@ import {
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
+import { useCallback } from 'react';
 import { FileViewer } from './file-viewer';
 import { MeowMoreMenu } from './meow/more-menu';
 
@@ -67,8 +68,12 @@ export function Meow(props: MeowProps) {
 const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 	const tree = parseTextToTree(meow.text ?? '');
 	const isSmall = size === 'xs' || size === 'sm';
-
 	const { openModal, closeModal } = useModal();
+
+	const handleReplyClick = useCallback(() => {
+		openModal(<PostModal replyTo={meow} closeModal={closeModal} />);
+	}, [openModal, closeModal, meow]);
+
 	if (meow.remeow) {
 		return (
 			<div>
@@ -168,11 +173,7 @@ const Render = ({ meow, disableActions, type, size, hideDate }: MeowProps) => {
 								<TbArrowBack
 									className="cursor-pointer"
 									strokeWidth={3}
-									onClick={() =>
-										openModal(
-											<PostModal replyTo={meow} closeModal={closeModal} />,
-										)
-									}
+									onClick={handleReplyClick}
 								/>
 								<DropdownMenu>
 									<DropdownMenuTrigger>
