@@ -35,13 +35,21 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {
-		document.addEventListener('keydown', (e) => {
-			if (e.key === 'Escape') {
-				closeModal();
-			}
-		});
+		const handleKeyDown = (e: KeyboardEvent) => {
+			if (e.key === 'Escape') closeModal();
+		};
+		document.addEventListener('keydown', handleKeyDown);
+		return () => document.removeEventListener('keydown', handleKeyDown);
 	}, []);
 
+	// モーダルが開いている間、スクロールを無効にする
+	useEffect(() => {
+		if (isModalOpen) {
+			document.body.style.overflow = 'hidden';
+		} else {
+			document.body.style.overflow = '';
+		}
+	}, [isModalOpen]);
 	return (
 		<ModalContext.Provider
 			value={{ isModalOpen, modalContent, openModal, closeModal }}
@@ -54,7 +62,7 @@ export const ModalProvider: React.FC<{ children: ReactNode }> = ({
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						transition={{ duration: 0.2 }}
-						className="absolute inset-0 z-10 flex items-center justify-center bg-black/80 bg-opacity-50"
+						className="fixed top-0 bottom-0 left-0 right-0 inset-0 z-50 flex items-center justify-center bg-black/80 bg-opacity-50"
 						onClick={closeModal}
 						onKeyDown={(e) => e.key === 'Escape' && closeModal()}
 					>
