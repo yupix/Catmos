@@ -1,6 +1,7 @@
 import type React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { TbPhotoPlus } from 'react-icons/tb';
+import { Link } from '~/components/link';
 import { Skeleton } from '~/components/shadcn/ui/skeleton';
 import { useFileUpload } from '~/hooks/use-upload';
 interface TreeNode {
@@ -99,15 +100,10 @@ export const renderTree = (nodes: TreeNode[]): JSX.Element[] => {
 				);
 			case 'link':
 				return (
-					<a
-						key={index}
-						href={node.content}
-						style={{ color: 'blue' }}
-						target="_blank"
-						rel="noreferrer"
-					>
+					// biome-ignore lint/style/noNonNullAssertion: <explanation>
+					<Link key={index} to={node?.content!} style={{ color: 'blue' }}>
 						{node.content}
-					</a>
+					</Link>
 				);
 			case 'bold':
 				return <strong key={index}>{node.content}</strong>;
