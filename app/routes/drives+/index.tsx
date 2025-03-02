@@ -23,7 +23,7 @@ export default function Index() {
 			{files.map((file) => (
 				<div
 					key={file.id}
-					className="@container mb-2 flex w-full max-w-28 shrink-0 flex-col items-center gap-2 rounded-xl p-4 transition-all duration-75 hover:bg-slate-100"
+					className="@container mb-2 flex w-full max-w-28 shrink-0 cursor-pointer flex-col items-center gap-2 rounded-xl p-4 transition-all duration-75 hover:bg-slate-100"
 				>
 					<FileViewer
 						file={file}
