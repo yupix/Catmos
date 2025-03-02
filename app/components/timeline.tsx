@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { ClientOnly } from 'remix-utils/client-only';
 import SuperJSON from 'superjson';
 import { useScrollPosition } from '~/hooks/use-scroll';
@@ -21,17 +22,17 @@ export function Client({ initMeows }: TimelineProps) {
 	const [isConnected, setIsConnected] = useState(socket.connected);
 	const [isAtTop, setIsAtTop] = useState(true);
 	const { scrollHeight, scrollTop, ref } = useScrollPosition();
+	const [searchParams, _] = useSearchParams();
+	const nowTab = searchParams.get('tab') ?? 'home';
 
 	useEffect(() => {
-		console.log(scrollHeight, scrollTop);
 		const isTop = scrollTop === 0;
-		setIsAtTop(isTop);
 		console.log(isTop, newMeows);
 		if (isTop && newMeows.length > 0) {
 			setMeows((prev) => [...newMeows, ...prev]);
 			setNewMeows([]);
 		}
-	}, [scrollHeight, scrollTop, newMeows]);
+	}, [newMeows, scrollTop]);
 
 	useEffect(() => {
 		setMeows(initMeows);
@@ -40,6 +41,11 @@ export function Client({ initMeows }: TimelineProps) {
 	const handleScrollToTop = () => {
 		ref.current?.scrollTo({ top: 0, behavior: 'smooth' });
 	};
+
+	// タブが変わったらトップにスクロール
+	useEffect(() => {
+		handleScrollToTop();
+	}, [nowTab]);
 
 	useEffect(() => {
 		const handleConnect = () => {

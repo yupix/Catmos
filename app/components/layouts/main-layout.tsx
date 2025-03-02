@@ -16,10 +16,35 @@ function Layout({ children }: { children: ReactNode }) {
 	);
 }
 
-export function MainLayout({ children }: { children: ReactNode }) {
+interface MainLayoutProps {
+	children: ReactNode;
+	header?: ReactNode;
+}
+
+export function MainLayout({ children, header }: MainLayoutProps) {
 	return (
-		<ScrollContextProvider>
-			<Layout>{children}</Layout>
-		</ScrollContextProvider>
+		<div className="w-full">
+			<ScrollContextProvider>
+				{header && <div>{header}</div>}
+				<Layout>{children}</Layout>
+			</ScrollContextProvider>
+		</div>
 	);
 }
+
+/**
+ * メインレイアウトのヘッダーコンポーネント
+ * @param {ReactNode} children - 子要素
+ * @returns {JSX.Element} ヘッダー
+ */
+MainLayout.header = function MainLayoutHeader({
+	children,
+}: {
+	children: ReactNode;
+}) {
+	return (
+		<div className="sticky bottom-0 z-10 flex w-full items-center justify-between bg-slate-200/60 backdrop-blur-md px-10 md:top-0">
+			<div className="flex-grow h-full">{children}</div>
+		</div>
+	);
+};

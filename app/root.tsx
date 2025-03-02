@@ -20,10 +20,7 @@ import { toast } from 'sonner';
 import { AppSidebar } from './components/app-sidebar';
 import { PostModal } from './components/post-modal';
 import { Button } from './components/shadcn/ui/button';
-import {
-	SidebarProvider,
-	SidebarTrigger,
-} from './components/shadcn/ui/sidebar';
+import { SidebarProvider } from './components/shadcn/ui/sidebar';
 import { Toaster } from './components/shadcn/ui/sonner';
 import { Sidebar } from './components/sidebar';
 import { ModalProvider, useModal } from './hooks/use-modal';
@@ -181,11 +178,6 @@ export default function App() {
 				<>
 					<AppSidebar user={data.user} />
 					<div className="w-full">
-						<div className="sticky bottom-0 z-10 flex w-full items-center justify-between bg-slate-200/60 backdrop-blur-md px-10 py-2 md:top-0">
-							<SidebarTrigger className="-ml-1 cursor-pointer" />
-							<Modal />
-						</div>
-
 						<div className="block md:flex md:flex-grow">
 							<Outlet />
 							<div id="sidebar" className="w-[25%] md:col-span-3">

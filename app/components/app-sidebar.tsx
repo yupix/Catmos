@@ -1,4 +1,11 @@
-import { TbBell, TbCloud, TbHeart, TbHome, TbSettings } from 'react-icons/tb';
+import {
+	TbBell,
+	TbCloud,
+	TbHeart,
+	TbHome,
+	TbMoodHappy,
+	TbSettings,
+} from 'react-icons/tb';
 import { Link, useLocation } from 'react-router';
 import {
 	Sidebar,
@@ -42,6 +49,11 @@ const MENUS = [
 			to: '/settings/profile',
 			icon: TbSettings,
 			text: '設定',
+		},
+		{
+			to: '/admin/emojis',
+			icon: TbMoodHappy,
+			text: '絵文字',
 		},
 	],
 ];
