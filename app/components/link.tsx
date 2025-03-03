@@ -10,7 +10,7 @@ interface LinkProps {
 export const Link: FC<LinkProps> = (props) => {
 	const isExternal = isAbsoluteUrl(props.to);
 
-	const { openModal } = useModal();
+	const { openModal, closeModal } = useModal();
 
 	const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
 		e.preventDefault();
@@ -25,7 +25,7 @@ export const Link: FC<LinkProps> = (props) => {
 					<button
 						type="button"
 						className="cursor-pointer rounded-2xl bg-gray-200 px-4 py-2 transition-colors duration-75 hover:bg-gray-300"
-						onClick={() => openModal(null)}
+						onClick={closeModal}
 					>
 						キャンセル
 					</button>
