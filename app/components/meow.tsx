@@ -8,7 +8,7 @@ import {
 	TbRepeat,
 } from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
-import { Form, useFetcher, useRouteLoaderData } from 'react-router';
+import { Form, Link, useFetcher, useRouteLoaderData } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 import type { IMeow } from '~/lib/const.server';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
@@ -170,16 +170,18 @@ const Render = ({
 		<div className="px-4">
 			<div className="flex gap-2">
 				<HoverUserCard user={meow.author}>
-					<Avatar
-						className={cn(
-							'h-15 w-15',
-							size === 'sm' && 'h-10 w-10',
-							size === 'xs' && 'h-8 w-8',
-						)}
-					>
-						<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
-						<AvatarFallback>{meow.author.name}</AvatarFallback>
-					</Avatar>
+					<Link to={`/${meow.author.name}`}>
+						<Avatar
+							className={cn(
+								'h-15 w-15',
+								size === 'sm' && 'h-10 w-10',
+								size === 'xs' && 'h-8 w-8',
+							)}
+						>
+							<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />
+							<AvatarFallback>{meow.author.name}</AvatarFallback>
+						</Avatar>
+					</Link>
 				</HoverUserCard>
 				<div
 					className={cn(
@@ -315,7 +317,7 @@ const Render = ({
 									/>
 								)}
 								{showEmojiPicker && (
-									<div className="absolute">
+									<div>
 										<EmojiPicker
 											open={showEmojiPicker}
 											onEmojiClick={(emoji) => {

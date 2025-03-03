@@ -9,6 +9,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from '~/components/shadcn/ui/sidebar';
 import type { User } from '~/lib/auth/auth.server';
 import { cn } from '~/lib/utils';
@@ -56,6 +57,7 @@ export interface AppSidebarProps {
 }
 
 export function AppSidebar({ user }: AppSidebarProps) {
+	const sidebar = useSidebar();
 	const location = useLocation();
 	const activeClass =
 		'bg-sky-600/20 text-sky-700 hover:text-sky-700 transition-all hover:bg-sky-600/30';
@@ -95,7 +97,10 @@ export function AppSidebar({ user }: AppSidebarProps) {
 															'h-10 rounded-full px-4 text-lg',
 														)}
 													>
-														<Link to={menu.to}>
+														<Link
+															to={menu.to}
+															onClick={() => sidebar.setOpenMobile(false)}
+														>
 															<Icon strokeWidth={3} />
 															{menu.text}
 														</Link>

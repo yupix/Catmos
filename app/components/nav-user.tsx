@@ -28,7 +28,7 @@ export function NavUser({
 }: {
 	user: User;
 }) {
-	const { isMobile } = useSidebar();
+	const { isMobile, setOpenMobile } = useSidebar();
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
@@ -74,13 +74,16 @@ export function NavUser({
 						<DropdownMenuSeparator />
 						<DropdownMenuGroup>
 							<DropdownMenuItem asChild>
-								<Link to={`/${user.name}`}>
+								<Link to={`/${user.name}`} onClick={() => setOpenMobile(false)}>
 									<BadgeCheck />
 									プロフィール
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuItem asChild>
-								<Link to={`/${user.name}`}>
+								<Link
+									to="/settings/profile"
+									onClick={() => setOpenMobile(false)}
+								>
 									<TbSettings />
 									設定
 								</Link>

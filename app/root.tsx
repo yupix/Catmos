@@ -129,7 +129,7 @@ function Modal() {
 	}, [isModalOpen]);
 
 	return (
-		<div className="fixed right-[20%] bottom-10">
+		<div className="fixed right-[10%] bottom-10 md:right-[20%]">
 			<Button
 				onClick={handleOpenModal}
 				className="h-12 w-12 cursor-pointer rounded-full bg-blue-400 shadow-lg hover:bg-blue-500"
@@ -170,7 +170,7 @@ export default function App() {
 					<div className="w-full">
 						<div className="block md:flex md:flex-grow">
 							<Outlet />
-							<div id="sidebar" className="w-[25%] md:col-span-3">
+							<div id="sidebar" className="hidden md:block w-[25%]">
 								<Sidebar notifications={data.notifications || []} />
 							</div>
 

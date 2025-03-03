@@ -1,4 +1,6 @@
-import { data } from 'react-router';
+import { Outlet, data } from 'react-router';
+import { UserLayout } from '~/components/layouts/user-layout';
+import { SidebarTrigger } from '~/components/shadcn/ui/sidebar';
 import { getUserSession } from '~/lib/auth/auth.server';
 import { MeowIncludes, UserCardIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
@@ -46,4 +48,20 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 	});
 
 	return { user: foundUser, meows, me, isFollowing: !!isFollowing };
+}
+
+export default function Layout() {
+	return (
+		<UserLayout
+			header={
+				<UserLayout.header>
+					<div className="flex items-center">
+						<SidebarTrigger className="-ml-1 cursor-pointer" />
+					</div>
+				</UserLayout.header>
+			}
+		>
+			<Outlet />
+		</UserLayout>
+	);
 }
