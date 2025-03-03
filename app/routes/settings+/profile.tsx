@@ -90,7 +90,7 @@ export async function action({ request }: Route.ActionArgs) {
 
 	if (formData.get('file')) {
 		file = JSON.parse(formData.get('file')?.toString() || '') as {
-			location: string;
+			url: string;
 			fileId: string;
 			mime: string;
 		};
@@ -104,7 +104,7 @@ export async function action({ request }: Route.ActionArgs) {
 				console.error('No file uploaded');
 				return;
 			}
-			await updateAvatar(user, file.location);
+			await updateAvatar(user, file.url);
 			break;
 		}
 
@@ -113,7 +113,7 @@ export async function action({ request }: Route.ActionArgs) {
 				console.error('No file uploaded');
 				return;
 			}
-			await updateBanner(user, file.location);
+			await updateBanner(user, file.url);
 			break;
 		}
 		case 'basic': {

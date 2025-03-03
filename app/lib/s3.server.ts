@@ -58,7 +58,7 @@ export async function uploadStreamToSpaces(
 		},
 	});
 	return {
-		location: res.Location,
+		url: res.Location,
 		fileId: createdFile.id,
 		mime: contentType.mime,
 	};
