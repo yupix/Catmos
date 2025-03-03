@@ -2,6 +2,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFetcher } from 'react-router';
 import { v4 as uuidV4 } from 'uuid';
 
+export type IUploadedFile = {
+	url: string;
+	fileId: string;
+	mime: string;
+};
+
 /**
  * ファイルアップロードを管理するカスタムフック
  * @returns {object} ファイルアップロードの状態と関数

@@ -14,7 +14,7 @@ import { getToast } from 'remix-toast';
 import type { Route } from './+types/root';
 import './app.css';
 import { motion } from 'motion/react';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { TbPencil } from 'react-icons/tb';
 import { toast } from 'sonner';
 import { AppSidebar } from './components/app-sidebar';
@@ -26,7 +26,7 @@ import { Sidebar } from './components/sidebar';
 import { ModalProvider, useModal } from './hooks/use-modal';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
-import { UserCardIncludes } from './lib/const.server';
+import { MeowIncludes, UserCardIncludes } from './lib/const.server';
 import { prisma } from './lib/db';
 import Welcome from './routes/welcome';
 
@@ -76,22 +76,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		},
 		include: {
 			meow: {
-				include: {
-					author: { include: UserCardIncludes },
-					attachments: true,
-					reply: {
-						include: {
-							author: { include: UserCardIncludes },
-							attachments: true,
-						},
-					},
-					remeow: {
-						include: {
-							author: { include: UserCardIncludes },
-							attachments: true,
-						},
-					},
-				},
+				include: MeowIncludes(user),
 			},
 			user: { include: UserCardIncludes },
 		},
@@ -124,9 +109,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function Modal() {
 	const { openModal, closeModal, isModalOpen } = useModal();
-	const handleOpenModal = useCallback(() => {
+	const handleOpenModal = () => {
 		openModal(<PostModal closeModal={closeModal} />);
-	}, [closeModal, openModal]);
+	};
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
 	useEffect(() => {

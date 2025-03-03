@@ -22,7 +22,7 @@ model CustomEmoji {
   id        String   @id @default(uuid())
   name      String   @unique
   aliases   String[]
-  category  String
+  category  String?
   url       String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -47,6 +47,7 @@ model User {
   following    User[]         @relation("UserToUser")
   followers    User[]         @relation("UserToUser")
   favorites    Favorite[]
+  MeowReaction MeowReaction[]
 }
 
 model Folder {
@@ -96,6 +97,19 @@ model Meow {
   remeows      Meow[]         @relation("RemeowToMeow")
   notification Notification[]
   favorites    Favorite[]
+  MeowReaction MeowReaction[]
+}
+
+model MeowReaction {
+  id        String   @id @default(uuid())
+  meowId    String   @map("meow_id")
+  meow      Meow     @relation(fields: [meowId], references: [id])
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id])
+  reaction  String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([meowId, userId], name: "unique_meow_user_reaction")
 }
 
 // お気に入り

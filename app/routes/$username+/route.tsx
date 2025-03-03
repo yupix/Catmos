@@ -1,6 +1,6 @@
 import { data } from 'react-router';
 import { getUserSession } from '~/lib/auth/auth.server';
-import { UserCardIncludes } from '~/lib/const.server';
+import { MeowIncludes, UserCardIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
 import type { Route } from '../+types';
 
@@ -39,24 +39,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 				none: {},
 			},
 		},
-		include: {
-			attachments: {
-				include: {
-					author: { include: UserCardIncludes },
-				},
-			},
-			author: { include: UserCardIncludes },
-			reply: {
-				include: {
-					author: { include: UserCardIncludes },
-					attachments: {
-						include: {
-							author: { include: UserCardIncludes },
-						},
-					},
-				},
-			},
-		},
+		include: MeowIncludes(me ?? undefined),
 		orderBy: {
 			createdAt: 'desc',
 		},

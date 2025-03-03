@@ -6,7 +6,7 @@ export const attachmentIncludes = {
 	folder: true,
 } as const satisfies Prisma.FileInclude;
 
-const favoriteIncludes = (userId: string) =>
+const favoriteIncludes = (userId?: string) =>
 	({
 		where: {
 			userId,
@@ -31,7 +31,15 @@ export const UserCardIncludes = {
 	},
 } as const satisfies Prisma.UserInclude;
 
-export const MeowIncludes = (user: User) =>
+export const MeowReactionDefaultArgs = {
+	select: {
+		reaction: true,
+		id: true,
+		userId: true,
+	},
+} as const satisfies Prisma.MeowReactionDefaultArgs;
+
+export const MeowIncludes = (user?: User) =>
 	({
 		attachments: { include: attachmentIncludes },
 		author: { include: UserCardIncludes },
@@ -41,17 +49,20 @@ export const MeowIncludes = (user: User) =>
 					include: UserCardIncludes,
 				},
 				attachments: { include: attachmentIncludes },
-				favorites: favoriteIncludes(user.id),
+				favorites: favoriteIncludes(user?.id),
+				MeowReaction: MeowReactionDefaultArgs,
 			},
 		},
 		remeow: {
 			include: {
 				author: { include: UserCardIncludes },
 				attachments: { include: attachmentIncludes },
-				favorites: favoriteIncludes(user.id),
+				favorites: favoriteIncludes(user?.id),
+				MeowReaction: MeowReactionDefaultArgs,
 			},
 		},
-		favorites: favoriteIncludes(user.id),
+		MeowReaction: MeowReactionDefaultArgs,
+		favorites: favoriteIncludes(user?.id),
 	}) as const satisfies Prisma.MeowInclude;
 
 /**

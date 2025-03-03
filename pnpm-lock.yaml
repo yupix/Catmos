@@ -83,6 +83,12 @@ importers:
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
+      emoji-picker-react:
+        specifier: ^4.12.0
+        version: 4.12.0(react@19.0.0)
+      emojilib:
+        specifier: ^4.0.1
+        version: 4.0.1
       file-type:
         specifier: ^20.1.0
         version: 20.1.0
@@ -3301,11 +3307,20 @@ packages:
   electron-to-chromium@1.5.99:
     resolution: {integrity: sha512-77c/+fCyL2U+aOyqfIFi89wYLBeSTCs55xCZL0oFH0KjqsvSvyh6AdQ+UIl1vgpnQQE6g+/KK8hOIupH6VwPtg==}
 
+  emoji-picker-react@4.12.0:
+    resolution: {integrity: sha512-q2c8UcZH0eRIMj41bj0k1akTjk69tsu+E7EzkW7giN66iltF6H9LQvQvw6ugscsxdC+1lmt3WZpQkkY65J95tg==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: '>=16'
+
   emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
 
   emoji-regex@9.2.2:
     resolution: {integrity: sha512-L18DaJsXSUk2+42pv8mLs5jJT2hqFkFE4j21wOmgbUqsZ2hL72NsUU785g9RXgo3s0ZNgVl42TiHp3ZtOv/Vyg==}
+
+  emojilib@4.0.1:
+    resolution: {integrity: sha512-zVY5JGxycujUimHkBn2lg5NCVwASJiQA2fhKfDPgyDFmNTftiw6KdOcq2fQt1HCVw0YeYW/ccYxQHQNjZpNeuw==}
 
   encodeurl@1.0.2:
     resolution: {integrity: sha512-TPJXq8JqFaVYm2CWmPvnP2Iyo4ZSM7/QKcSmuMLDObfpH5fi7RUGmd/rTDf+rut/saiDiQEeVTNgAmJEdAOx0w==}
@@ -3491,6 +3506,9 @@ packages:
   find-up@5.0.0:
     resolution: {integrity: sha512-78/PXT1wlLLDgTzDs7sjq9hzz0vXD+zn+7wypEe4fXQxCmdmqfGsEPQxmiCSQI3ajFV91bVSsvNtrJRiW6nGng==}
     engines: {node: '>=10'}
+
+  flairup@1.0.0:
+    resolution: {integrity: sha512-IKlE+pNvL2R+kVL1kEhUYqRxVqeFnjiIvHWDMLFXNaqyUdFXQM2wte44EfMYJNHkW16X991t2Zg8apKkhv7OBA==}
 
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
@@ -9284,9 +9302,16 @@ snapshots:
 
   electron-to-chromium@1.5.99: {}
 
+  emoji-picker-react@4.12.0(react@19.0.0):
+    dependencies:
+      flairup: 1.0.0
+      react: 19.0.0
+
   emoji-regex@8.0.0: {}
 
   emoji-regex@9.2.2: {}
+
+  emojilib@4.0.1: {}
 
   encodeurl@1.0.2: {}
 
@@ -9534,6 +9559,8 @@ snapshots:
     dependencies:
       locate-path: 6.0.0
       path-exists: 4.0.0
+
+  flairup@1.0.0: {}
 
   for-each@0.3.5:
     dependencies:

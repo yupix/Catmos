@@ -1,31 +1,21 @@
 import { useLoaderData } from 'react-router';
 import { Meow } from '~/components/meow';
-import { UserCardIncludes } from '~/lib/const.server';
+import { getUserSession } from '~/lib/auth/auth.server';
+import { MeowIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
-import type { Route } from './+types/$meowId';
+import type { Route } from '../+types';
 
-export async function loader({ params }: Route.LoaderArgs) {
+export async function loader({ request, params }: Route.LoaderArgs) {
+	const me = await getUserSession(request);
+
 	const meow = await prisma.meow.findUnique({
 		where: {
 			id: params.meowId,
 		},
-		include: {
-			attachments: true,
-			author: { include: UserCardIncludes },
-			reply: {
-				include: {
-					attachments: true,
-					author: { include: UserCardIncludes },
-				},
-			},
-			remeow: {
-				include: {
-					attachments: true,
-					author: { include: UserCardIncludes },
-				},
-			},
-		},
+		include: MeowIncludes(me ?? undefined),
 	});
+
+	console.log(meow);
 
 	if (!meow) {
 		throw new Response('Not Found', { status: 404 });

@@ -5,7 +5,7 @@ import { cn } from '~/lib/utils';
 interface FileViewerProps {
 	file: FileModel;
 	isCompact?: boolean;
-	className: string;
+	className?: string;
 	onClick?: () => void;
 	ref?: React.Ref<HTMLImageElement | HTMLVideoElement>;
 }

@@ -5,7 +5,7 @@ erDiagram
     String id "🗝️"
     String name 
     String aliases 
-    String category 
+    String category "❓"
     String url 
     DateTime created_at 
     DateTime updated_at 
@@ -54,6 +54,15 @@ erDiagram
     }
   
 
+  "MeowReaction" {
+    String id "🗝️"
+    String meow_id 
+    String user_id 
+    String reaction 
+    DateTime created_at 
+    }
+  
+
   "Favorite" {
     String id "🗝️"
     String meow_id 
@@ -79,6 +88,7 @@ erDiagram
     "User" o{--}o "User" : "following"
     "User" o{--}o "User" : "followers"
     "User" o{--}o "Favorite" : "favorites"
+    "User" o{--}o "MeowReaction" : "MeowReaction"
     "Folder" o|--|| "User" : "author"
     "Folder" o{--}o "File" : "files"
     "Folder" o|--|o "Folder" : "parent"
@@ -95,6 +105,9 @@ erDiagram
     "Meow" o{--}o "Meow" : "remeows"
     "Meow" o{--}o "Notification" : "notification"
     "Meow" o{--}o "Favorite" : "favorites"
+    "Meow" o{--}o "MeowReaction" : "MeowReaction"
+    "MeowReaction" o|--|| "Meow" : "meow"
+    "MeowReaction" o|--|| "User" : "user"
     "Favorite" o|--|| "Meow" : "meow"
     "Favorite" o|--|| "User" : "user"
     "Notification" o|--|o "Meow" : "meow"

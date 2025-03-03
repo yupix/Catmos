@@ -2,12 +2,13 @@ import {
 	TbArrowBack,
 	TbArrowRight,
 	TbDots,
+	TbMinus,
 	TbPlus,
 	TbQuote,
 	TbRepeat,
 } from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
-import { Form } from 'react-router';
+import { Form, useFetcher, useRouteLoaderData } from 'react-router';
 import { useModal } from '~/hooks/use-modal';
 import type { IMeow } from '~/lib/const.server';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
@@ -23,8 +24,10 @@ import {
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
+import EmojiPicker from 'emoji-picker-react';
+import * as emojilib from 'emojilib';
 import { motion } from 'motion/react';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { FileViewer } from './file-viewer';
 import { MeowMoreMenu } from './meow/more-menu';
 
@@ -86,7 +89,10 @@ const Render = ({
 	const tree = parseTextToTree(meow.text ?? '');
 	const isSmall = size === 'xs' || size === 'sm';
 	const [showFile, setShowFile] = useState<boolean>(!isCompactFile);
+	const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
 	const { openModal, closeModal } = useModal();
+	const fetcher = useFetcher();
+	const plusButtonRef = useRef<HTMLDivElement>(null);
 
 	const handleReplyClick = useCallback(() => {
 		openModal(<PostModal replyTo={meow} closeModal={closeModal} />);
@@ -96,6 +102,44 @@ const Render = ({
 		setShowFile((prev) => !prev);
 	};
 
+	const handleEmojiRemove = () => {
+		fetcher.submit(
+			{},
+			{
+				action: `/meows/${meow.id}/reaction`,
+				method: 'DELETE',
+			},
+		);
+	};
+
+	const handleEmojiPickerToggle = () => {
+		setShowEmojiPicker((prev) => !prev);
+	};
+
+	const handleEmojiSelect = (emoji: string) => {
+		console.log(emoji);
+		fetcher.submit(
+			{ reaction: emoji },
+			{
+				action: `/meows/${meow.id}/reaction`,
+				method: 'POST',
+			},
+		);
+	};
+	const data = useRouteLoaderData('root');
+	const isReacted = useMemo(() => {
+		return meow.MeowReaction.some(
+			(reaction) => reaction.userId === data.user.id,
+		);
+	}, [meow.MeowReaction, data.user.id]);
+
+	const reactionCounts = useMemo(() => {
+		const counts: { [key: string]: number } = {};
+		for (const reaction of meow.MeowReaction) {
+			counts[reaction.reaction] = (counts[reaction.reaction] || 0) + 1;
+		}
+		return counts;
+	}, [meow.MeowReaction]);
 	if (meow.remeow) {
 		return (
 			<div>
@@ -208,6 +252,20 @@ const Render = ({
 							</>
 						) : null}
 					</div>
+					{isSmall ? null : (
+						<div className="flex gap-2">
+							{Object.entries(reactionCounts).map(([reaction, count]) => (
+								<div key={reaction} className="flex items-center gap-2 p-2">
+									<img
+										src={`https://cdn.jsdelivr.net/npm/fluentui-emoji@latest/icons/flat/${reaction}.svg`}
+										alt={reaction}
+										className="h-8 w-8"
+									/>
+									<span>{count}</span>
+								</div>
+							))}
+						</div>
+					)}
 					<div className="@container w-full">
 						{disableActions ? null : (
 							<div className="flex flex-wrap @min-[300px]:gap-14 gap-2 text-slate-400 text-xl">
@@ -243,7 +301,32 @@ const Render = ({
 										</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenu>
-								<TbPlus className="shrink-0 cursor-pointer" strokeWidth={3} />
+								{isReacted ? (
+									<TbMinus
+										className="shrink-0 cursor-pointer"
+										strokeWidth={3}
+										onClick={handleEmojiRemove}
+									/>
+								) : (
+									<TbPlus
+										className="shrink-0 cursor-pointer"
+										strokeWidth={3}
+										onClick={handleEmojiPickerToggle}
+									/>
+								)}
+								{showEmojiPicker && (
+									<div className="absolute">
+										<EmojiPicker
+											open={showEmojiPicker}
+											onEmojiClick={(emoji) => {
+												handleEmojiSelect(
+													emojilib.default[emoji.emoji][0].replaceAll('_', '-'),
+												);
+												handleEmojiPickerToggle();
+											}}
+										/>
+									</div>
+								)}
 								<MeowMoreMenu meow={meow}>
 									<TbDots className="shrink-0 cursor-pointer" strokeWidth={3} />
 								</MeowMoreMenu>
