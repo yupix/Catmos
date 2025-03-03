@@ -144,9 +144,14 @@ function Modal() {
 	}, [isModalOpen]);
 
 	return (
-		<Button onClick={handleOpenModal} className="cursor-pointer">
-			<TbPencil strokeWidth={2} />
-		</Button>
+		<div className="fixed right-[20%] bottom-10">
+			<Button
+				onClick={handleOpenModal}
+				className="h-12 w-12 cursor-pointer rounded-full bg-blue-400 shadow-lg hover:bg-blue-500"
+			>
+				<TbPencil strokeWidth={2} />
+			</Button>
+		</div>
 	);
 }
 
@@ -183,6 +188,8 @@ export default function App() {
 							<div id="sidebar" className="w-[25%] md:col-span-3">
 								<Sidebar notifications={data.notifications || []} />
 							</div>
+
+							<Modal />
 						</div>
 					</div>
 				</>
