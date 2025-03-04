@@ -29,7 +29,7 @@ export default function Index() {
 
 	return (
 		<div className="p-5 @container">
-			<h1 className="text-2xl font-semibold">フォロワー</h1>
+			<h1 className="text-2xl font-semibold">フォロー</h1>
 			<div className="grid grid-cols-1 gap-1 @min-[600px]:grid-cols-3">
 				{followings.map((following) => (
 					<div key={following.id} className="my-2 shrink-0 w-full">
