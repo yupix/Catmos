@@ -23,6 +23,7 @@ import { Button } from './components/shadcn/ui/button';
 import { SidebarProvider } from './components/shadcn/ui/sidebar';
 import { Toaster } from './components/shadcn/ui/sonner';
 import { Sidebar } from './components/sidebar';
+import { EmojiPickerProvider } from './hooks/use-emoji-picker';
 import { ModalProvider, useModal } from './hooks/use-modal';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
@@ -98,7 +99,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Links />
 			</head>
 			<body>
-				<ModalProvider>{children}</ModalProvider>
+				<EmojiPickerProvider>
+					<ModalProvider>{children}</ModalProvider>
+				</EmojiPickerProvider>
 				<Toaster />
 				<ScrollRestoration />
 				<Scripts />

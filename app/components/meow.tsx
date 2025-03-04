@@ -24,10 +24,11 @@ import {
 	DropdownMenuTrigger,
 } from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react';
 import * as emojilib from 'emojilib';
 import { motion } from 'motion/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
+import { useEmojiPicker } from '~/hooks/use-emoji-picker';
 import { FileViewer } from './file-viewer';
 import { MeowMoreMenu } from './meow/more-menu';
 
@@ -87,9 +88,10 @@ const Render = ({
 	isCompactFile,
 }: MeowProps) => {
 	const tree = parseTextToTree(meow.text ?? '');
+	const { openEmojiPicker } = useEmojiPicker();
+
 	const isSmall = size === 'xs' || size === 'sm';
 	const [showFile, setShowFile] = useState<boolean>(!isCompactFile);
-	const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
 	const { openModal, closeModal } = useModal();
 	const fetcher = useFetcher();
 	const plusButtonRef = useRef<HTMLDivElement>(null);
@@ -113,13 +115,18 @@ const Render = ({
 	};
 
 	const handleEmojiPickerToggle = () => {
-		setShowEmojiPicker((prev) => !prev);
+		if (plusButtonRef.current)
+			openEmojiPicker(
+				plusButtonRef.current,
+				<EmojiPicker onEmojiClick={handleEmojiSelect} />,
+			);
 	};
 
-	const handleEmojiSelect = (emoji: string) => {
-		console.log(emoji);
+	const handleEmojiSelect = (emoji: EmojiClickData, event: MouseEvent) => {
+		const emojiName = emojilib.default[emoji.emoji][0].replaceAll('_', '-');
+
 		fetcher.submit(
-			{ reaction: emoji },
+			{ reaction: emojiName },
 			{
 				action: `/meows/${meow.id}/reaction`,
 				method: 'POST',
@@ -313,21 +320,9 @@ const Render = ({
 									<TbPlus
 										className="shrink-0 cursor-pointer"
 										strokeWidth={3}
+										ref={plusButtonRef}
 										onClick={handleEmojiPickerToggle}
 									/>
-								)}
-								{showEmojiPicker && (
-									<div>
-										<EmojiPicker
-											open={showEmojiPicker}
-											onEmojiClick={(emoji) => {
-												handleEmojiSelect(
-													emojilib.default[emoji.emoji][0].replaceAll('_', '-'),
-												);
-												handleEmojiPickerToggle();
-											}}
-										/>
-									</div>
 								)}
 								<MeowMoreMenu meow={meow}>
 									<TbDots className="shrink-0 cursor-pointer" strokeWidth={3} />
