@@ -31,19 +31,11 @@ const strategy = await OIDCStrategy.init<User>(
 	{
 		issuer: env.OIDC_ISSUER,
 		client_id: env.OIDC_CLIENT_ID,
-		redirect_uris: [
-			process.env.NODE_ENV === 'development'
-				? `${env.VITE_ORIGIN}/auth/callback`
-				: 'https://mos.catarks.org/auth/callback',
-		],
+		redirect_uris: [`${env.VITE_ORIGIN}/auth/callback`],
 		response_type: 'code',
 		scopes: ['openid', 'profile', 'email'],
 		token_endpoint_auth_method: 'none',
-		post_logout_redirect_uris: [
-			process.env.NODE_ENV === 'development'
-				? `${env.VITE_ORIGIN}/`
-				: 'https://mos.catarks.org/',
-		],
+		post_logout_redirect_uris: [`${env.VITE_ORIGIN}/`],
 		revocation_endpoint: 'https://auth.akarinext.org/oauth/v2/revoke',
 		end_session_endpoint: 'https://auth.akarinext.org/oidc/v1/end_session',
 		userinfo_endpoint: 'https://auth.akarinext.org/oidc/v1/userinfo',
