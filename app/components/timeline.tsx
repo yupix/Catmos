@@ -35,6 +35,10 @@ export function Client({ initMeows }: TimelineProps) {
 	}, [newMeows, scrollTop]);
 
 	useEffect(() => {
+		setIsAtTop(scrollTop === 0);
+	}, [scrollTop]);
+
+	useEffect(() => {
 		setMeows(initMeows);
 	}, [initMeows]);
 
