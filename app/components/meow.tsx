@@ -150,7 +150,12 @@ const Render = ({
 	if (meow.remeow) {
 		return (
 			<div>
-				<span className="mb-2 flex items-center justify-between gap-2 overflow-hidden whitespace-nowrap text-nowrap px-4">
+				<span
+					className={cn(
+						'mb-2 flex items-center justify-between gap-2 overflow-hidden whitespace-nowrap text-nowrap px-4',
+						size === 'xs' && 'text-[13px]',
+					)}
+				>
 					<div className="flex shrink-[9999] items-center gap-2 overflow-hidden whitespace-nowrap text-nowrap text-sky-600">
 						<Avatar className="h-8 w-8">
 							<AvatarImage src={meow.author.avatarUrl} alt={meow.author.name} />

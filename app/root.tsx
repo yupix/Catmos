@@ -27,8 +27,7 @@ import { EmojiPickerProvider } from './hooks/use-emoji-picker';
 import { ModalProvider, useModal } from './hooks/use-modal';
 import type { User } from './lib/auth/auth.server';
 import { getSession } from './lib/auth/session.server';
-import { MeowIncludes, UserCardIncludes } from './lib/const.server';
-import { prisma } from './lib/db';
+import { NotificationService } from './lib/notification.server';
 import Welcome from './routes/welcome';
 
 export const links: Route.LinksFunction = () => [
@@ -69,23 +68,8 @@ export async function loader({ request }: Route.LoaderArgs) {
 		return data({ user: null, toast }, { headers });
 	}
 
-	const notifications = await prisma.notification.findMany({
-		where: {
-			user: {
-				sub: user.sub,
-			},
-		},
-		include: {
-			meow: {
-				include: MeowIncludes(user),
-			},
-			user: { include: UserCardIncludes },
-		},
-		orderBy: {
-			createdAt: 'desc',
-		},
-	});
-
+	const notificationService = new NotificationService(user.id);
+	const notifications = await notificationService.getNotifications();
 	return data({ user, notifications, toast }, { headers });
 }
 

@@ -1,4 +1,5 @@
-import { type INotification, Notifications } from './widgets/notifications';
+import type { Notification as INotification } from '~/lib/notification.server';
+import { Notifications } from './widgets/notifications';
 
 interface SidebarProps {
 	notifications: INotification[];

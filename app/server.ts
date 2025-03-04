@@ -8,7 +8,7 @@ import { redis, redisSubscriber } from './lib/redis.server';
 
 console.log('loading server');
 
-const subScribeChannels = ['meow', 'notification'];
+const subScribeChannels = ['meow', 'notification', 'follow'];
 
 for (const channel of subScribeChannels) {
 	redisSubscriber.subscribe(channel, (err, count) => {
@@ -67,7 +67,7 @@ export default await createHonoServer({
 				}
 				case 'notification': {
 					const data = SuperJSON.parse(message);
-					const socketId = await redis.get(`socket:${data.user.id}`);
+					const socketId = await redis.get(`socket:${data.targetId}`);
 					if (!socketId) {
 						break;
 					}

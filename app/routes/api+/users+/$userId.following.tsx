@@ -1,8 +1,12 @@
 import type { User } from '@prisma/client';
 import { data } from 'react-router';
-import type { User as IUser } from '~/lib/auth/auth.server';
+import SuperJSON from 'superjson';
+import { v4 } from 'uuid';
 import { getUserSession } from '~/lib/auth/auth.server';
+import { type IUserCard, UserCardIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
+import { NotificationService } from '~/lib/notification.server';
+import { redisPublisher } from '~/lib/redis.server';
 import type { Route } from '../../+types';
 
 export async function loader() {
@@ -10,7 +14,7 @@ export async function loader() {
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
-	async function createFollowing(me: IUser, targetUser: User) {
+	async function createFollowing(me: IUserCard, targetUser: User) {
 		await prisma.user.update({
 			where: {
 				sub: me.sub,
@@ -23,9 +27,25 @@ export async function action({ request, params }: Route.ActionArgs) {
 				},
 			},
 		});
+
+		const notificationService = new NotificationService(targetUser.id);
+		const createdNotification = await notificationService.notify(
+			{
+				id: v4(),
+				type: 'follow',
+				userId: me.id,
+				user: me,
+			},
+			targetUser.id,
+		);
+
+		await redisPublisher.publish(
+			'notification',
+			SuperJSON.stringify(createdNotification),
+		);
 	}
 
-	async function deleteFollowing(me: IUser, targetUser: User) {
+	async function deleteFollowing(me: IUserCard, targetUser: User) {
 		await prisma.user.update({
 			where: {
 				sub: me.sub,
@@ -43,11 +63,21 @@ export async function action({ request, params }: Route.ActionArgs) {
 	const me = await getUserSession(request);
 
 	const userId = params.userId;
-	console.log(params.userId, 'うんこ');
 
 	// 未認証
 	if (!me) {
 		return { status: 401 };
+	}
+
+	const user = await prisma.user.findFirst({
+		where: {
+			id: me.id,
+		},
+		include: UserCardIncludes,
+	});
+
+	if (!user) {
+		return { status: 404 };
 	}
 
 	const targetUser = await prisma.user.findFirst({
@@ -67,10 +97,10 @@ export async function action({ request, params }: Route.ActionArgs) {
 
 	switch (request.method) {
 		case 'POST':
-			await createFollowing(me, targetUser);
+			await createFollowing(user, targetUser);
 			return data({ status: 201 });
 		case 'DELETE':
-			await deleteFollowing(me, targetUser);
+			await deleteFollowing(user, targetUser);
 			return data({ status: 204 });
 		default:
 			return { status: 405 };

@@ -2,6 +2,7 @@ import { parseWithZod } from '@conform-to/zod';
 import { TbHome, TbWhirl } from 'react-icons/tb';
 import { useLoaderData, useSearchParams } from 'react-router';
 import superjson from 'superjson';
+import { v4 } from 'uuid';
 import { z } from 'zod';
 import { MainLayout } from '~/components/layouts/main-layout';
 import {} from '~/components/shadcn/ui/avatar';
@@ -9,9 +10,10 @@ import { SidebarTrigger } from '~/components/shadcn/ui/sidebar';
 import Timeline from '~/components/timeline';
 import type { User } from '~/lib/auth/auth.server';
 import { getSession } from '~/lib/auth/session.server';
-import { MeowIncludes, UserCardIncludes } from '~/lib/const.server';
+import { MeowIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
 import { parseTextToTree } from '~/lib/meow-tree';
+import { NotificationService } from '~/lib/notification.server';
 import { redisPublisher } from '~/lib/redis.server';
 import { cn } from '~/lib/utils';
 import type { Route } from './+types/index';
@@ -60,6 +62,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		},
 		include: MeowIncludes(user),
 	});
+	// console.dir(meows, { depth: null });
 
 	return { meows };
 }
@@ -143,19 +146,20 @@ export async function action({ request }: Route.ActionArgs) {
 				});
 
 				if (createdMeow.remeowId && createdMeow.remeow) {
-					const createdNotification = await prisma.notification.create({
-						data: {
+					const notificationService = new NotificationService(
+						createdMeow.remeow.author.id,
+					);
+					const createdNotification = await notificationService.notify(
+						{
+							id: v4(),
 							type: 'remeow',
-							userId: createdMeow.remeow.author.id,
 							meowId: createdMeow.id,
+							meow: createdMeow,
+							userId: createdMeow.remeow.author.id,
+							user: createdMeow.author,
 						},
-						include: {
-							user: { include: UserCardIncludes },
-							meow: {
-								include: MeowIncludes(me),
-							},
-						},
-					});
+						createdMeow.remeow.author.id,
+					);
 
 					await redisPublisher.publish(
 						'notification',
@@ -164,19 +168,18 @@ export async function action({ request }: Route.ActionArgs) {
 				}
 
 				for (const user of mentionedUsers) {
-					const createdNotification = await prisma.notification.create({
-						data: {
+					const notificationService = new NotificationService(user.id);
+					const createdNotification = await notificationService.notify(
+						{
+							id: v4(),
 							type: 'mention',
-							userId: user.id,
 							meowId: createdMeow.id,
+							meow: createdMeow,
+							userId: user.id,
+							user: createdMeow.author,
 						},
-						include: {
-							user: { include: UserCardIncludes },
-							meow: {
-								include: MeowIncludes(me),
-							},
-						},
-					});
+						user.id,
+					);
 					await redisPublisher.publish(
 						'notification',
 						superjson.stringify(createdNotification),
