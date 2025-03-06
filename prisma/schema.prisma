@@ -43,7 +43,6 @@ model User {
   bannerUrl    String?        @map("banner_url")
   files        File[]
   folders      Folder[]
-  Notification Notification[]
   following    User[]         @relation("UserToUser")
   followers    User[]         @relation("UserToUser")
   favorites    Favorite[]
@@ -88,14 +87,13 @@ model Meow {
   attachments File[]
   // 1:1でreplyとremeowを持つ
   replyId     String?  @map("reply_id")
-  reply       Meow?    @relation("ReplyToMeow", fields: [replyId], references: [id])
+  reply       Meow?    @relation("ReplyToMeow", fields: [replyId], references: [id], onDelete: Cascade)
 
   remeowId String? @map("remeow_id")
-  remeow   Meow?   @relation("RemeowToMeow", fields: [remeowId], references: [id])
+  remeow   Meow?   @relation("RemeowToMeow", fields: [remeowId], references: [id], onDelete: Cascade)
 
   replies      Meow[]         @relation("ReplyToMeow")
   remeows      Meow[]         @relation("RemeowToMeow")
-  notification Notification[]
   favorites    Favorite[]
   MeowReaction MeowReaction[]
 }
@@ -116,22 +114,10 @@ model MeowReaction {
 model Favorite {
   id        String   @id @default(uuid())
   meowId    String   @map("meow_id")
-  meow      Meow     @relation(fields: [meowId], references: [id])
+  meow      Meow     @relation(fields: [meowId], references: [id], onDelete: Cascade)
   userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
 
   @@unique([meowId, userId], name: "unique_meow_user")
-}
-
-// 通知
-model Notification {
-  id        String   @id @default(uuid())
-  isRead    Boolean  @default(false) @map("is_read")
-  type      String
-  meowId    String?  @map("meow_id")
-  meow      Meow?    @relation(fields: [meowId], references: [id])
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now()) @map("created_at")
 }
