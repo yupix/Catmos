@@ -70,21 +70,10 @@ erDiagram
     DateTime created_at 
     }
   
-
-  "Notification" {
-    String id "🗝️"
-    Boolean is_read 
-    String type 
-    String meow_id "❓"
-    String user_id 
-    DateTime created_at 
-    }
-  
     "CustomEmoji" o|--|o "File" : "File"
     "User" o{--}o "Meow" : "meows"
     "User" o{--}o "File" : "files"
     "User" o{--}o "Folder" : "folders"
-    "User" o{--}o "Notification" : "Notification"
     "User" o{--}o "User" : "following"
     "User" o{--}o "User" : "followers"
     "User" o{--}o "Favorite" : "favorites"
@@ -103,13 +92,10 @@ erDiagram
     "Meow" o|--|o "Meow" : "remeow"
     "Meow" o{--}o "Meow" : "replies"
     "Meow" o{--}o "Meow" : "remeows"
-    "Meow" o{--}o "Notification" : "notification"
     "Meow" o{--}o "Favorite" : "favorites"
     "Meow" o{--}o "MeowReaction" : "MeowReaction"
     "MeowReaction" o|--|| "Meow" : "meow"
     "MeowReaction" o|--|| "User" : "user"
     "Favorite" o|--|| "Meow" : "meow"
     "Favorite" o|--|| "User" : "user"
-    "Notification" o|--|o "Meow" : "meow"
-    "Notification" o|--|| "User" : "user"
 ```
