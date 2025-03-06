@@ -15,14 +15,34 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 		include: MeowIncludes(me ?? undefined),
 	});
 
-	console.log(meow);
-
 	if (!meow) {
 		throw new Response('Not Found', { status: 404 });
 	}
 
 	return { meow };
 }
+
+export const action = async ({ request, params }: Route.ActionArgs) => {
+	const user = await getUserSession(request);
+
+	if (!user) {
+		throw new Error('Unauthorized');
+	}
+
+	switch (request.method) {
+		case 'DELETE': {
+			await prisma.meow.delete({
+				where: {
+					id: params.meowId,
+				},
+			});
+			break;
+		}
+		default: {
+			throw new Error('Method Not Allowed');
+		}
+	}
+};
 
 export default function Index() {
 	const { meow } = useLoaderData<typeof loader>();

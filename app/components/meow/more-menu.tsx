@@ -49,12 +49,13 @@ export function MeowMoreMenu({ children, meow }: MeowMoreMenuProps) {
 	};
 
 	const handleDelete = () => {
-		const formData = new FormData();
-		formData.append('meowId', meow.id);
-		submit(formData, {
-			method: 'DELETE',
-			action: '/meows/?index',
-		});
+		submit(
+			{},
+			{
+				method: 'DELETE',
+				action: `/meows/${meow.id}`,
+			},
+		);
 	};
 
 	return (
