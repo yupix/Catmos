@@ -6,6 +6,7 @@ import { type INotification, Notification } from '~/components/notification';
 import { socket } from '~/lib/socket.client';
 import { cn } from '~/lib/utils';
 import { Skeleton } from '../shadcn/ui/skeleton';
+import { SpecificImage } from '../specific-image';
 
 interface NotificationProps {
 	notifications: INotification[];
@@ -87,10 +88,9 @@ function Clint({ notifications }: NotificationProps) {
 			<div className="max-h-[300px] overflow-y-scroll">
 				{notificationsState.length === 0 && (
 					<div className="flex h-40 flex-col items-center justify-center">
-						<img
+						<SpecificImage
 							src="/mihoyo/not_notification.webp"
 							alt="通知はありません"
-							className="mb-4 h-30 w-30 rounded-xl"
 						/>
 						<p>通知はありません</p>
 					</div>

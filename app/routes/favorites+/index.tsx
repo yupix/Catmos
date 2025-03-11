@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useLoaderData } from 'react-router';
 import { Meow } from '~/components/meow';
+import { SpecificImage } from '~/components/specific-image';
 import { getUserSession } from '~/lib/auth/auth.server';
 import { MeowIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
@@ -49,11 +50,7 @@ export default function Index() {
 			</AnimatePresence>
 			{favorites?.length === 0 && (
 				<div className="flex flex-col items-center justify-center">
-					<img
-						src="/mihoyo/no_favorites.webp"
-						alt="no favorites"
-						className="mb-4 mb-4w-fit rounded-4xl border-2 h-50 w-50"
-					/>
+					<SpecificImage src="/mihoyo/no_favorites.webp" alt="no favorites" />
 					<p>お気に入りはまだありません。</p>
 				</div>
 			)}

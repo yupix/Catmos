@@ -3,6 +3,7 @@ import { useLoaderData } from 'react-router';
 import { MainLayout } from '~/components/layouts/main-layout';
 import { Notification } from '~/components/notification';
 import { SidebarTrigger } from '~/components/shadcn/ui/sidebar';
+import { SpecificImage } from '~/components/specific-image';
 import { getUserSession } from '~/lib/auth/auth.server';
 import { NotificationService } from '~/lib/notification.server';
 import type { Route } from './+types';
@@ -56,10 +57,9 @@ export default function Notifications() {
 					))
 				) : (
 					<div className="flex h-40 flex-col items-center justify-center">
-						<img
+						<SpecificImage
 							src="/mihoyo/not_notification.webp"
 							alt="通知はありません"
-							className="mb-4 h-30 w-30 rounded-xl"
 						/>
 						<p>通知はありません</p>
 					</div>
