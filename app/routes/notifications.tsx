@@ -4,9 +4,8 @@ import { MainLayout } from '~/components/layouts/main-layout';
 import { Notification } from '~/components/notification';
 import { SidebarTrigger } from '~/components/shadcn/ui/sidebar';
 import { getUserSession } from '~/lib/auth/auth.server';
-import { MeowIncludes, UserCardIncludes } from '~/lib/const.server';
-import { prisma } from '~/lib/db';
 import type { Route } from './+types';
+import { NotificationService } from '~/lib/notification.server';
 
 export async function loader({ request }: Route.LoaderArgs) {
 	const user = await getUserSession(request);
@@ -16,22 +15,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		};
 	}
 
-	const notifications = await prisma.notification.findMany({
-		where: {
-			user: {
-				sub: user.sub,
-			},
-		},
-		orderBy: {
-			createdAt: 'desc',
-		},
-		include: {
-			user: { include: UserCardIncludes },
-			meow: {
-				include: MeowIncludes(user),
-			},
-		},
-	});
+	const notifications = await (new NotificationService(user.id).getNotifications());
 
 	return {
 		notifications,
