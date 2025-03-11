@@ -111,7 +111,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 									</SidebarMenu>
 								</SidebarContent>
 							</SidebarGroup>
-							{MENUS.length - 1 !== i && <div className="mx-2 border-b" />}
+							{MENUS.length - 1 !== i ? <div className="mx-2 border-b" /> : null}
 						</>
 					);
 				})}

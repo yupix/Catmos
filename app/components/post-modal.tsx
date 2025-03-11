@@ -1,9 +1,10 @@
 import { useRef } from 'react';
 import { Form, useNavigation, useSubmit } from 'react-router';
 import MeowTree, {} from '~/lib/meow-tree';
-import { type IMeow, Meow } from './meow';
 import { Button } from './shadcn/ui/button';
 import { DialogHeader } from './shadcn/ui/dialog';
+import type { IMeow } from '~/lib/const.server';
+import { Meow } from './meow';
 
 export interface PostModalProps {
 	replyTo?: IMeow;
@@ -32,11 +33,11 @@ export function PostModal({ replyTo, closeModal }: PostModalProps) {
 
 	return (
 		<div>
-			{replyTo && (
+			{replyTo ? (
 				<div className="mb-4">
 					<ReplyTo meow={replyTo} />
 				</div>
-			)}
+			) : null}
 			<Form action="/?index" method="POST" ref={form} onSubmit={handleSubmit}>
 				<DialogHeader />
 				<input type="hidden" name="intent" value="post" />
