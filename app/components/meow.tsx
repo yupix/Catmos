@@ -35,7 +35,6 @@ import { MeowMoreMenu } from './meow/more-menu';
 
 export type MeowProps = {
 	meow: IMeow;
-	hideDate?: boolean;
 	disableActions?: boolean;
 	type?: 'normal' | 'reply';
 	size?: 'xs' | 'sm' | 'md';
@@ -57,7 +56,6 @@ export function Meow(props: MeowProps) {
 						meow={props.meow.reply}
 						size={'sm'}
 						disableActions
-						hideDate={props.hideDate}
 						isCompactFile
 					/>
 				</div>
@@ -66,7 +64,6 @@ export function Meow(props: MeowProps) {
 					disableActions={props.disableActions}
 					type={props.meow.replyId !== null ? 'reply' : undefined}
 					size={props.size}
-					hideDate={props.hideDate}
 				/>
 			</div>
 		);
@@ -85,7 +82,6 @@ const Render = ({
 	disableActions,
 	type,
 	size,
-	hideDate,
 	isCompactFile,
 }: MeowProps) => {
 	const tree = parseTextToTree(meow.text ?? '');
@@ -174,7 +170,7 @@ const Render = ({
 						<TimeDisplay date={meow.createdAt} />
 					</div>
 				</span>
-				<Render meow={meow.remeow} size={size} hideDate isCompactFile />
+				<Render meow={meow.remeow} size={size} isCompactFile />
 			</div>
 		);
 	}
