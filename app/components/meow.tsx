@@ -30,6 +30,7 @@ import { motion } from 'motion/react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useEmojiPicker } from '~/hooks/use-emoji-picker';
 import { FileViewer } from './file-viewer';
+import { MeowHeader } from './meow/header';
 import { MeowMoreMenu } from './meow/more-menu';
 
 export type MeowProps = {
@@ -201,21 +202,7 @@ const Render = ({
 						size === 'xs' && 'text-[13px]',
 					)}
 				>
-					<div className="flex justify-between">
-						<HoverUserCard
-							user={meow.author}
-							className="shrink-999999 overflow-hidden overflow-ellipsis whitespace-nowrap"
-						>
-							{meow.author.displayName || meow.author.name}
-							{meow.author.displayName ? `@${meow.author.name}` : null}
-						</HoverUserCard>
-
-						{hideDate ? null : (
-							<div className="shrink-0">
-								<TimeDisplay date={meow.createdAt} />
-							</div>
-						)}
-					</div>
+					<MeowHeader meow={meow} />
 					<div className="mb-5 pt-2">
 						<div className="flex">
 							{type === 'reply' ? (

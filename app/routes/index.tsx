@@ -62,7 +62,6 @@ export async function loader({ request }: Route.LoaderArgs) {
 		},
 		include: MeowIncludes(user),
 	});
-	// console.dir(meows, { depth: null });
 
 	return { meows };
 }
