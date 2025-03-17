@@ -39,15 +39,12 @@ export type MeowProps = {
 	type?: 'normal' | 'reply';
 	size?: 'xs' | 'sm' | 'md';
 	isCompactFile?: boolean;
+	depth?: number;
 };
 
-/**
- * Meowコンポーネント
- * @param {MeowProps} props - Meowコンポーネントのプロパティ
- * @returns {JSX.Element} Meowコンポーネント
- */
 export function Meow(props: MeowProps) {
 	// 返信がある場合は先に返信を少しpaddingして表示して下にメインのメウを表示する
+	const depth = props.depth ?? 0;
 	if (props.meow.reply) {
 		return (
 			<div className="flex flex-col">
@@ -55,6 +52,7 @@ export function Meow(props: MeowProps) {
 					<Render
 						meow={props.meow.reply}
 						size={'sm'}
+						depth={depth + 1}
 						disableActions
 						isCompactFile
 					/>
@@ -72,15 +70,11 @@ export function Meow(props: MeowProps) {
 	return <Render {...props} />;
 }
 
-/**
- * Renderコンポーネント
- * @param {MeowProps} props - Meowコンポーネントのプロパティ
- * @returns {JSX.Element} Renderコンポーネント
- */
 const Render = ({
 	meow,
 	disableActions,
 	type,
+	depth,
 	size,
 	isCompactFile,
 }: MeowProps) => {
@@ -176,7 +170,7 @@ const Render = ({
 	}
 
 	const content = (
-		<div className="px-4">
+		<div className={cn('px-4', (depth ?? 0) > 0 && 'text-[.8rem]')}>
 			<div className="flex gap-2">
 				<HoverUserCard user={meow.author}>
 					<Link to={`/${meow.author.name}`}>
@@ -192,12 +186,7 @@ const Render = ({
 						</Avatar>
 					</Link>
 				</HoverUserCard>
-				<div
-					className={cn(
-						'w-full overflow-hidden',
-						size === 'xs' && 'text-[13px]',
-					)}
-				>
+				<div className={cn('w-full overflow-hidden')}>
 					<MeowHeader meow={meow} />
 					<div className="mb-5 pt-1">
 						<div className="flex items-center">
