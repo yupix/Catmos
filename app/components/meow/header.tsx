@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import type { IMeow } from '~/lib/const.server';
 import { HoverUserCard } from '../hover-user-card';
 import { TimeDisplay } from './time';
@@ -13,17 +14,18 @@ export const MeowHeader = ({ meow }: MeowHeaderProps) => {
 				user={meow.author}
 				className="shrink-999999 overflow-hidden overflow-ellipsis whitespace-nowrap"
 			>
-				<span className='font-semibold'>
-				{meow.author.displayName || meow.author.name}
-
+				<span className="font-semibold">
+					{meow.author.displayName || meow.author.name}
 				</span>
-				<span className='text-slate-500'>
-				{meow.author.displayName ? `@${meow.author.name}` : null}
+				<span className="text-slate-500">
+					{meow.author.displayName ? `@${meow.author.name}` : null}
 				</span>
 			</HoverUserCard>
 
 			<div className="shrink-0">
-				<TimeDisplay date={meow.createdAt} />
+				<Link to={`/meows/${meow.id}`}>
+					<TimeDisplay date={meow.createdAt} />
+				</Link>
 			</div>
 		</div>
 	);
