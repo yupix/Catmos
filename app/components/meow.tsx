@@ -199,8 +199,8 @@ const Render = ({
 					)}
 				>
 					<MeowHeader meow={meow} />
-					<div className="mb-5 pt-2">
-						<div className="flex">
+					<div className="mb-5 pt-1">
+						<div className="flex items-center">
 							{type === 'reply' ? (
 								<TbArrowBack className="mr-1 text-sky-600" strokeWidth={3} />
 							) : null}
