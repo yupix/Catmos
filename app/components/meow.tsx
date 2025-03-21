@@ -27,11 +27,24 @@ import 'react-photo-view/dist/react-photo-view.css';
 import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react';
 import * as emojilib from 'emojilib';
 import { motion } from 'motion/react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+	type FC,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+} from 'react';
 import { useEmojiPicker } from '~/hooks/use-emoji-picker';
+import type { loader as reactionLoader } from '~/routes/api+/meows+/$meowId+/reactions';
 import { FileViewer } from './file-viewer';
 import { MeowHeader } from './meow/header';
 import { MeowMoreMenu } from './meow/more-menu';
+import {
+	HoverCard,
+	HoverCardContent,
+	HoverCardTrigger,
+} from './shadcn/ui/hover-card';
 
 export type MeowProps = {
 	meow: IMeow;
@@ -79,13 +92,29 @@ const Render = ({
 	isCompactFile,
 }: MeowProps) => {
 	const tree = parseTextToTree(meow.text ?? '');
-	const { openEmojiPicker } = useEmojiPicker();
-
 	const isSmall = size === 'xs' || size === 'sm';
-	const [showFile, setShowFile] = useState<boolean>(!isCompactFile);
-	const { openModal, closeModal } = useModal();
-	const fetcher = useFetcher();
+
+	// 状態
 	const plusButtonRef = useRef<HTMLDivElement>(null);
+	const [showFile, setShowFile] = useState<boolean>(!isCompactFile);
+	const [reactionDetail, setReactionDetail] = useState<Awaited<
+		ReturnType<typeof reactionLoader>
+	> | null>(null);
+
+	// context系
+	const { openEmojiPicker } = useEmojiPicker();
+	const { openModal, closeModal } = useModal();
+
+	// Fetcher系の定義
+	const fetcher = useFetcher();
+	const reactionFetcher = useFetcher<typeof reactionLoader>();
+	const data = useRouteLoaderData('root');
+
+	useEffect(() => {
+		if (reactionFetcher.data) {
+			setReactionDetail(reactionFetcher.data);
+		}
+	}, [reactionFetcher]);
 
 	const handleReplyClick = useCallback(() => {
 		openModal(<PostModal replyTo={meow} closeModal={closeModal} />);
@@ -124,7 +153,16 @@ const Render = ({
 			},
 		);
 	};
-	const data = useRouteLoaderData('root');
+
+	const handleEmojiHover = (emoji: string) => {
+		const actionURI = encodeURI(
+			`/api/meows/${meow.id}/reactions?reaction=${emoji}`,
+		);
+
+		reactionFetcher.load(actionURI);
+	};
+
+	// シンプルな値じゃないもの
 	const isReacted = useMemo(() => {
 		return meow.MeowReaction.some(
 			(reaction) => reaction.userId === data.user.id,
@@ -138,6 +176,7 @@ const Render = ({
 		}
 		return counts;
 	}, [meow.MeowReaction]);
+
 	if (meow.remeow) {
 		return (
 			<div>
@@ -168,6 +207,26 @@ const Render = ({
 			</div>
 		);
 	}
+
+	const ReactionContent: FC<{ reaction: string; count: number }> = ({
+		reaction,
+		count,
+	}) => (
+		<div
+			className={cn(
+				'flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg select-none',
+				isReacted ? 'cursor-not-allowed' : 'cursor-pointer',
+			)}
+			onMouseEnter={() => handleEmojiHover(reaction)}
+		>
+			<img
+				src={`https://cdn.jsdelivr.net/npm/fluentui-emoji@latest/icons/flat/${reaction}.svg`}
+				alt={reaction}
+				className="h-8 w-8"
+			/>
+			<span>{count}</span>
+		</div>
+	);
 
 	const content = (
 		<div className={cn('px-4', (depth ?? 0) > 0 && 'text-[.8rem]')}>
@@ -240,16 +299,32 @@ const Render = ({
 					</div>
 					{isSmall ? null : (
 						<div className="flex gap-2">
-							{Object.entries(reactionCounts).map(([reaction, count]) => (
-								<div key={reaction} className="flex items-center gap-2 p-2">
-									<img
-										src={`https://cdn.jsdelivr.net/npm/fluentui-emoji@latest/icons/flat/${reaction}.svg`}
-										alt={reaction}
-										className="h-8 w-8"
+							{Object.entries(reactionCounts).map(([reaction, count]) =>
+								reactionDetail?.reaction === reaction ? (
+									<HoverCard key={reaction}>
+										<HoverCardTrigger>
+											<ReactionContent reaction={reaction} count={count} />
+										</HoverCardTrigger>
+										<HoverCardContent className="bg-white/10 text-xs backdrop-blur-sm">
+											{reactionDetail.reactions.map((react) => (
+												<div key={react.id} className="flex items-center gap-1">
+													<Avatar className="h-7 w-7">
+														<AvatarImage src={react.user.avatarUrl} />
+														<AvatarFallback>{react.user.name}</AvatarFallback>
+													</Avatar>
+													<p>{react.user.name}</p>
+												</div>
+											))}
+										</HoverCardContent>
+									</HoverCard>
+								) : (
+									<ReactionContent
+										key={reaction}
+										reaction={reaction}
+										count={count}
 									/>
-									<span>{count}</span>
-								</div>
-							))}
+								),
+							)}
 						</div>
 					)}
 					<div className="@container w-full">
