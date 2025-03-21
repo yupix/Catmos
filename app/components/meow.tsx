@@ -263,7 +263,9 @@ const Render = ({
 						</div>
 					)}
 					<div className="@container w-full">
-						{disableActions ? null : <MeowAction meow={meow} isReacted />}
+						{disableActions ? null : (
+							<MeowAction meow={meow} isReacted={isReacted} />
+						)}
 					</div>
 				</div>
 			</div>
