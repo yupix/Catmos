@@ -26,7 +26,7 @@ export function HoverUserCard({
 
 	return (
 		<HoverCard>
-			<HoverCardTrigger className={cn('h-fit', className)}>
+			<HoverCardTrigger className={cn('h-fit', className)} asChild>
 				{children}
 			</HoverCardTrigger>
 			<Link to={user.name}>
