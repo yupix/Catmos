@@ -40,21 +40,21 @@ export default function Index() {
 				<FileViewer file={file} className="xs:w-full" />
 			</div>
 
-			<h4 className="font-semibold mb-8">{file.filename}</h4>
+			<h4 className="text-foreground font-semibold mb-8">{file.filename}</h4>
 			<div className="mb-6">
-				<h5 className="text-gray-400 text-xs">ファイルタイプ</h5>
-				<p className="text-gray-500 text-sm">{file.mimetype}</p>
+				<h5 className="text-foreground/90 text-xs">ファイルタイプ</h5>
+				<p className="text-foreground text-sm">{file.mimetype}</p>
 			</div>
 			<div className="mb-6">
-				<h5 className="text-gray-400 text-xs">アップロード日</h5>
-				<p className="text-gray-500 text-sm">
+				<h5 className="text-foreground/90 text-xs">アップロード日</h5>
+				<p className="text-foreground text-sm">
 					{getDateFormatted(file.createdAt)}
 				</p>
 			</div>
 			<div className="mb-6">
-				<h5 className="text-gray-400 text-xs">URL</h5>
+				<h5 className="text-foreground/90 text-xs">URL</h5>
 				<div className="flex items-center gap-2">
-					<p className="text-gray-500 text-sm">{file.url}</p>
+					<p className="text-foreground text-sm">{file.url}</p>
 					<TbCopy
 						className="cursor-pointer text-blue-500"
 						onClick={copyHandler}

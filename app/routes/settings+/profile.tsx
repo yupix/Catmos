@@ -173,7 +173,7 @@ export default function Index() {
 						/>
 						<div className="absolute top-5 right-5">
 							<FileUpload asChild action="/settings/profile" intent="banner">
-								<Button>バナーを変更</Button>
+								<Button className="font-semibold">バナーを変更</Button>
 							</FileUpload>
 						</div>
 
@@ -188,7 +188,7 @@ export default function Index() {
 					</div>
 					<div className="mx-auto max-w-[80%]">
 						<FileUpload asChild action="/settings/profile" intent="avatar">
-							<Button>アバターを変更</Button>
+							<Button className="font-semibold">アバターを変更</Button>
 						</FileUpload>
 					</div>
 				</div>

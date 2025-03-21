@@ -7,7 +7,7 @@ interface SidebarProps {
 
 export function Sidebar({ notifications }: SidebarProps) {
 	return (
-		<aside className="h-full w-full border-sidebar-accent border-l bg-sidebar">
+		<aside className="h-full w-full border-border border-l bg-background">
 			<div className="p-4">
 				<Notifications notifications={notifications} />
 			</div>

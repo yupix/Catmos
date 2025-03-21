@@ -4,10 +4,13 @@ import { ScrollContextProvider, useScroll } from '~/hooks/use-scroll';
 function Layout({ children }: { children: ReactNode }) {
 	const { ref } = useScroll();
 	return (
-		<div className="max-h-screen w-full overflow-y-scroll" ref={ref}>
+		<div
+			className="max-h-screen w-full overflow-y-scroll bg-background"
+			ref={ref}
+		>
 			<div className="mx-auto max-w-full md:max-w-[70%]">
 				<div className="w-full p-5">
-					<div className="rounded-2xl p-5 bg-secondary">{children}</div>
+					<div className="rounded-2xl p-5 bg-panel">{children}</div>
 				</div>
 			</div>
 		</div>

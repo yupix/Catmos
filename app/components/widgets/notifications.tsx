@@ -78,7 +78,7 @@ function Clint({ notifications }: NotificationProps) {
 	}, []);
 
 	return (
-		<div className="bg-accent w-full rounded-3xl">
+		<div className="bg-panel w-full rounded-3xl">
 			<div className="sticky top-0 z-10 mb-4 flex h-10 w-full items-center rounded-t-3xl bg-widget bg-muted pl-3">
 				<h1 className="flex items-center gap-1 text-accent-foreground">
 					<TbBell className="h-5 w-5" />

@@ -134,7 +134,7 @@ const Render = ({
 							</span>
 						</div>
 					</div>
-					<div className="shirnk-0 text-accent-foreground">
+					<div className="shirnk-0 text-foreground">
 						<TimeDisplay date={meow.createdAt} />
 					</div>
 				</span>
@@ -165,10 +165,7 @@ const Render = ({
 
 	const content = (
 		<div
-			className={cn(
-				'px-4 text-accent-foreground',
-				(depth ?? 0) > 0 && 'text-[.8rem]',
-			)}
+			className={cn('px-4 text-foreground', (depth ?? 0) > 0 && 'text-[.8rem]')}
 		>
 			<div className="flex gap-2">
 				<HoverUserCard user={meow.author}>
