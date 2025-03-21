@@ -1,45 +1,19 @@
-import {
-	TbArrowBack,
-	TbArrowRight,
-	TbDots,
-	TbMinus,
-	TbPlus,
-	TbQuote,
-	TbRepeat,
-} from 'react-icons/tb';
+import { TbArrowBack, TbArrowRight, TbRepeat } from 'react-icons/tb';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
-import { Form, Link, useFetcher, useRouteLoaderData } from 'react-router';
-import { useModal } from '~/hooks/use-modal';
+import { Link, useFetcher, useRouteLoaderData } from 'react-router';
 import type { IMeow } from '~/lib/const.server';
 import { parseTextToTree, renderTree } from '~/lib/meow-tree';
 import { cn, getUserName } from '~/lib/utils';
 import { HoverUserCard } from './hover-user-card';
 import { TimeDisplay } from './meow/time';
-import { PostModal } from './post-modal';
 import { Avatar, AvatarFallback, AvatarImage } from './shadcn/ui/avatar';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from './shadcn/ui/dropdown-menu';
 import 'react-photo-view/dist/react-photo-view.css';
-import EmojiPicker, { type EmojiClickData } from 'emoji-picker-react';
-import * as emojilib from 'emojilib';
 import { motion } from 'motion/react';
-import {
-	type FC,
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from 'react';
-import { useEmojiPicker } from '~/hooks/use-emoji-picker';
+import { type FC, useEffect, useMemo, useState } from 'react';
 import type { loader as reactionLoader } from '~/routes/api+/meows+/$meowId+/reactions';
 import { FileViewer } from './file-viewer';
+import { MeowAction } from './meow/action';
 import { MeowHeader } from './meow/header';
-import { MeowMoreMenu } from './meow/more-menu';
 import {
 	HoverCard,
 	HoverCardContent,
@@ -56,7 +30,6 @@ export type MeowProps = {
 };
 
 export function Meow(props: MeowProps) {
-	// 返信がある場合は先に返信を少しpaddingして表示して下にメインのメウを表示する
 	const depth = props.depth ?? 0;
 	if (props.meow.reply) {
 		return (
@@ -94,19 +67,11 @@ const Render = ({
 	const tree = parseTextToTree(meow.text ?? '');
 	const isSmall = size === 'xs' || size === 'sm';
 
-	// 状態
-	const plusButtonRef = useRef<HTMLDivElement>(null);
 	const [showFile, setShowFile] = useState<boolean>(!isCompactFile);
 	const [reactionDetail, setReactionDetail] = useState<Awaited<
 		ReturnType<typeof reactionLoader>
 	> | null>(null);
 
-	// context系
-	const { openEmojiPicker } = useEmojiPicker();
-	const { openModal, closeModal } = useModal();
-
-	// Fetcher系の定義
-	const fetcher = useFetcher();
 	const reactionFetcher = useFetcher<typeof reactionLoader>();
 	const data = useRouteLoaderData('root');
 
@@ -116,45 +81,16 @@ const Render = ({
 		}
 	}, [reactionFetcher]);
 
-	const handleReplyClick = useCallback(() => {
-		openModal(<PostModal replyTo={meow} closeModal={closeModal} />);
-	}, [openModal, closeModal, meow]);
-
 	const handleFileToggle = () => {
 		setShowFile((prev) => !prev);
 	};
 
-	const handleEmojiRemove = () => {
-		fetcher.submit(
-			{},
-			{
-				action: `/meows/${meow.id}/reaction`,
-				method: 'DELETE',
-			},
-		);
-	};
-
-	const handleEmojiPickerToggle = () => {
-		if (plusButtonRef.current)
-			openEmojiPicker(
-				plusButtonRef.current,
-				<EmojiPicker onEmojiClick={handleEmojiSelect} />,
-			);
-	};
-
-	const handleEmojiSelect = (emoji: EmojiClickData, event: MouseEvent) => {
-		const emojiName = emojilib.default[emoji.emoji][0].replaceAll('_', '-');
-
-		fetcher.submit(
-			{ reaction: emojiName },
-			{
-				action: `/meows/${meow.id}/reaction`,
-				method: 'POST',
-			},
-		);
-	};
-
 	const handleEmojiHover = (emoji: string) => {
+		// 再レンダリングされたときに同じemojiがhoverされた場合は何もしない
+		if (reactionDetail?.reaction === emoji) {
+			return;
+		}
+
 		const actionURI = encodeURI(
 			`/api/meows/${meow.id}/reactions?reaction=${emoji}`,
 		);
@@ -162,7 +98,6 @@ const Render = ({
 		reactionFetcher.load(actionURI);
 	};
 
-	// シンプルな値じゃないもの
 	const isReacted = useMemo(() => {
 		return meow.MeowReaction.some(
 			(reaction) => reaction.userId === data.user.id,
@@ -214,7 +149,7 @@ const Render = ({
 	}) => (
 		<div
 			className={cn(
-				'flex items-center gap-2 p-2 hover:bg-slate-50 rounded-lg select-none',
+				'flex select-none items-center gap-2 rounded-lg p-2 hover:bg-slate-50',
 				isReacted ? 'cursor-not-allowed' : 'cursor-pointer',
 			)}
 			onMouseEnter={() => handleEmojiHover(reaction)}
@@ -328,59 +263,7 @@ const Render = ({
 						</div>
 					)}
 					<div className="@container w-full">
-						{disableActions ? null : (
-							<div className="flex flex-wrap @min-[300px]:gap-14 gap-2 text-slate-400 text-xl">
-								<TbArrowBack
-									className="cursor-pointer"
-									strokeWidth={3}
-									onClick={handleReplyClick}
-								/>
-								<DropdownMenu>
-									<DropdownMenuTrigger>
-										<TbRepeat
-											className="shrink-0 cursor-pointer"
-											strokeWidth={3}
-										/>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<Form action="/?index" method="POST">
-											<input type="hidden" name="intent" value="post" />
-											<input type="hidden" name="remeowId" value={meow.id} />
-											<DropdownMenuItem className="cursor-pointer">
-												<button
-													type="submit"
-													className="flex w-full items-center gap-2"
-												>
-													<TbRepeat strokeWidth={2} />
-													ReMeow
-												</button>
-											</DropdownMenuItem>
-										</Form>
-										<DropdownMenuItem className="cursor-pointer">
-											<TbQuote strokeWidth={2} />
-											Quote
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
-								{isReacted ? (
-									<TbMinus
-										className="shrink-0 cursor-pointer"
-										strokeWidth={3}
-										onClick={handleEmojiRemove}
-									/>
-								) : (
-									<TbPlus
-										className="shrink-0 cursor-pointer"
-										strokeWidth={3}
-										ref={plusButtonRef}
-										onClick={handleEmojiPickerToggle}
-									/>
-								)}
-								<MeowMoreMenu meow={meow}>
-									<TbDots className="shrink-0 cursor-pointer" strokeWidth={3} />
-								</MeowMoreMenu>
-							</div>
-						)}
+						{disableActions ? null : <MeowAction meow={meow} isReacted />}
 					</div>
 				</div>
 			</div>
@@ -388,5 +271,4 @@ const Render = ({
 	);
 
 	return isSmall ? content : content;
-	// <MeowContextMenu meow={meow}>{content}</MeowContextMenu>
 };
