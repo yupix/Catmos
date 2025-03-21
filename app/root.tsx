@@ -75,7 +75,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en">
+		<html lang="ja" className="overflow-y-hidden text-accent-foreground">
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -157,7 +157,7 @@ export default function App() {
 					<div className="w-full">
 						<div className="block md:flex md:flex-grow">
 							<Outlet />
-							<div id="sidebar" className="hidden md:block w-[25%]">
+							<div id="sidebar" className="hidden w-[25%] md:block">
 								<Sidebar notifications={data.notifications || []} />
 							</div>
 

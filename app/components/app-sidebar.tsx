@@ -60,7 +60,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 	const sidebar = useSidebar();
 	const location = useLocation();
 	const activeClass =
-		'bg-sky-600/20 text-sky-700 hover:text-sky-700 transition-all hover:bg-sky-600/30';
+		'text-sky-700 dark:text-sky-500 hover:text-sky-700 dark:hover:text-sky-400 transition-all bg-sky-600/30 dark:bg-sky-400/20 dark:hover:bg-sky-400/30';
 
 	return (
 		<Sidebar collapsible="icon">
@@ -86,7 +86,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 											const isActive = location.pathname === menu.to;
 											const className = isActive
 												? activeClass
-												: 'hover:text-sky-700 transition-all hover:bg-sky-600/30';
+												: 'hover:text-sky-700 dark:hover:text-sky-500 transition-all hover:bg-sky-600/30 dark:hover:bg-sky-400/30';
 
 											return (
 												<SidebarMenuItem key={i}>
@@ -101,7 +101,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 															to={menu.to}
 															onClick={() => sidebar.setOpenMobile(false)}
 														>
-															<Icon strokeWidth={3} />
+															<Icon strokeWidth={2} />
 															{menu.text}
 														</Link>
 													</SidebarMenuButton>
@@ -111,7 +111,9 @@ export function AppSidebar({ user }: AppSidebarProps) {
 									</SidebarMenu>
 								</SidebarContent>
 							</SidebarGroup>
-							{MENUS.length - 1 !== i ? <div className="mx-2 border-b" /> : null}
+							{MENUS.length - 1 !== i ? (
+								<div className="mx-2 border-b" />
+							) : null}
 						</>
 					);
 				})}

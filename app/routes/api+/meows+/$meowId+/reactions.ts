@@ -1,5 +1,4 @@
 import { createLoader, parseAsString } from 'nuqs/server';
-import { data } from 'react-router';
 import { getUserSession } from '~/lib/auth/auth.server';
 import { UserCardIncludes } from '~/lib/const.server';
 import { prisma } from '~/lib/db';
@@ -30,13 +29,5 @@ export const loader = async ({ params, request }: Route.LoaderArgs) => {
 		},
 	});
 
-	return data(
-		{ reactions, reaction },
-		{
-			headers: {
-				'Cache-Control': 'public, max-age=60',
-				'Content-Type': 'application/json',
-			},
-		},
-	);
+	return { reactions, reaction };
 };

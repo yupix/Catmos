@@ -6,6 +6,7 @@ import SuperJSON from 'superjson';
 import { useScrollPosition } from '~/hooks/use-scroll';
 import type { IMeow } from '~/lib/const.server';
 import { socket } from '~/lib/socket.client';
+import { cn } from '~/lib/utils';
 import { Meow } from './meow';
 
 interface TimelineProps {
@@ -102,7 +103,7 @@ export function Client({ initMeows }: TimelineProps) {
 							meows.map((meow, i) => (
 								<motion.div
 									className={cn(
-										'my-6 border-b pb-6',
+										'my-6 border-b border-border pb-6',
 										meows.length === i + 1 && 'border-none',
 									)}
 									key={meow.id}

@@ -134,7 +134,7 @@ const Render = ({
 							</span>
 						</div>
 					</div>
-					<div className="shirnk-0">
+					<div className="shirnk-0 text-accent-foreground">
 						<TimeDisplay date={meow.createdAt} />
 					</div>
 				</span>
@@ -164,7 +164,12 @@ const Render = ({
 	);
 
 	const content = (
-		<div className={cn('px-4', (depth ?? 0) > 0 && 'text-[.8rem]')}>
+		<div
+			className={cn(
+				'px-4 text-accent-foreground',
+				(depth ?? 0) > 0 && 'text-[.8rem]',
+			)}
+		>
 			<div className="flex gap-2">
 				<HoverUserCard user={meow.author}>
 					<Link to={`/${meow.author.name}`}>
@@ -213,7 +218,6 @@ const Render = ({
 									<div
 										className={cn(
 											'mt-2 flex @max-[300px]:flex-col flex-wrap gap-2',
-											isSmall && '@min-[500px]:max-w-[40%]',
 										)}
 									>
 										<PhotoProvider>
@@ -232,7 +236,7 @@ const Render = ({
 							</>
 						) : null}
 					</div>
-					{isSmall ? null : (
+					{depth > 0 ? null : (
 						<div className="flex gap-2">
 							{Object.entries(reactionCounts).map(([reaction, count]) =>
 								reactionDetail?.reaction === reaction ? (

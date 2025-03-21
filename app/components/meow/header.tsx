@@ -18,7 +18,7 @@ export const MeowHeader = ({ meow }: MeowHeaderProps) => {
 					<span className="font-semibold">
 						{meow.author.displayName || meow.author.name}
 					</span>
-					<span className="text-slate-500">
+					<span className="text-accent-foreground/80">
 						{meow.author.displayName ? `@${meow.author.name}` : null}
 					</span>
 				</div>
