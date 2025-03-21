@@ -99,9 +99,12 @@ export function Client({ initMeows }: TimelineProps) {
 				{isConnected ? (
 					<AnimatePresence>
 						{meows.length > 0 ? (
-							meows.map((meow) => (
+							meows.map((meow, i) => (
 								<motion.div
-									className="my-6 border-b pb-6"
+									className={cn(
+										'my-6 border-b pb-6',
+										meows.length === i + 1 && 'border-none',
+									)}
 									key={meow.id}
 									layout
 									initial={{ opacity: 0, y: -20, scale: 0.9 }}
